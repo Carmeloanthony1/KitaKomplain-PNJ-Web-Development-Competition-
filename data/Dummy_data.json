@@ -4,6 +4,7 @@
             "id": 1,
             "author": "Alfonso the dequeue",
             "username":"@Alfonso",
+            "avatar": "/assets/Dummy_photo.png",
             "time":"2 jam lalu",
             "title":"Jalanan arah umn rusak",
             "content":"Jalan arah ke umn rusak, saya mau ke sana susah sekali",
@@ -15,6 +16,7 @@
             "id": 2,
             "author": "Marvel",
             "username":"@sigantengumn",
+            "avatar": "/assets/Dummy_photo.png",
             "time":"6 jam lalu",
             "title":"Banjir GS",
             "content":"Sudah 8 hari banjir di gs, saya kesulitan ke umn untuk kuliah",
@@ -26,6 +28,7 @@
             "id": 3,
             "author": "Kent Dji",
             "username":"@sipintarumn",
+            "avatar": "/assets/Dummy_photo.png",
             "time":"2 hari lalu",
             "title":"Pengadaan lomba koding banjarmasin korupsi",
             "content":"Beberapa hari lalu saya menang lomba webdev di banjarmasin, hanya saja penyelenggaranya korup",
@@ -37,8 +40,24 @@
     "polling": [
         {
             "id": 1,
-            "topic": "Gading Serpong",
-            "polling": "128"
+            "username": "@AkusukaSupratman",
+            "topic": "#Jalanan di gading serpong",
+            "polling": "128",
+            "avatar": "/assets/Dummy_photo.png"
+        },
+        {
+            "id": 2,
+            "username": "@sigantengumn",
+            "topic": "#Banjir GS",
+            "polling": "100",
+            "avatar": "/assets/Dummy_photo.png"
+        },
+        {
+            "id": 3,
+            "username": "@sipintarumn",
+            "topic": "#Lomba Koding",
+            "polling": "28",
+            "avatar": "/assets/Dummy_photo.png"
         }
     ]
 }

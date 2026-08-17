@@ -4,8 +4,14 @@ export default function Navbar() {
   const [search, setSearch] = useState("");
 
   return (
-    <nav className="flex justify-end items-center py-2 w-full relative z-10">
-      <div className="fixed top-8 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-white border-2 border-[#a50034] rounded-full px-4 py-1.5 w-full h-12 max-w-md shadow-sm z-30">
+    <nav className="flex items-center justify-between w-full">
+      {/* 1. Judul Brand Kiri (Yang Hilang) */}
+      <h1 className="text-3xl font-black text-[#a50034] tracking-tight">
+        KitaKomplain
+      </h1>
+
+      {/* 2. Search Bar Tengah */}
+      <div className="flex items-center gap-2 bg-white border-2 border-[#a50034] rounded-full px-4 py-1.5 w-full max-w-md shadow-sm">
         <input 
           type="text" 
           placeholder="search bar" 
@@ -18,6 +24,7 @@ export default function Navbar() {
         </svg>
       </div>
 
+      {/* 3. Profile Akun Kanan */}
       <div className="flex items-center gap-3 bg-[#a50034] text-white px-5 py-2 rounded-full font-bold shadow-md cursor-pointer hover:bg-[#801427] transition">
         <span className="text-lg">Akusuka</span>
         <img src="/assets/Dummy_photo.png" alt="avatar" className="w-8 h-8 rounded-full bg-white object-cover border border-white"/>

@@ -4,17 +4,22 @@ import Most_Polling from "./components/Most_Polling";
 
 export default function App() {
   return (
-    <div className="min-h-screen bg-[#f7f7f7] flex">
-      <Sidebar_Kiri />
-
-      <div className="flex-1 flex flex-col items-center px-6">
+    <div className="min-h-screen bg-[#f7f7f7] flex flex-col">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-[#f7f7f7] border-b border-gray-200 px-8 py-3">
         <Navbar />
-        <main className="w-full max-w-2xl mt-20">
-        </main>
-      </div>
+      </header>
 
-      <div className="p-6">
-        <Most_Polling />
+\      <div className="flex flex-1 pt-14 px-8 gap-8 w-full justify-between items-start">
+        <aside className="w-64 flex-shrink-0 sticky top-24">
+          <Sidebar_Kiri />
+        </aside>
+
+        <main className="flex-1 max-w-2xl mx-auto">
+        </main>
+
+        <aside className="w-[400px]flex-shrink-0 sticky top-24">
+          <Most_Polling />
+        </aside>
       </div>
     </div>
   );
