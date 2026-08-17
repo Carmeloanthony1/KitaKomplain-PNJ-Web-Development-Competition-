@@ -4,8 +4,8 @@ export default function Most_Polling() {
   const pollingList = dummyData.polling || [];
 
   return (
-    <aside className="max-w-2xl w-full p-4 bg-white rounded-2xl shadow-sm border-5 border-[#a50034] flex flex-col gap-4">
-      <div className="isi flex flex-col">
+    <aside className=" relative max-w-xl w-full p-4 bg-white rounded-2xl shadow-sm max-h-[400px] border-3 border-[#a50034] flex flex-col gap-4">
+      <div className=" mb-[0.1px] top-2 left-40 justify-center flex gap-5">
         <h1 className="text-[#a50034] text-xl font-bold">Most Polling</h1>
       </div>
 
@@ -14,7 +14,7 @@ export default function Most_Polling() {
           <div key={index} className="flex flex-row items-start gap-2 p-3 rounded-xl">
             <span className="font-bold text-[#a50034] text-lg">#{index + 1}</span>
 
-            <div className="border-4 flex-1 flex flex-col gap-1 border-[#a50034] p-2 rounded-xl">
+            <div className="border-2 flex-1 flex flex-col gap-1 border-[#a50034] p-2 rounded-xl">
               {/*Avatar dan nama*/}
               <div className="flex flex-row gap-2">
                 <img
