@@ -4,33 +4,31 @@ export default function Most_Polling() {
   const pollingList = dummyData.polling || [];
 
   return (
-    <aside className=" relative max-w-xl w-full p-4 bg-white rounded-2xl shadow-sm max-h-[400px] border-3 border-[#a50034] flex flex-col gap-4">
-      <div className=" mb-[0.1px] top-2 left-40 justify-center flex gap-5">
-        <h1 className="text-[#a50034] text-xl font-bold">Most Polling</h1>
+    <aside className="w-full bg-white rounded-2xl shadow-md border border-gray-200 overflow-hidden flex flex-col">
+      <div className="bg-[#a50034] py-3 px-4 flex items-center justify-center">
+        <h1 className="text-white text-xl font-bold tracking-wide">Most Polling</h1>
       </div>
 
-      <div className="flex flex-col gap-3">
+      <div className="p-3 flex flex-col gap-2.5 max-h-[420px] overflow-y-auto custom-scrollbar">
         {pollingList.map((item, index) => (
-          <div key={index} className="flex flex-row items-start gap-2 p-3 rounded-xl">
-            <span className="font-bold text-[#a50034] text-lg">#{index + 1}</span>
-
-            <div className="border-2 flex-1 flex flex-col gap-1 border-[#a50034] p-2 rounded-xl">
-              {/*Avatar dan nama*/}
-              <div className="flex flex-row gap-2">
-                <img
-                  src={item.avatar}
-                  alt="avatar"
-                  className="w-7 h-7 rounded-full object-cover border-2 border-black flex-shrink-0"
-                />
-                <span className="font-bold text-md">{item.username}</span>
-              </div>
-
-              {/*topic dan polling*/}
-              <div className="flex flex-col gap-1">
-                <span className="text-[#a50034] font-bold">{item.topic}</span>
-                <span className="text-[#a50034] font-bold text-center">{item.polling} Polling</span>
+          <div 
+            key={index} 
+            className="group relative bg-gray-50 hover:bg-red-50/50 border border-gray-200 hover:border-[#a50034]/40 p-3 rounded-xl
+            transition duration-200 flex flex-col gap-2 cursor-pointer">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2.5 min-w-0">
+                <span className={`text-xs font-black px-2 py-0.5 rounded-md flex-shrink-0 ${
+                  index === 0 ? "bg-[#FFD700] text-black" :
+                  index === 1 ? "bg-[#B5B7BB] text-black" : 
+                  index === 2 ? "bg-[#CE8946] text-black" : "bg-gray-200 text-gray-600"
+                }`}>#{index + 1}</span>
+                <img src = {item.avatar} alt="avatar" className="w-6 h-6 rounded-full object-cover border border-gray-300 flex-shrink-0"/>
+                <span className="font-semibold text-sm text-gray-800 truncate">{item.username}</span>
               </div>
             </div>
+            <p className="text-[#a50034] font-bold text-sm leading-snug break-words pl-1">{item.topic}</p>
+            <span className="text-xs font-bold text-[#a50034] text-center bg-red-100/80 px-2 py-0.5 rounded-full flex-shrink-0">{item.polling} Polling</span>
+
           </div>
         ))}
       </div>

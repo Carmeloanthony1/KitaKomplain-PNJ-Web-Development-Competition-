@@ -35,6 +35,30 @@
             "likes": 9,
             "comment": 2,
             "status": "Waiting to be responded"
+        },
+                {
+            "id": 4,
+            "author": "Asep",
+            "username":"@sipintarumn",
+            "avatar": "/assets/Dummy_photo.png",
+            "time":"2 hari lalu",
+            "title":"Pengadaan lomba koding banjarmasin korupsi",
+            "content":"Beberapa hari lalu saya menang lomba webdev di banjarmasin, hanya saja penyelenggaranya korup",
+            "likes": 9,
+            "comment": 2,
+            "status": "Waiting to be responded"
+        },
+                {
+            "id": 5,
+            "author": "Joyboy",
+            "username":"@sipintarumn",
+            "avatar": "/assets/Dummy_photo.png",
+            "time":"2 hari lalu",
+            "title":"Pengadaan lomba koding banjarmasin korupsi",
+            "content":"Beberapa hari lalu saya menang lomba webdev di banjarmasin, hanya saja penyelenggaranya korup",
+            "likes": 9,
+            "comment": 2,
+            "status": "Waiting to be responded"
         }
     ],
     "polling": [
@@ -56,7 +80,21 @@
             "id": 3,
             "username": "@sipintarumn",
             "topic": "#Lomba Koding",
-            "polling": "28",
+            "polling": "68",
+            "avatar": "/assets/Dummy_photo.png"
+        },
+                {
+            "id": 4,
+            "username": "@sipintarumn",
+            "topic": "#Lomba Koding",
+            "polling": "48",
+            "avatar": "/assets/Dummy_photo.png"
+        },
+                {
+            "id": 5,
+            "username": "@sipintarumn",
+            "topic": "#Lomba Koding",
+            "polling": "29",
             "avatar": "/assets/Dummy_photo.png"
         }
     ]
