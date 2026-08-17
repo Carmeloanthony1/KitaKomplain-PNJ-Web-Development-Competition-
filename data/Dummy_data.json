@@ -1,0 +1,44 @@
+{
+    "post":[
+        {
+            "id": 1,
+            "author": "Alfonso the dequeue",
+            "username":"@Alfonso",
+            "time":"2 jam lalu",
+            "title":"Jalanan arah umn rusak",
+            "content":"Jalan arah ke umn rusak, saya mau ke sana susah sekali",
+            "likes": 24,
+            "comment": 5,
+            "status": "Waiting to be responded"
+        },
+        {
+            "id": 2,
+            "author": "Marvel",
+            "username":"@sigantengumn",
+            "time":"6 jam lalu",
+            "title":"Banjir GS",
+            "content":"Sudah 8 hari banjir di gs, saya kesulitan ke umn untuk kuliah",
+            "likes": 12,
+            "comment": 9,
+            "status": "responded"
+        },
+        {
+            "id": 3,
+            "author": "Kent Dji",
+            "username":"@sipintarumn",
+            "time":"2 hari lalu",
+            "title":"Pengadaan lomba koding banjarmasin korupsi",
+            "content":"Beberapa hari lalu saya menang lomba webdev di banjarmasin, hanya saja penyelenggaranya korup",
+            "likes": 9,
+            "comment": 2,
+            "status": "Waiting to be responded"
+        }
+    ],
+    "polling": [
+        {
+            "id": 1,
+            "topic": "Gading Serpong",
+            "polling": "128"
+        }
+    ]
+}
