@@ -3,9 +3,8 @@ export default function Navbar(){
   const [search, setSearch] = useState("");
   
   return (
-    <div className="flex justify-between items-center py-6 px-10 w-full">
-      <h1 className="text-4xl font-extrabold text-[#a50034] tracking-tight cursor-pointer">KitaKomplain</h1>
-      <div className="flex items-center gap-2 bg-white border-2 border[#a50034] rounded-full px-4 py-1.5 w-full max-w-md shadow-sm mx-6">
+    <div className="flex justify-end items-center py-2 w-full relative">
+      <div className="fixed left-1/2 -translate-x-1/2 flex items-center gap-2 bg-white border-2 border[#a50034] rounded-full px-4 py-1.5 w-full h-12 max-w-md shadow-sm">
         <input 
           type="text" placeholder="search" value={search}
           onChange={(e) => setSearch(e.taget.value)} 
