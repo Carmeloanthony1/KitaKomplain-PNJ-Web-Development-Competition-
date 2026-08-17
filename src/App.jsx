@@ -1,18 +1,18 @@
 import { useState } from "react";
-import Navbar from "./components/Navbar";
 import Sidebar_Kiri from "./components/Sidebar_Kiri";
+import Navbar from "./components/Navbar";
 
-export default function App(){
+export default function App() {
   return (
-    <div className="bg-[#f7f7f7] min-h-screen p-2 flex flex-col">
-      <div className="flex flex-1 px-8 py-4 gap-6 w-full">
-        <aside className="w-64 flex-shrink-0">
-          <Sidebar_Kiri/>
-        </aside>
-        <main className="flex-1 flex flex-col gap-4">
-          <Navbar/>
-        </main>
+    <div className="bg-[#f7f7f7] min-h-screen px-8 py-4">
+      <div className="flex gap-8 justify-between items-start">
+        <Sidebar_Kiri />
+        <div className="flex-1 flex flex-col gap-6">
+          <Navbar />
+          <div className="flex gap-8 justify-between items-start pt-4">
+          </div>
+        </div>
       </div>
     </div>
-  );  
+  );
 }
