@@ -1,6 +1,7 @@
 import Sidebar_Kiri from "./components/Sidebar_Kiri";
 import Navbar from "./components/Navbar";
 import Most_Polling from "./components/Most_Polling";
+import Post from "./components/Post";
 
 export default function App() {
   return (
@@ -15,6 +16,7 @@ export default function App() {
         </aside>
 
         <main className="flex-1 max-w-2xl mx-auto">
+          <Post/>
         </main>
 
         <aside className="w-[400px]flex-shrink-0 sticky top-24">
