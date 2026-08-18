@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import "./SignUp.css"
 
 function SignUp()
 {
@@ -23,11 +24,11 @@ function SignUp()
 
   // return == masuk ke HTML/CSS
   return(
-    <div className = "min-h-screen flex">
+    <div className = "signup-whole-background">
 
       {/*Left side*/}
-      <div className = "w-1/2 min-h-screen bg-gradient-to-r from-[#f5eadc] to-[#f9d9d0] flex items-center px-20">
-        <h1 className = "text-[#ad003c] text-8xl font-bold">
+      <div className = "signup-left-background">
+        <h1 className = "signup-logo">
           Kita
           <br />
           Komplain
@@ -35,52 +36,52 @@ function SignUp()
       </div>
 
       {/*Right side*/}
-      <div className = "w-1/2 min-h-screen bg-white flex items-center justify-center p-10">
+      <div className = "signup-right-background">
 
-        <div className = "w-full max-w-xl bg-[#f5f2e9] border-[5px] border-[#ad003c] rounded-[40px] px-16 py-14">
+        <div className = "signup-card-background">
 
-          <h2 className = "text-center text-5xl font-bold text-[#ad003c] mb-14">
+          <h2 className = "signup-card-text">
             Sign Up
           </h2>
 
-          <form onSubmit = {handleSubmit} className = "space-y-6">
+          <form onSubmit = {handleSubmit} className = "signup-form">
 
             <input
               type = "email"
-              placeholder = "Input your email"
+              placeholder = "Email"
               value = {email}
               onChange = {(event) => setEmail(event.target.value)}
-              className = "w-full h-24 px-8 rounded-[40px] border-[4px] border-[#ad003c] text-center"
+              className = "signup-input"
             />
 
             <input
               type = "password"
-              placeholder = "Input your password"
+              placeholder = "Password"
               value = {password}
               onChange = {(event) => setPassword(event.target.value)}
-              className = "w-full h-24 px-8 rounded-[40px] border-[4px] border-[#ad003c] text-center"
+              className = "signup-input"
             />
 
             <input
               type = "password"
-              placeholder = "Input your password again"
+              placeholder = "Confirm Password"
               value = {confirmPassword}
               onChange = {(event) => setConfirmPassword(event.target.value)}
-              className = "w-full h-24 px-8 rounded-[40px] border-[4px] border-[#ad003c] text-center"
+              className = "signup-input"
             />
 
-            <div className = "flex justify-center pt-4">
+            <div className = "signup-button-container">
               <button
                 type = "submit"
-                className = "w-64 h-16 rounded-full bg-[#ff8585] text-white text-xl font-bold"
+                className = "signup-button"
               >
                 Submit
               </button>
             </div>
 
-            <p className = "text-center text-[#8f0033] font-semibold">
+            <p className = "signup-login">
               Already have an account?{' '}
-              <button type = "button" className = "hover:underline">
+              <button type = "button" className = "signup-login-button">
                 Log in
               </button>
             </p>

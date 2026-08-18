@@ -3,13 +3,13 @@ import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
 import heroImg from './assets/hero.png'
 import './App.css'
-import SignUp from './pages/SignUp'
+//import SignUp from './pages/SignUp'
 
 // yang di komen buat test penampilan sign up
 
 function App() {
 
-  return <SignUp />
+  //return <SignUp />
 
   const [count, setCount] = useState(0)
 
