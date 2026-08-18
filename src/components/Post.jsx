@@ -1,17 +1,23 @@
 import { useState } from "react";
 import dummyData from "../../data/Dummy_data.json";
-
+import Share_post from "./Share_post";
 export default function Post(){
   const pollingList = dummyData.post || [];
   
   // Menggunakan object state supaya like per post tidak saling tumpuk
   const [likedPosts, setLikedPosts] = useState({});
-
+  const [isshare_open, setIsshare_open] = useState(false);
+  const [selectedpost, setSelectedpost] = useState(null);
   const toggleLike = (index) => {
     setLikedPosts((prev) => ({
       ...prev,
       [index]: !prev[index],
     }));
+  };
+
+  const handle_share = (item) => {
+    setSelectedpost(item);
+    setIsshare_open(true)
   };
 
   return (
@@ -66,14 +72,15 @@ export default function Post(){
                     </svg>
 
                     {/* SHARE */}
+                  <button onClick={() => setIsshare_open(item)} className="focus:outline-none cursor-pointer">
                     <svg 
                       className="w-10 h-10 stroke-[#a50034] fill-none hover:scale-110 transition-transform cursor-pointer" 
                       xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                      <path 
-                        strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" 
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" 
                         d="m5 12l-.604-5.437C4.223 5.007 5.825 3.864 7.24 4.535l11.944 5.658c1.525.722 1.525 2.892 0 3.614L7.24 19.466c-1.415.67-3.017-.472-2.844-2.028zm0 0h7"
                       />
                     </svg>
+                  </button>
                   </div>
                   <button className="bg-red-50 p-2 leading-relaxed rounded-lg border-2 border-[#a50034] font-semibold cursor-pointer">Polling</button>
                 </div>
@@ -83,6 +90,12 @@ export default function Post(){
           </div>
         );
       })}
+
+      {isshare_open && (
+        <Share_post post = {selectedpost}
+          onclose={() => setIsshare_open(false)}
+        />
+      )}
     </div>
   );
 }
