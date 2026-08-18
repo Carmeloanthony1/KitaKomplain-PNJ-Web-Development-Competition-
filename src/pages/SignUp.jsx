@@ -48,7 +48,7 @@ function SignUp()
 
             <input
               type = "email"
-              placeholder = "Email"
+              placeholder = "Email" /* to show gray text on box*/
               value = {email}
               onChange = {(event) => setEmail(event.target.value)}
               className = "signup-input"
