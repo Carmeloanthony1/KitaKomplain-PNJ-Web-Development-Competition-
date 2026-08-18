@@ -72,7 +72,7 @@ export default function Post(){
                     </svg>
 
                     {/* SHARE */}
-                  <button onClick={() => setIsshare_open(item)} className="focus:outline-none cursor-pointer">
+                  <button onClick={() => handle_share(item)} className="focus:outline-none cursor-pointer">
                     <svg 
                       className="w-10 h-10 stroke-[#a50034] fill-none hover:scale-110 transition-transform cursor-pointer" 
                       xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
