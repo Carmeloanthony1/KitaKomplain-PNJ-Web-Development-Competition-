@@ -1,0 +1,101 @@
+{
+    "post":[
+        {
+            "id": 1,
+            "author": "Alfonso the dequeue",
+            "username":"@Alfonso",
+            "avatar": "/assets/Dummy_photo.png",
+            "time":"2 jam lalu",
+            "title":"Jalanan arah umn rusak",
+            "content":"Jalan arah ke umn rusak, saya mau ke sana susah sekali, Jalan arah ke umn rusak, saya mau ke sana susah sekali, Jalan arah ke umn rusak, saya mau ke sana susah sekali Jalan arah ke umn rusak, saya mau ke sana susah sekali Jalan arah ke umn rusak, saya mau ke sana susah sekaliJalan arah ke umn rusak, saya mau ke sana susah sekali Jalan arah ke umn rusak, saya mau ke sana susah sekaliJalan arah ke umn rusak, saya mau ke sana susah sekali Jalan arah ke umn rusak, saya mau ke sana susah sekaliJalan arah ke umn rusak, saya mau ke sana susah sekaliJalan arah ke umn rusak, saya mau ke sana susah sekaliJalan arah ke umn rusak, saya mau ke sana susah sekaliJalan arah ke umn rusak, saya mau ke sana susah sekaliJalan arah ke umn rusak, saya mau ke sana susah sekaliJalan arah ke umn rusak, saya mau ke sana susah sekaliJalan arah ke umn rusak, saya mau ke sana susah sekali Jalan arah ke umn rusak, saya mau ke sana susah sekali Jalan arah ke umn rusak, saya mau ke sana susah sekaliJalan arah ke umn rusak, saya mau ke sana susah sekaliJalan arah ke umn rusak, saya mau ke sana susah sekaliJalan arah ke umn rusak, saya mau ke sana susah sekali",
+            "likes": 24,
+            "comment": 5,
+            "status": "Waiting to be responded"
+        },
+        {
+            "id": 2,
+            "author": "Marvel",
+            "username":"@sigantengumn",
+            "avatar": "/assets/Dummy_photo.png",
+            "time":"6 jam lalu",
+            "title":"Banjir GS",
+            "content":"Sudah 8 hari banjir di gs, saya kesulitan ke umn untuk kuliah Jalan arah ke umn rusak, saya mau ke sana susah sekali, Jalan arah ke umn rusak, saya mau ke sana susah sekali, Jalan arah ke umn rusak, saya mau ke sana susah sekali Jalan arah ke umn rusak, saya mau ke sana susah sekali Jalan arah ke umn rusak, saya mau ke sana susah sekaliJalan arah ke umn rusak, saya mau ke sana susah sekali Jalan arah ke umn rusak, saya mau ke sana susah sekaliJalan arah ke umn rusak, saya mau ke sana susah sekali Jalan arah ke umn rusak, saya mau ke sana susah sekaliJalan arah ke umn rusak, saya mau ke sana susah sekaliJalan arah ke umn rusak, saya mau ke sana susah sekaliJalan arah ke umn rusak, saya mau ke sana susah sekaliJalan arah ke umn rusak, saya mau ke sana susah sekaliJalan arah ke umn rusak, saya mau ke sana susah sekaliJalan arah ke umn rusak, saya mau ke sana susah sekaliJalan arah ke umn rusak, saya mau ke sana susah sekali Jalan arah ke umn rusak, saya mau ke sana susah sekali Jalan arah ke umn rusak, saya mau ke sana susah sekaliJalan arah ke umn rusak, saya mau ke sana susah sekaliJalan arah ke umn rusak, saya mau ke sana susah sekaliJalan arah ke umn rusak, saya mau ke sana susah sekali",
+            "likes": 12,
+            "comment": 9,
+            "status": "responded"
+        },
+        {
+            "id": 3,
+            "author": "Kent Dji",
+            "username":"@sipintarumn",
+            "avatar": "/assets/Dummy_photo.png",
+            "time":"2 hari lalu",
+            "title":"Pengadaan lomba koding banjarmasin korupsi",
+            "content":"Beberapa hari lalu saya menang lomba webdev di banjarmasin, hanya saja penyelenggaranya korup",
+            "likes": 9,
+            "comment": 2,
+            "status": "Waiting to be responded"
+        },
+                {
+            "id": 4,
+            "author": "Asep",
+            "username":"@sipintarumn",
+            "avatar": "/assets/Dummy_photo.png",
+            "time":"2 hari lalu",
+            "title":"Pengadaan lomba koding banjarmasin korupsi",
+            "content":"Beberapa hari lalu saya menang lomba webdev di banjarmasin, hanya saja penyelenggaranya korup Jalan arah ke umn rusak, saya mau ke sana susah sekali, Jalan arah ke umn rusak, saya mau ke sana susah sekali, Jalan arah ke umn rusak, saya mau ke sana susah sekali Jalan arah ke umn rusak, saya mau ke sana susah sekali Jalan arah ke umn rusak, saya mau ke sana susah sekaliJalan arah ke umn rusak, saya mau ke sana susah sekali Jalan arah ke umn rusak, saya mau ke sana susah sekaliJalan arah ke umn rusak, saya mau ke sana susah sekali Jalan arah ke umn rusak, saya mau ke sana susah sekaliJalan arah ke umn rusak, saya mau ke sana susah sekaliJalan arah ke umn rusak, saya mau ke sana susah sekaliJalan arah ke umn rusak, saya mau ke sana susah sekaliJalan arah ke umn rusak, saya mau ke sana susah sekaliJalan arah ke umn rusak, saya mau ke sana susah sekaliJalan arah ke umn rusak, saya mau ke sana susah sekaliJalan arah ke umn rusak, saya mau ke sana susah sekali Jalan arah ke umn rusak, saya mau ke sana susah sekali Jalan arah ke umn rusak, saya mau ke sana susah sekaliJalan arah ke umn rusak, saya mau ke sana susah sekaliJalan arah ke umn rusak, saya mau ke sana susah sekaliJalan arah ke umn rusak, saya mau ke sana susah sekali",
+            "likes": 9,
+            "comment": 2,
+            "status": "Waiting to be responded"
+        },
+                {
+            "id": 5,
+            "author": "Joyboy",
+            "username":"@sipintarumn",
+            "avatar": "/assets/Dummy_photo.png",
+            "time":"2 hari lalu",
+            "title":"Pengadaan lomba koding banjarmasin korupsi",
+            "content":"Beberapa hari lalu saya menang lomba webdev di banjarmasin, Jalan arah ke umn rusak, saya mau ke sana susah sekali, Jalan arah ke umn rusak, saya mau ke sana susah sekali, Jalan arah ke umn rusak, saya mau ke sana susah sekali Jalan arah ke umn rusak, saya mau ke sana susah sekali Jalan arah ke umn rusak, saya mau ke sana susah sekaliJalan arah ke umn rusak, saya mau ke sana susah sekali Jalan arah ke umn rusak, saya mau ke sana susah sekaliJalan arah ke umn rusak, saya mau ke sana susah sekali Jalan arah ke umn rusak, saya mau ke sana susah sekaliJalan arah ke umn rusak, saya mau ke sana susah sekaliJalan arah ke umn rusak, saya mau ke sana susah sekaliJalan arah ke umn rusak, saya mau ke sana susah sekaliJalan arah ke umn rusak, saya mau ke sana susah sekaliJalan arah ke umn rusak, saya mau ke sana susah sekaliJalan arah ke umn rusak, saya mau ke sana susah sekaliJalan arah ke umn rusak, saya mau ke sana susah sekali Jalan arah ke umn rusak, saya mau ke sana susah sekali Jalan arah ke umn rusak, saya mau ke sana susah sekaliJalan arah ke umn rusak, saya mau ke sana susah sekaliJalan arah ke umn rusak, saya mau ke sana susah sekaliJalan arah ke umn rusak, saya mau ke sana susah sekali hanya saja penyelenggaranya korup",
+            "likes": 9,
+            "comment": 2,
+            "status": "Waiting to be responded"
+        }
+    ],
+    "polling": [
+        {
+            "id": 1,
+            "username": "@AkusukaSupratman",
+            "topic": "#Jalanan di gading serpong",
+            "polling": "128",
+            "avatar": "/assets/Dummy_photo.png"
+        },
+        {
+            "id": 2,
+            "username": "@sigantengumn",
+            "topic": "#Banjir GS",
+            "polling": "100",
+            "avatar": "/assets/Dummy_photo.png"
+        },
+        {
+            "id": 3,
+            "username": "@sipintarumn",
+            "topic": "#Lomba Koding",
+            "polling": "68",
+            "avatar": "/assets/Dummy_photo.png"
+        },
+                {
+            "id": 4,
+            "username": "@sipintarumn",
+            "topic": "#Lomba Koding",
+            "polling": "48",
+            "avatar": "/assets/Dummy_photo.png"
+        },
+                {
+            "id": 5,
+            "username": "@sipintarumn",
+            "topic": "#Lomba Koding",
+            "polling": "29",
+            "avatar": "/assets/Dummy_photo.png"
+        }
+    ]
+}
