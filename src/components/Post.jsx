@@ -6,7 +6,6 @@ import CommentSection from "./Comment";
 export default function Post() {
   const pollingList = dummyData.post || [];
   
-  // Menggunakan object state supaya like per post tidak saling tumpuk
   const [likedPosts, setLikedPosts] = useState({});
   const [isshare_open, setIsshare_open] = useState(false);
   const [selectedpost, setSelectedpost] = useState(null);
@@ -21,7 +20,6 @@ export default function Post() {
   };
 
   const handleToggleComment = (index) => {
-    // Kalau diklik lagi di post yang sama -> tutup, kalau beda -> pindah buka ke post tsb
     setActiveCommentIndex(activeCommentIndex === index ? null : index);
   };
 
@@ -34,7 +32,6 @@ export default function Post() {
     <div className="min-w-2xl w-full bg-slate-50/70 p-4 rounded-2xl flex flex-col gap-4">
       {pollingList.map((item, index) => {
         const isLiked = !!likedPosts[index];
-        // 1. Disesuaikan penamaannya jadi isCommentOpen
         const isCommentOpen = activeCommentIndex === index;
 
         return (
@@ -102,7 +99,6 @@ export default function Post() {
                   <button className="bg-red-50 p-2 leading-relaxed rounded-lg border-2 border-[#a50034] font-semibold cursor-pointer">Polling</button>
                 </div>
 
-                {/* 2. Komentar dipindah ke dalam div "flex-1 min-w-0" agar sejajar dengan teks post */}
                 {isCommentOpen && (
                   <CommentSection comments={item.comments} />
                 )}
