@@ -4,7 +4,7 @@ export default function Sidebar_kiri() {
   const [search, setSearch] = useState("");
 
   return (
-    <aside className="w-64 flex flex-col justify-between py-0 px-2 pb-4 bg-[#f7f7f7]">
+    <aside className="mt-4 w-64 flex flex-col justify-between py-0 px-2 pb-4 bg-[#f7f7f7]">
       <div className="flex flex-col gap-10">
         <div className="flex flex-col gap-12">
           <button className="flex items-center text-3xl gap-4 font-bold text-[#a50034] cursor-pointer hover:opacity-80 transition">
