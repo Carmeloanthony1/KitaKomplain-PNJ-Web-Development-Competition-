@@ -1,22 +1,19 @@
 import { useState } from "react";
-
+import "./Login.css"
 
 function Login()
 {
-    const[email, useEmail] = useState('')
-    const[password, usePassword] = useState('')
+    const[identifier, setIdentifier] = useState('')
+    const[password, setPassword] = useState('')
 
     const handleSubmit = (event) =>
     {
-        event.preventDefault() //don't reload page after submit or link when clicked
+        event.preventDefault()
 
-        if (password !== confirmPassword) //12345 != "12345"
-        {
-            alert('Passwords do not match!')
-            return
-        }
+        // taro login logic disini
 
-        console.log(email, password)
+        console.log("Identifier: ", identifier)
+        console.log("Password: ", password)
     }
 
     return(
@@ -39,12 +36,14 @@ function Login()
                         </h2>
 
                         <form onSubmit = {handleSubmit} className = "login-form">
+                            
                             <input
-                                type = "email"
-                                placeholder = "Email"
-                                value = {email}
-                                onChange = {(event) => setEmail(event.target.value)}
+                                type = "text"
+                                placeholder = "Username/Email"
+                                value = {identifier}
+                                onChange = {(event) => setIdentifier(event.target.value)}
                                 className = "login-input"
+                                required
                             />
 
                             <input
@@ -53,17 +52,32 @@ function Login()
                                 value = {password}
                                 onChange = {(event) => setPassword(event.target.value)}
                                 className = "login-input"
+                                required
                             />
 
+                            <div className = "login-button-container">
+                                <button
+                                    type = "submit"
+                                    className = "login-button"
+                                >
+                                    Submit
+                                </button>  
+                            </div>
+
+                            <p className = "login-signup">
+                                Don't have an account?{' '}
+                                <button
+                                    type = "button"
+                                    className = "login-signup-button"
+                                >
+                                    Sign Up
+                                </button>
+                            </p>
                         </form>
-
                 </div>
-
             </div>
-
-
         </div>
-
-
     )
 }
+
+export default Login
