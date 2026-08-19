@@ -1,15 +1,44 @@
 import { useState } from "react";
 import "./Login.css";
 
-export default function Login({ switchToSignup }) {
+export default function Login({ switchToSignup, onLoginSuccess }) {
     const [identifier, setIdentifier] = useState('');
     const [password, setPassword] = useState('');
+    const [loading, setLoading] = useState(false);
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault(); // Mencegah reload halaman
-        
-        // Logika login / hit API ke backend
-        console.log("User Login:", { identifier, password });
+        setLoading(true);
+
+        try {
+            // Tembak API Login backend
+            const response = await fetch('http://localhost:5000/api/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ identifier, password }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || 'Login gagal! Periksa kembali akunmu.');
+            }
+
+            // Simpan token JWT ke browser
+            localStorage.setItem('token', data.token);
+
+            // Langsung panggil callback buat pindah halaman di App.jsx tanpa alert
+            if (onLoginSuccess) {
+                onLoginSuccess(data.user);
+            }
+
+        } catch (error) {
+            alert(error.message);
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -54,9 +83,9 @@ export default function Login({ switchToSignup }) {
                         <div className="login-button-container">
                             <button
                                 type="submit"
-                                className="login-button"
-                            >
-                                Submit
+                                className="login-button" 
+                                disabled={loading}
+                            > {loading ? 'Memproses...' : 'Submit'}
                             </button>  
                         </div>
 

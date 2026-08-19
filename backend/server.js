@@ -53,7 +53,7 @@ app.post('/api/auth/sign_up', async (req, res) => {
             .from('users') //ambil dari user, milih email dan username, cari yang emailnya sama atau usernamenya sama
             .select('email, username')
             .or(`email.eq.${email},username.eq.${username}`) //nyari yang emailnya sama atau usernamenya sama 
-            .single();
+            .maybeSingle();
         
         if(existingUser){
             return res.status(400).json({
@@ -96,17 +96,19 @@ app.post('/api/auth/sign_up', async (req, res) => {
 });
 
 app.post('/api/auth/login', async (req, res) => {
-    const { email, password } = req.body;
-    if(!email || !password){
-        return res.status(400).json({
-            message: "Email dan password wajib di isi!"
-        });
-    }
+    const { identifier, email, password } = req.body;
+    const loginKey = identifier || email;
+
+        if(!loginKey || !password){
+            return res.status(400).json({
+                message: "Email dan password wajib di isi!"
+            });
+        }
     try {
         const { data: user, error } = await supabase
             .from('users')
             .select('*')
-            .eq('email', email) //nilai email di db sesuai dengan nilai email di input
+            .or(`email.eq.${loginKey},username.eq.${loginKey}`)
             .maybeSingle();
         
         if(error || !user){
@@ -125,7 +127,7 @@ app.post('/api/auth/login', async (req, res) => {
         const token = JWT.sign(
             { id: user.id, email: user.email },
             process.env.JWT_SECRET || 'secretkey',
-            { expiredIn: '7d' }
+            { expiresIn: '7d' }
         );
 
         return res.status(200).json({
