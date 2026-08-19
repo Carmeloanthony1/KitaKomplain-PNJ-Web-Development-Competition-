@@ -38,3 +38,8 @@ const verifytoken = (req, res, next) => {
         });
     }
 };
+
+//Bagian signup
+app.post('/api/auth/sign_up', async (req, res) => {
+    const { username, }
+})
