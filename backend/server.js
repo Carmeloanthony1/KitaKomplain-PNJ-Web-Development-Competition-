@@ -8,7 +8,7 @@ import { createClient } from '@supabase/supabase-js';
 dotenv.config(); //biar bisa di proses dalam code, ngebaca .env
 
 const app = express();
-const PORT = process.env.PORT || 500;
+const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json());
@@ -91,6 +91,55 @@ app.post('/api/auth/sign_up', async (req, res) => {
         console.error("Error sign up", error.message);
         return res.status(500).json({
             message: "Terjadi kesalahan pada server! "
+        });
+    }
+});
+
+app.post('/api/auth/login', async (req, res) => {
+    const { email, password } = req.body;
+    if(!email || !password){
+        return res.status(400).json({
+            message: "Email dan password wajib di isi!"
+        });
+    }
+    try {
+        const { data: user, error } = await supabase
+            .from('users')
+            .select('*')
+            .eq('email', email) //nilai email di db sesuai dengan nilai email di input
+            .maybeSingle();
+        
+        if(error || !user){
+            return res.status(400).json({
+                message: "Email atau password salah"
+            });
+        }
+
+        const isMatch = await bcrypt.compare(password, user.password);
+        if(!isMatch){
+            return res.status(400).json({
+                message : "Email atau password salah"
+            });
+        }
+
+        const token = JWT.sign(
+            { id: user.id, email: user.email },
+            process.env.JWT_SECRET || 'secretkey',
+            { expiredIn: '7d' }
+        );
+
+        return res.status(200).json({
+            message: "Login berhasil!", token,
+            user: {
+                id: user.id,
+                username: user.username,
+                email: user.email
+            }
+        });
+    } catch (error) {
+        console.error("Error login: ", error.message);
+        return res.status(500).json({
+            message: "Terjadi kesalahan di server!"
         });
     }
 });
