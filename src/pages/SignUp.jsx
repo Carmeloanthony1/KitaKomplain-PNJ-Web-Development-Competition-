@@ -3,6 +3,7 @@ import "./SignUp.css"
 
 function SignUp()
 {
+  const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -47,6 +48,14 @@ function SignUp()
           <form onSubmit = {handleSubmit} className = "signup-form">
 
             <input
+              type = "username"
+              placeholder = "Username"
+              value = {username}
+              onChange = {(event) => setUsername(event.target.value)}
+              className = "signup-input"
+            />
+
+            <input
               type = "email"
               placeholder = "Email" /* to show gray text on box*/
               value = {email}
@@ -82,7 +91,7 @@ function SignUp()
             <p className = "signup-login">
               Already have an account?{' '}
               <button type = "button" className = "signup-login-button">
-                Log in
+                Login
               </button>
             </p>
 

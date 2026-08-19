@@ -1,18 +1,17 @@
-html, body {
+html, body
+{
   margin: 0;
   padding: 0;
 }
 
-.signup-whole-background
+.login-whole-background
 {
     min-height: 100vh;
     display: flex;
     background: #ffffff;
 }
 
-/* Left Side*/
-
-.signup-left-background
+.login-left-background
 {
     width: 50%;
     min-height: 100vh;
@@ -29,7 +28,7 @@ html, body {
     );
 }
 
-.signup-logo
+.login-logo
 {
     color: #a50034;
 
@@ -39,9 +38,7 @@ html, body {
     line-height: 1.05;
 }
 
-/* Right Side*/
-
-.signup-right-background
+.login-right-background
 {
     width: 50%;
     min-height: 100vh;
@@ -53,12 +50,10 @@ html, body {
     padding: 10px;
 }
 
-/*Signup Card*/
-
-.signup-card-background
+.login-card-background
 {
     width: 80%;
-    height: 650px;
+    height: 550px;
 
     padding: 55px 65px;
 
@@ -68,7 +63,7 @@ html, body {
     border-radius: 40px;
 }
 
-.signup-card-text
+.login-card-text
 {
     position: relative;
     bottom: 30px;
@@ -83,9 +78,7 @@ html, body {
     font-weight: 700;
 }
 
-/*Form*/
-
-.signup-form
+.login-form
 {
     position: relative;
     bottom: 50px;
@@ -96,9 +89,7 @@ html, body {
     gap: 30px;
 }
 
-/*Inputs*/
-
-.signup-input
+.login-input
 {
     width: 100%;
     height: 65px;
@@ -122,28 +113,24 @@ html, body {
     transition: 0.2s ease;
 }
 
-/*placeholder for text before clicked*/
-.signup-input::placeholder
+.login-input::placeholder
 {
     color : #777;
 }
 
-/*when the user clicks on the box*/
-.signup-input:focus
+.login-input:focus
 {
     border-color: #8f0033;
 
     box-shadow: 0 0 0 4px rgba(173, 0, 60, 0.15);
 }
 
-.signup-input:focus::placeholder
+.login-input:focus::placeholder
 {
     color: transparent;
 }
 
-/* Submit Button*/
-
-.signup-button-container
+.login-button-container
 {
     display: flex;
     justify-content: center;
@@ -151,7 +138,7 @@ html, body {
     padding-top: 15px;
 }
 
-.signup-button
+.login-button
 {
     width: 250px;
     height: 60px;
@@ -171,19 +158,17 @@ html, body {
     transition: 0.2s ease;
 }
 
-.signup-button:hover
+.login-button:hover
 {
     transform: translateY(-2px);
 }
 
-.signup-button:active
+.login-button:active
 {
     transform: translateY(0);
 }
 
-/*Already have account? text*/
-
-.signup-login
+.login-signup
 {
     position: relative;
     bottom: 20px;
@@ -198,7 +183,7 @@ html, body {
     text-align: center;
 }
 
-.signup-login-button
+.login-signup-button
 {
     padding: 0;
 
@@ -214,7 +199,7 @@ html, body {
     cursor: pointer;
 }
 
-.signup-login-button:hover
+.login-signup-button:hover
 {
     text-decoration: underline;
 }
