@@ -3,15 +3,48 @@ import "./ReportProblem.css"
 
 export default function ReportProblem()
 {
+    const developerEmail = "kentdjiorlando90@gmail.com";
+
     const[email, setEmail] = useState('');
     const[category, setCategory] = useState('');
     const[details, setDetails] = useState('');
 
-    const handleSubmit = async (event) =>
+    const [lastoken, setLasttoken] = useState(null);
+
+    const handleSubmit = (event) =>
     {
         event.preventDefault();
 
+        if(!email || !category || !details)
+            return;
+
+        const randomNum = Math.floor(10000 + Math.random() * 90000);
+        const ticket = `Ticket-${randomNum}`;
+
+        const subject = encodeURIComponent(`[Support Ticket ${ticket} - ${category}]`);
+        const bodytext = 
+        `
+        [Ticket : ${ticket}]
+        Email: ${email}
+        Category: ${category}
         
+        Details:
+        ${details}`;
+
+        const body = encodeURIComponent(bodytext);
+
+        const gmailUrl =
+        `https://mail.google.com/mail/?view=cm&fs=1` +
+        `&to=${encodeURIComponent(developerEmail)}` +
+        `&su=${subject}` +
+        `&body=${body}`;
+
+        window.open(gmailUrl, '_blank');
+
+        //window.location.href = `mailto:${developerEmail}?subject=${subject}&body=${body}`;
+
+        //otomatis bikin email biar user langsung bisa kirim aja
+        setLasttoken(ticket);
     }
 
     return(
