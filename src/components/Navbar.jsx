@@ -6,9 +6,12 @@ export default function Navbar({ openProfile, user}) {
   return (
     <div>
       <nav className="flex items-center justify-between w-full">
-        <h1 className="text-3xl font-black text-[#a50034] tracking-tight">
-          KitaKomplain
-        </h1>
+        <div className="cursor-pointer transition hover:scale-102 active:scale-109">
+            <h1 className=" ml-3 text-3xl font-black text-[#a50034] tracking-tight">
+              KitaKomplain
+          </h1>
+        </div>
+        
 
         {/* 2. Search Bar Tengah */}
         <div className="flex items-center gap-2 bg-white border-2 border-[#a50034] rounded-full px-4 py-1.5 w-full max-w-md shadow-sm">
@@ -27,7 +30,7 @@ export default function Navbar({ openProfile, user}) {
         {/* 3. Profile Akun Kanan */}
         <div onClick={openProfile}
           className="flex items-center gap-3 bg-[#a50034] text-white px-5 py-2 rounded-full font-bold shadow-md cursor-pointer hover:bg-[#801427] transition">
-          <span className="text-lg">Blek Nigge</span>
+          <span className="text-lg">NIGAAAAA</span>
           <img src="/assets/Dummy_photo.png" alt="avatar" className="w-8 h-8 rounded-full bg-white object-cover border border-white"/>
         </div>
       </nav>
