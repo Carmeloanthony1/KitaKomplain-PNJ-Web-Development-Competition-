@@ -1,0 +1,181 @@
+html, body
+{
+  margin: 0;
+  padding: 0;
+}
+
+.report-background
+{
+    width: 100%;
+    min-height: 100vh;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: linear-gradient(
+        to right,
+        #f1ece1,
+        #ffc1b3
+    );
+}
+
+.report-card-background
+{
+    width: 35%;
+    height: 650px;
+
+    background-color: #fffbf4;
+
+    border: 6px solid #a50034;
+    border-radius: 40px;
+}
+
+.report-card-title
+{
+    position: relative;
+    top: 20px;
+
+    color: #a50034;
+
+    font-size: 32px;
+    font-weight: 700;
+
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.report-form
+{
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+
+    gap: 20px;
+}
+
+.report-input
+{
+    width: 85%;
+    height: 65px;
+
+    padding: 0 30px;
+
+    border: 6px solid #a50034;
+    border-radius: 35px;
+
+    background-color: #ffffff;
+
+    font-size: 18px;
+    font-weight: 600;
+
+    text-align: left;
+
+    outline: none;
+
+    box-sizing: border-box;
+
+    transition: 0.2s ease;
+}
+
+.report-input::placeholder
+{
+    color : #777;
+}
+
+.report-input:focus
+{
+    border-color: #8f0033;
+
+    box-shadow: 0 0 0 4px rgba(173, 0, 60, 0.15);
+}
+
+.report-input:focus::placeholder
+{
+    color: transparent;
+}
+
+.details-text-container
+{
+    width: 100%;
+
+    display: flex;
+    align-items: flex-start;
+    padding-left: 30px;
+}
+
+.details-text
+{
+    font-size: 18px;
+    font-weight: 600;
+
+    color: #a50034;
+}
+
+.report-textarea
+{
+    width: 85%;
+    height: 225px;
+
+    border: 6px solid #a50034;
+    border-radius: 20px;
+
+    background-color: #ffffff;
+
+    font-size: 15px;
+    font-weight: 600;
+
+    text-align: left;
+    vertical-align: top;
+    padding: 5px;
+
+    outline: none;
+
+    box-sizing: border-box;
+
+    transition: 0.2s ease;
+}
+
+.report-textarea:focus
+{
+    border-color: #8f0033;
+
+    box-shadow: 0 0 0 4px rgba(173, 0, 60, 0.15);
+}
+
+.submit-button-container
+{
+    display: flex;
+    justify-content: center;
+    padding-top: 5px;
+}
+
+.submit-button
+{
+    width: 200px;
+    height: 50px;
+
+    border: none;
+    border-radius: 30px;
+
+    background-color: #ff8888;
+
+    color: #ffffff;
+
+    font-size: 20px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+.submit-button:hover
+{
+    transform: translateY(-2px);
+}
+
+.submit-button:active
+{
+    transform: translateY(0);
+}
