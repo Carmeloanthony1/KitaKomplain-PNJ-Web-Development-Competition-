@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export default function Navbar({ openSignup }) {
+export default function Navbar({ openProfile, user}) {
   const [search, setSearch] = useState("");
 
   return (
@@ -25,7 +25,7 @@ export default function Navbar({ openSignup }) {
         </div>
 
         {/* 3. Profile Akun Kanan */}
-        <div onClick={openSignup}
+        <div onClick={openProfile}
           className="flex items-center gap-3 bg-[#a50034] text-white px-5 py-2 rounded-full font-bold shadow-md cursor-pointer hover:bg-[#801427] transition">
           <span className="text-lg">Blek Nigge</span>
           <img src="/assets/Dummy_photo.png" alt="avatar" className="w-8 h-8 rounded-full bg-white object-cover border border-white"/>
