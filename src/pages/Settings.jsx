@@ -72,7 +72,7 @@ export default function Settings({ user, onNavigate }) {
           {/* SECTION 1: PERMISSION */}
           <section id="permission-section" className="scroll-mt-28 max-w-3xl flex flex-col gap-6">
             <div>
-                <h1 className={`text-3xl font-bold ${isDarkMode ? "text-[#f1ece1]" : "text-gray-600"}`}>Permission Settings</h1>                
+                <h1 className={`text-3xl font-bold ${isDarkMode ? "text-[#f1ece1]" : "text-[#a50034]"}`}>Permission Settings</h1>                
                 <p className={isDarkMode ? "text-[#f1ece1]" : "text-gray-600"}>Mengelola akses fitur dan perangkat untuk kelancaran pembuatan laporan</p>
             </div>
             <div className={`flex flex-col gap-4 p-6 rounded-2xl shadow-sm transition-colors ${isDarkMode ? "bg-[#1e1e1e] border-2 border-[#f1ece1]" : "bg-white border-2 border-[#a50034]"}`}>
@@ -102,7 +102,7 @@ export default function Settings({ user, onNavigate }) {
           {/* SECTION 2: APPEARANCE */}
           <section id="appearance-section" className="scroll-mt-28 max-w-3xl flex flex-col gap-6">
             <div>
-              <h1 className={`text-3xl font-bold ${isDarkMode ? "text-[#f1ece1]" : "text-gray-600"}`}>Appearance Settings</h1>
+              <h1 className={`text-3xl font-bold ${isDarkMode ? "text-[#f1ece1]" : "text-[#a50034]"}`}>Appearance Settings</h1>
               <p className={isDarkMode ? "text-[#f1ece1]" : "text-gray-600"}>Ubah tema visual aplikasi.</p>
             </div>
             <div className={`flex flex-col gap-4 p-6 rounded-2xl shadow-sm transition-colors ${isDarkMode ? "bg-[#1e1e1e] border-2 border-[#f1ece1]" : "bg-white border-2 border-[#a50034]"}`}>
@@ -123,7 +123,7 @@ export default function Settings({ user, onNavigate }) {
                         <div className="w-[52px] h-[28px] bg-gray-300 rounded-full peer peer-checked:bg-[#a50034] transition-colors relative after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-[24px] after:w-[24px] after:transition-all peer-checked:after:translate-x-[24px]"></div>
                     </label>
 
-                    <span className={`text-xl font-bold transition-colors ${isDarkMode ? "text-[#a50034]" : "text-gray-400"}`}>
+                    <span className={`text-xl font-bold transition-colors ${isDarkMode ? "text-[#f1ece1]" : "text-[#a50034]"}`}>
                       Dark Mode
                     </span>
                 </div>
@@ -133,8 +133,8 @@ export default function Settings({ user, onNavigate }) {
           {/* SECTION 3: PRIVACY */}
           <section id="privacy-section" className="scroll-mt-28 max-w-3xl flex flex-col gap-6">
             <div>
-              <h1 className="text-3xl font-black text-[#a50034] mb-2">Privacy Settings</h1>
-              <p className={isDarkMode ? "text-gray-400" : "text-gray-600"}>Kelola visibilitas profil dan mode anonim.</p>
+              <h1 className={`text-3xl font-bold ${isDarkMode ? "text-[#f1ece1]" : "text-[#a50034]"}`}>Privacy Settings</h1>
+              <p className={isDarkMode ? "text-[#f1ece1]" : "text-gray-600"}>Kelola visibilitas profil dan mode anonim.</p>
             </div>
             <div className={`p-6 rounded-2xl border-2 border-[#a50034] shadow-sm transition-colors ${isDarkMode ? "bg-[#1e1e1e]" : "bg-white"}`}>
               <p className={isDarkMode ? "text-gray-400" : "text-gray-500"}>Pengaturan anonimitas laporan...</p>
@@ -144,7 +144,7 @@ export default function Settings({ user, onNavigate }) {
           {/* SECTION 4: NOTIFICATION */}
           <section id="notification-section" className="scroll-mt-28 max-w-3xl flex flex-col gap-6">
             <div>
-              <h1 className="text-3xl font-black text-[#a50034] mb-2">Notification Settings</h1>
+              <h1 className={`text-3xl font-bold ${isDarkMode ? "text-[#f1ece1]" : "text-[#a50034]"}`}>Notification Settings</h1>
               <p className={isDarkMode ? "text-gray-400" : "text-gray-600"}>Atur notifikasi push dan email yang ingin kamu terima.</p>
             </div>
             <div className={`p-6 rounded-2xl border-2 border-[#a50034] shadow-sm transition-colors ${isDarkMode ? "bg-[#1e1e1e]" : "bg-white"}`}>
