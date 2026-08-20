@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import Navbar from '../components/Navbar';
 
 export default function Settings({ user, onNavigate }) {
-  // State untuk melacak tab mana yang sedang aktif
   const [activeTab, setActiveTab] = useState("permission");
   const navigate = useNavigate();
   return (
@@ -17,9 +16,8 @@ export default function Settings({ user, onNavigate }) {
         />
       </header>
 
-      {/* Wrapper Utama: Dikasih 'flex flex-row' biar Sidebar & Konten berdampingan */}
       <div className="flex flex-row flex-1 pt-24">
-        {/* Sidebar Kiri */}
+        {/* Sidebar Navigation */}
         <aside className="flex flex-col px-8 gap-3 w-fit border-r-4 border-[#a50034] min-h-[calc(100vh-6rem)]">
           <div 
             onClick={() => navigate('/home')}
@@ -68,33 +66,76 @@ export default function Settings({ user, onNavigate }) {
           </div>
         </aside>
 
-        {/* Konten Kanan (Samping Sidebar) */}
+        {/* Main Content */}
         <main className="flex-1 p-8">
           {activeTab === "permission" && (
-            <div>
-              <h1 className="text-3xl font-black text-gray-800 mb-4">Permission Settings</h1>
-              <p className="text-gray-600">Atur izin akses akun dan aplikasi kamu di sini.</p>
+            <div className="max-w-3xl flex flex-col gap-6">  
+              <div>
+                <h1 className="text-3xl font-black text-[#a50034] mb-2">Permission Settings</h1>
+                <p className="text-gray-600 font-medium">Mengelola akses fitur dan perangkat untuk kelancaran pembuatan laporan.</p>
+              </div>
+
+              {/* Container Kartu Permission */}
+              <div className="flex flex-col gap-4 bg-white p-6 rounded-2xl border-2 border-[#a50034] shadow-sm">
+                
+                {/* 1. Location */}
+                <div className="flex flex-row items-center justify-between pb-4 border-b border-gray-100">
+                  <div className="flex flex-col">
+                    <h3 className="text-xl font-bold text-[#a50034]">Location</h3>
+                    <p className="text-sm text-gray-500">Mendeteksi lokasi kejadian komplain secara otomatis.</p>
+                  </div>
+                  <label className="relative inline-flex items-center cursor-pointer shrink-0">
+                    <input type="checkbox" defaultChecked className="sr-only peer" />
+                    <div className="w-12 h-6 bg-gray-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#a50034]"></div>
+                  </label>
+                </div>
+
+                {/* 2. Camera & Media */}
+                <div className="flex flex-row items-center justify-between pb-4 border-b border-gray-100">
+                  <div className="flex flex-col">
+                    <h3 className="text-xl font-bold text-[#a50034]">Camera & Gallery</h3>
+                    <p className="text-sm text-gray-500">Mengambil foto langsung atau mengunggah gambar bukti komplain.</p>
+                  </div>
+                  <label className="relative inline-flex items-center cursor-pointer shrink-0">
+                    <input type="checkbox" defaultChecked className="sr-only peer" />
+                    <div className="w-12 h-6 bg-gray-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#a50034]"></div>
+                  </label>
+                </div>
+
+                {/* 3. Notifications */}
+                <div className="flex flex-row items-center justify-between">
+                  <div className="flex flex-col">
+                    <h3 className="text-xl font-bold text-[#a50034]">Browser Notifications</h3>
+                    <p className="text-sm text-gray-500">Menerima peringatan langsung saat ada pembaruan status laporan.</p>
+                  </div>
+                  <label className="relative inline-flex items-center cursor-pointer shrink-0">
+                    <input type="checkbox" className="sr-only peer" />
+                    <div className="w-12 h-6 bg-gray-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#a50034]"></div>
+                  </label>
+                </div>
+
+              </div>
             </div>
           )}
 
           {activeTab === "appearance" && (
             <div>
-              <h1 className="text-3xl font-black text-gray-800 mb-4">Appearance Settings</h1>
-              <p className="text-gray-600">Ubah tema visual dan gaya tampilan aplikasi.</p>
+              <h1 className="text-3xl font-black text-[#a50034] mb-4">Appearance Settings</h1>
+              <p className="text-gray-600 font-medium">Ubah tema visual dan gaya tampilan aplikasi.</p>
             </div>
           )}
 
           {activeTab === "privacy" && (
             <div>
-              <h1 className="text-3xl font-black text-gray-800 mb-4">Privacy Settings</h1>
-              <p className="text-gray-600">Kelola visibilitas profil dan mode anonim.</p>
+              <h1 className="text-3xl font-black text-[#a50034] mb-4">Privacy Settings</h1>
+              <p className="text-gray-600 font-medium">Kelola visibilitas profil dan mode anonim.</p>
             </div>
           )}
 
           {activeTab === "notification" && (
             <div>
-              <h1 className="text-3xl font-black text-gray-800 mb-4">Notification Settings</h1>
-              <p className="text-gray-600">Atur notifikasi push dan email yang ingin kamu terima.</p>
+              <h1 className="text-3xl font-black text-[#a50034] mb-4">Notification Settings</h1>
+              <p className="text-gray-600 font-medium">Atur notifikasi push dan email yang ingin kamu terima.</p>
             </div>
           )}
         </main>
