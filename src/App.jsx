@@ -2,6 +2,7 @@ import Signup from "./pages/SignUp";
 import Login from "./pages/Login";
 import Home from "./pages/Home";
 import Profile from "./pages/Profile";
+import Settings from "./pages/Settings";
 import { useState } from "react";
 
 export default function App() {
@@ -48,6 +49,15 @@ export default function App() {
   if (currentpage === "profile") {
     return (
       <Profile 
+        user={user} 
+        onNavigate={(page) => setCurrentpage(page)} 
+      />
+    );
+  }
+
+    if (currentpage === "settings") {
+    return (
+      <Settings 
         user={user} 
         onNavigate={(page) => setCurrentpage(page)} 
       />

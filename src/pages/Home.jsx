@@ -15,15 +15,15 @@ export default function Home({ user, onLogout, onNavigate}){
             </header>
 
             <div className="flex flex-1 pt-20 px-8 gap-8 w-full justify-between items-start">
-            <aside className="w-64 flex-shrink-0 sticky top-24">
-                <Sidebar_Kiri />
+            <aside className="min-w-xs flex-shrink-0 sticky top-24">
+                <Sidebar_Kiri onNavigate={onNavigate} />
             </aside>
 
-            <main className="flex-1 max-w-2xl mx-auto">
+            <main className="flex-1 max-w-3xl mx-auto">
                 <Post />
             </main>
 
-            <aside className="w-[400px] flex-shrink-0 sticky top-24">
+            <aside className="w-[360px] flex-shrink-0 sticky top-24">
                 <Most_Polling />
             </aside>
             </div>
