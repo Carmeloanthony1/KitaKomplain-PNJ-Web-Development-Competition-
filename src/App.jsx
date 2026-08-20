@@ -1,45 +1,43 @@
-import Sidebar_Kiri from "./components/Sidebar_Kiri";
-import Navbar from "./components/Navbar";
-import Most_Polling from "./components/Most_Polling";
-import Post from "./components/Post";
 import Signup from "./pages/SignUp";
 import Login from "./pages/Login";
+import Home from "./pages/Home";
 import { useState } from "react";
 
 
 export default function App() {
-  const [currentpage, setCurrentpage] = useState('home');
+  // Biar pas baru pertama masuk langsung nampil Halaman Login:
+  const [currentpage, setCurrentpage] = useState('login'); 
+  const [user, setUser] = useState(null);
+
+  const handleLoginSuccess = (userData) => {
+    setUser(userData);
+    setCurrentpage('home'); // Pindah ke home setelah login sukses
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    setUser(null);
+    setCurrentpage('login'); // Kembali ke login pas logout
+  };
 
   if (currentpage === 'signup') {
-    return <Signup switchToLogin={() => setCurrentpage('login')} />;
+    return <Signup switchToLogin={() => setCurrentpage('login')}/>;
   }
 
-  if (currentpage === 'login') {
-    return <Login switchToSignup={() => setCurrentpage('signup')} />;
+  if (currentpage === 'home') {
+    return (
+      <Home 
+        user={user} 
+        onLogout={handleLogout} 
+        onNavigate={(page) => setCurrentpage(page)} 
+      />
+    );
   }
 
   return (
-    <div className="min-h-screen bg-[#f7f7f7] flex flex-col">
-      <header className="fixed top-0 left-0 right-0 z-50 bg-[#f7f7f7] border-b border-gray-200 px-8 py-3">
-        <Navbar 
-          openSignup={() => setCurrentpage('signup')} 
-          openHome={() => setCurrentpage('home')}
-        />
-      </header>
-
-      <div className="flex flex-1 pt-20 px-8 gap-8 w-full justify-between items-start">
-        <aside className="w-64 flex-shrink-0 sticky top-24">
-          <Sidebar_Kiri />
-        </aside>
-
-        <main className="flex-1 max-w-2xl mx-auto">
-          <Post />
-        </main>
-
-        <aside className="w-[400px] flex-shrink-0 sticky top-24">
-          <Most_Polling />
-        </aside>
-      </div>
-    </div>
+    <Login
+      switchToSignup={() => setCurrentpage('signup')}
+      onLoginSuccess={handleLoginSuccess}
+    />
   );
 }
