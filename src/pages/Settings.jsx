@@ -1,10 +1,11 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar from '../components/Navbar';
 
 export default function Settings({ user, onNavigate }) {
   // State untuk melacak tab mana yang sedang aktif
   const [activeTab, setActiveTab] = useState("permission");
-
+  const navigate = useNavigate();
   return (
     <div className="min-h-screen bg-[#f7f7f7] flex flex-col">    
       {/* Header Fixed */}
@@ -21,7 +22,7 @@ export default function Settings({ user, onNavigate }) {
         {/* Sidebar Kiri */}
         <aside className="flex flex-col px-8 gap-3 w-fit border-r-4 border-[#a50034] min-h-[calc(100vh-6rem)]">
           <div 
-            onClick={() => onNavigate && onNavigate("home")}
+            onClick={() => navigate('/home')}
             className="flex flex-row items-center gap-3 cursor-pointer hover:opacity-80 transition w-fit"
           >
             <svg className="w-10 h-10 fill-[#a50034]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">

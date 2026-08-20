@@ -3,6 +3,7 @@ import Login from "./pages/Login";
 import Home from "./pages/Home";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
+import { Routes, Route, Navigate, useNavigate } from 'react-router-dom'
 import { useState } from "react";
 
 export default function App() {
@@ -11,63 +12,44 @@ export default function App() {
     return savedUser ? JSON.parse(savedUser) : null;
   });
 
-  // Jika user sudah login -> default selalu ke 'home' saat refresh
-  // Jika belum login -> default ke 'login'
-  const [currentpage, setCurrentpage] = useState(() => {
-    const savedUser = localStorage.getItem("user");
-    return savedUser ? "home" : "login";
-  });
+  const navigate = useNavigate();
 
   const handleLoginSuccess = (userData) => {
     setUser(userData);
     localStorage.setItem("user", JSON.stringify(userData));
-    setCurrentpage("home");
+    navigate("/home");
   };
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     setUser(null);
-    setCurrentpage("login");
+    navigate("/login");
   };
 
-  // Conditional Rendering
-  if (currentpage === "signup") {
-    return <Signup switchToLogin={() => setCurrentpage("login")} />;
-  }
-
-  if (currentpage === "home") {
-    return (
-      <Home 
-        user={user} 
-        onLogout={handleLogout} 
-        onNavigate={(page) => setCurrentpage(page)} 
-      />
-    );
-  }
-
-  if (currentpage === "profile") {
-    return (
-      <Profile 
-        user={user} 
-        onNavigate={(page) => setCurrentpage(page)} 
-      />
-    );
-  }
-
-    if (currentpage === "settings") {
-    return (
-      <Settings 
-        user={user} 
-        onNavigate={(page) => setCurrentpage(page)} 
-      />
-    );
-  }
-
   return (
-    <Login
-      switchToSignup={() => setCurrentpage("signup")}
-      onLoginSuccess={handleLoginSuccess}
-    />
+    <Routes>
+      <Route
+        path="/login"
+        element={<Login onLoginSuccess={handleLoginSuccess} />}
+      />
+      <Route path="/signup" element={<Signup />} />
+      <Route
+        path="/home"
+        element={user ? <Home user={user} onLogout={handleLogout} /> : <Navigate to="/login" />}
+      />
+      <Route
+        path="/profile"
+        element={user ? <Profile user={user} /> : <Navigate to="/login" />}
+      />
+      <Route
+        path="/settings"
+        element={user ? <Settings user={user} /> : <Navigate to="/login" />}
+      />
+      <Route
+        path="/"
+        element={<Navigate to={user ? "/home" : "/login"} />}
+      />
+    </Routes>
   );
 }
