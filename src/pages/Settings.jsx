@@ -1,14 +1,133 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from '../components/Navbar';
 
 export default function Settings({ user, onNavigate }) {
-  const [activeTab, setActiveTab] = useState("permission");
+  const [isDarkMode, setIsDarkMode] = useState(false);
   const navigate = useNavigate();
+
+  const [permission, setPermission] = useState({
+    Camera: false,
+    Notification: false
+  });
+
+  // 1. Fetch & Sinkronisasi Permission dengan Browser & Backend
+  useEffect(() => {
+    const syncPermissions = async () => {
+      let initialPerms = { Camera: false, Notification: false };
+
+      // Cek status izin browser langsung
+      try {
+        if ("Notification" in window) {
+          initialPerms.Notification = Notification.permission === "granted";
+        }
+      } catch (err) {
+        console.warn("Permissions API check failed:", err);
+      }
+
+      // Sync dari backend jika ada
+      try {
+        const res = await fetch("http://localhost:5000/api/users/permissions");
+        if (res.ok) {
+          const data = await res.json();
+          setPermission({
+            Camera: data.Camera ?? initialPerms.Camera,
+            Notification: data.Notification ?? initialPerms.Notification
+          });
+          return;
+        }
+      } catch (error) {
+        console.error("Gagal mengambil permission dari server", error);
+      }
+
+      setPermission(initialPerms);
+    };
+
+    syncPermissions();
+  }, []);
+
+  const updatebackend_permission = async (type, status) => {
+    try {
+      await fetch("http://localhost:5000/api/users/permissions", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ permissionType: type, isAllowed: status })
+      });
+    } catch (error) {
+      console.error("Gagal update ke backend", error);
+    }
+  };
+
+  const scrollToSection = (id) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+  
+  {/* Handler Kamera */}
+  const handleCamera = async (e) => {
+    const isChecked = e.target.checked;
+    if (!isChecked) {
+      setPermission((prev) => ({ ...prev, Camera: false }));
+      await updatebackend_permission("Camera", false);
+      return;
+    }
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      stream.getTracks().forEach(track => track.stop());
+      setPermission((prev) => ({ ...prev, Camera: true }));
+      await updatebackend_permission("Camera", true);
+    } catch (error) {
+      setPermission((prev) => ({ ...prev, Camera: false }));
+      await updatebackend_permission("Camera", false);
+      alert("Akses kamera ditolak! Izinkan kamera pada pengaturan browser.");
+    }
+  };
+
+  {/* Handler Notifikasi */}
+  const handleNotification = async (e) => {
+    const isChecked = e.target.checked;
+    if (!isChecked) {
+      setPermission((prev) => ({ ...prev, Notification: false }));
+      await updatebackend_permission("Notification", false);
+      return;
+    }
+
+    if (!("Notification" in window)) {
+      alert("Browser ini tidak mendukung notifikasi desktop.");
+      return;
+    }
+
+    try {
+      // Jika statusnya sudah ditolak sebelumnya, Notification.requestPermission() tidak akan menampilkan pop-up lagi
+      if (Notification.permission === "denied") {
+        alert("Akses notifikasi telah diblokir. Buka ikon setelan situs di Address Bar lalu ubah Notifikasi menjadi 'Allow'.");
+        setPermission((prev) => ({ ...prev, Notification: false }));
+        await updatebackend_permission("Notification", false);
+        return;
+      }
+
+      const resPermission = await Notification.requestPermission();
+      if (resPermission === "granted") {
+        setPermission((prev) => ({ ...prev, Notification: true }));
+        await updatebackend_permission("Notification", true);
+      } else {
+        setPermission((prev) => ({ ...prev, Notification: false }));
+        await updatebackend_permission("Notification", false);
+        alert("Akses notifikasi ditolak!");
+      }
+    } catch (err) {
+      console.error("Error requesting notification permission:", err);
+      setPermission((prev) => ({ ...prev, Notification: false }));
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-[#f7f7f7] flex flex-col">    
+    <div className={`min-h-screen flex flex-col transition-colors duration-300 ${isDarkMode ? "bg-[#292828] text-white" : "bg-[#f7f7f7] text-gray-800"}`}>    
       {/* Header Fixed */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-[#f7f7f7] border-b border-gray-200 px-8 py-3">
+      <header className={`fixed top-0 left-0 right-0 z-50 border-b px-8 py-3 transition-colors duration-300 ${isDarkMode ? "bg-[#1e1e1e] border-gray-800" : "bg-[#f7f7f7] border-gray-200"}`}>
         <Navbar 
           user={user} 
           openProfile={() => onNavigate && onNavigate("profile")} 
@@ -17,127 +136,119 @@ export default function Settings({ user, onNavigate }) {
       </header>
 
       <div className="flex flex-row flex-1 pt-24">
-        {/* Sidebar Navigation */}
-        <aside className="flex flex-col px-8 gap-3 w-fit border-r-4 border-[#a50034] min-h-[calc(100vh-6rem)]">
+        {/* Sidebar Navigation Shortcut (Sticky) */}
+        <aside className="sticky top-24 h-[calc(100vh-6rem)] flex flex-col px-8 gap-3 w-fit border-r-4 border-[#a50034]">
           <div 
             onClick={() => navigate('/home')}
-            className="flex flex-row items-center gap-3 cursor-pointer hover:opacity-80 transition w-fit"
+            className="flex flex-row items-center gap-3 cursor-pointer hover:opacity-80 transition w-fit mb-4"
           >
-            <svg className="w-10 h-10 fill-[#a50034]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+            <svg className={`w-10 h-10 transition-colors duration-300 ${isDarkMode ? "fill-[#f1ece1]" : "fill-[#a50034]"}`} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
               <path d="M41.4 342.6C28.9 330.1 28.9 309.8 41.4 297.3L169.4 169.3C178.6 160.1 192.3 157.4 204.3 162.4C216.3 167.4 224 179.1 224 192L224 256L560 256C586.5 256 608 277.5 608 304L608 336C608 362.5 586.5 384 560 384L224 384L224 448C224 460.9 216.2 472.6 204.2 477.6C192.2 482.6 178.5 479.8 169.3 470.7L41.3 342.7z"/>
             </svg>
-            <h2 className="text-2xl text-[#a50034] font-bold">Back</h2>
+            <h2 className={`text-2xl font-bold transition-colors duration-300 ${isDarkMode ? "text-[#f1ece1]" : "text-[#a50034]"}`}>Back</h2>
           </div>
 
-          {/* Menu Tab Navigasi */}
-          <div className="flex flex-col gap-8 mt-6">
-            <span 
-              onClick={() => setActiveTab("permission")}
-              className={`text-2xl font-bold cursor-pointer transition ${
-                activeTab === "permission" ? "text-[#a50034]" : "text-gray-500 hover:text-[#a50034]"
-              }`}
-            >
-              Permission
-            </span>
-            <span 
-              onClick={() => setActiveTab("appearance")}
-              className={`text-2xl font-bold cursor-pointer transition ${
-                activeTab === "appearance" ? "text-[#a50034]" : "text-gray-500 hover:text-[#a50034]"
-              }`}
-            >
-              Appearance
-            </span>
-            <span 
-              onClick={() => setActiveTab("privacy")}
-              className={`text-2xl font-bold cursor-pointer transition ${
-                activeTab === "privacy" ? "text-[#a50034]" : "text-gray-500 hover:text-[#a50034]"
-              }`}
-            >
-              Privacy
-            </span>
-            <span 
-              onClick={() => setActiveTab("notification")}
-              className={`text-2xl font-bold cursor-pointer transition ${
-                activeTab === "notification" ? "text-[#a50034]" : "text-gray-500 hover:text-[#a50034]"
-              }`}
-            >
-              Notification
-            </span>
+          {/* Menu Shortcut */}
+          <div className="flex flex-col gap-6">
+            {["permission", "appearance", "privacy", "notification"].map((item) => (
+              <span 
+                key={item}
+                onClick={() => scrollToSection(`${item}-section`)}
+                className={`text-2xl font-bold capitalize cursor-pointer transition ${isDarkMode ? "text-[#f1ece1] hover:text-[#a50034]" : "text-gray-500 hover:text-[#a50034]"}`}
+              >
+                {item}
+              </span>
+            ))}
           </div>
         </aside>
 
-        {/* Main Content */}
-        <main className="flex-1 p-8">
-          {activeTab === "permission" && (
-            <div className="max-w-3xl flex flex-col gap-6">  
-              <div>
-                <h1 className="text-3xl font-black text-[#a50034] mb-2">Permission Settings</h1>
-                <p className="text-gray-600 font-medium">Mengelola akses fitur dan perangkat untuk kelancaran pembuatan laporan.</p>
+        {/* Konten Utama */}
+        <main className="flex-1 p-8 flex flex-col gap-16 pb-32">
+          
+          {/* SECTION 1: PERMISSION */}
+          <section id="permission-section" className="scroll-mt-28 max-w-3xl flex flex-col gap-6">
+            <div>
+              <h1 className={`text-3xl font-bold mb-2 ${isDarkMode ? "text-[#f1ece1]" : "text-[#a50034]"}`}>Permission Settings</h1>                
+              <p className={isDarkMode ? "text-[#f1ece1]" : "text-gray-600"}>Mengelola akses fitur dan perangkat untuk kelancaran pembuatan laporan</p>
+            </div>
+            <div className={`flex flex-col gap-4 p-6 rounded-2xl shadow-sm transition-colors ${isDarkMode ? "bg-[#1e1e1e] border-2 border-[#f1ece1]" : "bg-white border-2 border-[#a50034]"}`}>
+              <div className={`flex flex-row items-center justify-between pb-4 border-b ${isDarkMode ? "border-gray-700" : "border-gray-100"}`}>
+                <div className="flex flex-col">
+                  <h3 className={`text-xl font-bold ${isDarkMode ? "text-[#f1ece1]" : "text-[#a50034]"}`}>Camera & Gallery</h3>
+                  <p className={`text-sm ${isDarkMode ? "text-gray-300" : "text-gray-500"}`}>Mengambil foto langsung atau mengunggah gambar bukti komplain.</p>
+                </div>
+                <label className="relative inline-flex items-center cursor-pointer shrink-0">
+                  <input type="checkbox" onChange={handleCamera} checked={permission.Camera} className="sr-only peer" />
+                  <div className="w-[52px] h-[28px] bg-gray-300 rounded-full peer peer-checked:bg-[#a50034] transition-colors relative after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-[24px] after:w-[24px] after:transition-all peer-checked:after:translate-x-[24px]"></div>
+                </label>
               </div>
 
-              {/* Container Kartu Permission */}
-              <div className="flex flex-col gap-4 bg-white p-6 rounded-2xl border-2 border-[#a50034] shadow-sm">
+              <div className="flex flex-row items-center justify-between pb-4">
+                <div className="flex flex-col">
+                  <h3 className={`text-xl font-bold ${isDarkMode ? "text-[#f1ece1]" : "text-[#a50034]"}`}>Notification</h3>
+                  <p className={`text-sm ${isDarkMode ? "text-gray-300" : "text-gray-500"}`}>Menerima notifikasi saat ada kegiatan pada website</p>
+                </div>
+                <label className="relative inline-flex items-center cursor-pointer shrink-0">
+                  <input type="checkbox" onChange={handleNotification} checked={permission.Notification} className="sr-only peer" />
+                  <div className="w-[52px] h-[28px] bg-gray-300 rounded-full peer peer-checked:bg-[#a50034] transition-colors relative after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-[24px] after:w-[24px] after:transition-all peer-checked:after:translate-x-[24px]"></div>
+                </label>
+              </div>
+            </div>
+          </section>
+
+          {/* SECTION 2: APPEARANCE */}
+          <section id="appearance-section" className="scroll-mt-28 max-w-3xl flex flex-col gap-6">
+            <div>
+              <h1 className={`text-3xl font-bold mb-2 ${isDarkMode ? "text-[#f1ece1]" : "text-[#a50034]"}`}>Appearance Settings</h1>
+              <p className={isDarkMode ? "text-[#f1ece1]" : "text-gray-600"}>Ubah tema visual aplikasi.</p>
+            </div>
+            <div className={`flex flex-col gap-4 p-6 rounded-2xl shadow-sm transition-colors ${isDarkMode ? "bg-[#1e1e1e] border-2 border-[#f1ece1]" : "bg-white border-2 border-[#a50034]"}`}>
+              <p className={`text-center text-2xl font-bold ${isDarkMode ? "text-[#f1ece1]" : "text-[#a50034]"}`}>Pilihan Tema Visual</p>
+              <div className="flex flex-row gap-6 items-center justify-center">
+                <span className={`text-xl font-bold transition-colors ${!isDarkMode ? "text-[#a50034]" : "text-[#f1ece1]"}`}>
+                  Light Mode
+                </span>
                 
-                {/* 1. Location */}
-                <div className="flex flex-row items-center justify-between pb-4 border-b border-gray-100">
-                  <div className="flex flex-col">
-                    <h3 className="text-xl font-bold text-[#a50034]">Location</h3>
-                    <p className="text-sm text-gray-500">Mendeteksi lokasi kejadian komplain secara otomatis.</p>
-                  </div>
-                  <label className="relative inline-flex items-center cursor-pointer shrink-0">
-                    <input type="checkbox" defaultChecked className="sr-only peer" />
-                    <div className="w-12 h-6 bg-gray-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#a50034]"></div>
-                  </label>
-                </div>
+                {/* Switcher Dark Mode */}
+                <label className="relative inline-flex items-center cursor-pointer shrink-0">
+                  <input 
+                    type="checkbox" 
+                    checked={isDarkMode} 
+                    onChange={(e) => setIsDarkMode(e.target.checked)} 
+                    className="sr-only peer" 
+                  />
+                  <div className="w-[52px] h-[28px] bg-gray-300 rounded-full peer peer-checked:bg-[#a50034] transition-colors relative after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-[24px] after:w-[24px] after:transition-all peer-checked:after:translate-x-[24px]"></div>
+                </label>
 
-                {/* 2. Camera & Media */}
-                <div className="flex flex-row items-center justify-between pb-4 border-b border-gray-100">
-                  <div className="flex flex-col">
-                    <h3 className="text-xl font-bold text-[#a50034]">Camera & Gallery</h3>
-                    <p className="text-sm text-gray-500">Mengambil foto langsung atau mengunggah gambar bukti komplain.</p>
-                  </div>
-                  <label className="relative inline-flex items-center cursor-pointer shrink-0">
-                    <input type="checkbox" defaultChecked className="sr-only peer" />
-                    <div className="w-12 h-6 bg-gray-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#a50034]"></div>
-                  </label>
-                </div>
-
-                {/* 3. Notifications */}
-                <div className="flex flex-row items-center justify-between">
-                  <div className="flex flex-col">
-                    <h3 className="text-xl font-bold text-[#a50034]">Browser Notifications</h3>
-                    <p className="text-sm text-gray-500">Menerima peringatan langsung saat ada pembaruan status laporan.</p>
-                  </div>
-                  <label className="relative inline-flex items-center cursor-pointer shrink-0">
-                    <input type="checkbox" className="sr-only peer" />
-                    <div className="w-12 h-6 bg-gray-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#a50034]"></div>
-                  </label>
-                </div>
-
+                <span className={`text-xl font-bold transition-colors ${isDarkMode ? "text-[#f1ece1]" : "text-[#a50034]"}`}>
+                  Dark Mode
+                </span>
               </div>
             </div>
-          )}
+          </section>
 
-          {activeTab === "appearance" && (
+          {/* SECTION 3: PRIVACY */}
+          <section id="privacy-section" className="scroll-mt-28 max-w-3xl flex flex-col gap-6">
             <div>
-              <h1 className="text-3xl font-black text-[#a50034] mb-4">Appearance Settings</h1>
-              <p className="text-gray-600 font-medium">Ubah tema visual dan gaya tampilan aplikasi.</p>
+              <h1 className={`text-3xl font-bold mb-2 ${isDarkMode ? "text-[#f1ece1]" : "text-[#a50034]"}`}>Privacy Settings</h1>
+              <p className={isDarkMode ? "text-[#f1ece1]" : "text-gray-600"}>Kelola visibilitas profil dan mode anonim.</p>
             </div>
-          )}
+            <div className={`p-6 rounded-2xl shadow-sm transition-colors ${isDarkMode ? "bg-[#1e1e1e] border-2 border-[#f1ece1]" : "bg-white border-2 border-[#a50034]"}`}>
+              <p className={isDarkMode ? "text-gray-300" : "text-gray-500"}>Pengaturan anonimitas laporan...</p>
+            </div>
+          </section>
 
-          {activeTab === "privacy" && (
+          {/* SECTION 4: NOTIFICATION */}
+          <section id="notification-section" className="scroll-mt-28 max-w-3xl flex flex-col gap-6">
             <div>
-              <h1 className="text-3xl font-black text-[#a50034] mb-4">Privacy Settings</h1>
-              <p className="text-gray-600 font-medium">Kelola visibilitas profil dan mode anonim.</p>
+              <h1 className={`text-3xl font-bold mb-2 ${isDarkMode ? "text-[#f1ece1]" : "text-[#a50034]"}`}>Notification Settings</h1>
+              <p className={isDarkMode ? "text-[#f1ece1]" : "text-gray-600"}>Atur notifikasi push dan email yang ingin kamu terima.</p>
             </div>
-          )}
+            <div className={`p-6 rounded-2xl shadow-sm transition-colors ${isDarkMode ? "bg-[#1e1e1e] border-2 border-[#f1ece1]" : "bg-white border-2 border-[#a50034]"}`}>
+              <p className={isDarkMode ? "text-gray-300" : "text-gray-500"}>Pengaturan notifikasi email & push...</p>
+            </div>
+          </section>
 
-          {activeTab === "notification" && (
-            <div>
-              <h1 className="text-3xl font-black text-[#a50034] mb-4">Notification Settings</h1>
-              <p className="text-gray-600 font-medium">Atur notifikasi push dan email yang ingin kamu terima.</p>
-            </div>
-          )}
         </main>
       </div>
     </div>
