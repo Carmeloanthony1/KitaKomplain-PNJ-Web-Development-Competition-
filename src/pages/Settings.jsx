@@ -101,7 +101,6 @@ export default function Settings({ user, onNavigate }) {
     }
 
     try {
-      // Jika statusnya sudah ditolak sebelumnya, Notification.requestPermission() tidak akan menampilkan pop-up lagi
       if (Notification.permission === "denied") {
         alert("Akses notifikasi telah diblokir. Buka ikon setelan situs di Address Bar lalu ubah Notifikasi menjadi 'Allow'.");
         setPermission((prev) => ({ ...prev, Notification: false }));
