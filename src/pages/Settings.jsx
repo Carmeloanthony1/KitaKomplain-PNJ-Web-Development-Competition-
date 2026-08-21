@@ -1,7 +1,9 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar from '../components/Navbar';
 
 export default function Settings({ user, onNavigate }) {
+<<<<<<< HEAD
   // State untuk mengontrol Dark Mode
   const [isDarkMode, setIsDarkMode] = useState(false);
 
@@ -13,6 +15,11 @@ export default function Settings({ user, onNavigate }) {
     }
   };
 
+=======
+  // State untuk melacak tab mana yang sedang aktif
+  const [activeTab, setActiveTab] = useState("permission");
+  const navigate = useNavigate();
+>>>>>>> 1b74a39503ab32c695e948ad579c29363d68758e
   return (
     <div className={`min-h-screen flex flex-col transition-colors duration-300 ${isDarkMode ? "bg-[#292828] text-white" : "bg-[#f7f7f7] text-gray-800"}`}>    
       {/* Header Fixed */}
@@ -28,8 +35,13 @@ export default function Settings({ user, onNavigate }) {
         {/* Sidebar Navigation Shortcut (Sticky) */}
         <aside className="sticky top-24 h-[calc(100vh-6rem)] flex flex-col px-8 gap-3 w-fit border-r-4 border-[#a50034]">
           <div 
+<<<<<<< HEAD
             onClick={() => onNavigate && onNavigate("home")}
             className="flex flex-row items-center gap-3 cursor-pointer hover:opacity-80 transition w-fit mb-4"
+=======
+            onClick={() => navigate('/home')}
+            className="flex flex-row items-center gap-3 cursor-pointer hover:opacity-80 transition w-fit"
+>>>>>>> 1b74a39503ab32c695e948ad579c29363d68758e
           >
             <svg className={`w-10 h-10 transition-colors duration-300 ${isDarkMode ? "fill-[#f1ece1]" : "fill-[#a50034]"}`} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
               <path d="M41.4 342.6C28.9 330.1 28.9 309.8 41.4 297.3L169.4 169.3C178.6 160.1 192.3 157.4 204.3 162.4C216.3 167.4 224 179.1 224 192L224 256L560 256C586.5 256 608 277.5 608 304L608 336C608 362.5 586.5 384 560 384L224 384L224 448C224 460.9 216.2 472.6 204.2 477.6C192.2 482.6 178.5 479.8 169.3 470.7L41.3 342.7z"/>
