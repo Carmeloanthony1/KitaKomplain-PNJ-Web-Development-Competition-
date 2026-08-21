@@ -29,12 +29,15 @@ export default function Login({ switchToSignup, onLoginSuccess }) {
             // Simpan token JWT ke browser
             localStorage.setItem('token', data.token);
 
+            if(data.user && data.user.id){
+                localStorage.setItem('user_id', data.user.id);
+            }
             // Langsung panggil callback buat pindah halaman di App.jsx tanpa alert
             if (onLoginSuccess) {
                 onLoginSuccess(data.user);
             }
 
-        } catch (error) {
+        } catch (error) {   
             alert(error.message);
         } finally {
             setLoading(false);
