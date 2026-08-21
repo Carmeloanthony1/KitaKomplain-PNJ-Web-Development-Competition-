@@ -3,6 +3,7 @@ import Login from "./pages/Login";
 import Home from "./pages/Home";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
+import { NewPost } from "./components/newpost";
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom'
 import { useState } from "react";
 
@@ -46,6 +47,12 @@ export default function App() {
         path="/settings"
         element={user ? <Settings user={user} /> : <Navigate to="/login" />}
       />
+
+      <Route
+        path="/newpost"
+         element={user ? <NewPost user={user} /> : <Navigate to="/login" />}
+      />
+
       <Route
         path="/"
         element={<Navigate to={user ? "/home" : "/login"} />}
