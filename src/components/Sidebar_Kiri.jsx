@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Sidebar_kiri({ onNavigate }) {
   const [search, setSearch] = useState("");
@@ -9,11 +9,12 @@ export default function Sidebar_kiri({ onNavigate }) {
     <aside className="h-full mt-4 w-64 flex flex-col justify-between py-0 px-2 pb-4 bg-[#f7f7f7]">
       <div className="flex flex-col gap-10">
         <div className="flex flex-col gap-12">
-          <button className="flex items-center text-3xl gap-4 font-bold text-[#a50034] cursor-pointer hover:opacity-80 transition">
+          <Link to="/newpost"
+          className="flex items-center text-3xl gap-4 font-bold text-[#a50034] cursor-pointer hover:opacity-80 transition">
             <svg className="w-12 h-12 fill-[#a50034] flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
               <path d="M352 128C352 110.3 337.7 96 320 96C302.3 96 288 110.3 288 128L288 288L128 288C110.3 288 96 302.3 96 320C96 337.7 110.3 352 128 352L288 352L288 512C288 529.7 302.3 544 320 544C337.7 544 352 529.7 352 512L352 352L512 352C529.7 352 544 337.7 544 320C544 302.3 529.7 288 512 288L352 288L352 128z"/>
             </svg> Post
-          </button>
+          </Link>
 
           <button className="flex items-center text-3xl font-bold cursor-pointer gap-4 text-[#a50034] hover:opacity-80 transition">
             <svg className="w-12 h-12 fill-[#a50034] flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
