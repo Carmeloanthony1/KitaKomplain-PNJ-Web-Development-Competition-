@@ -1,18 +1,74 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Share_post from "./Share_post";
 import CommentSection from "./Comment";
+import { data } from "react-router-dom";
+import { supabase } from "../supabaseClient";
 
 export default function Post({ post }) {
+  const [like, setLiked] = useState([]);
   const [isLiked, setIsLiked] = useState(false);
   const [isshare_open, setIsshare_open] = useState(false);
   const [isCommentOpen, setIsCommentOpen] = useState(false);
+  const [show_wholike, setShow_wholike] = useState(false);
+
+  const currentUserId = localStorage.getItem("user_id");
 
   if (!post) return null;
 
   const username = post.users?.username || "Unknown";
   const avatar = post.users?.avatar_url || "/default-avatar.png";
 
-  const toggleLike = () => setIsLiked((prev) => !prev);
+  const fetchLikes = async () => {
+    const { data, error } = await supabase
+      .from('likes')
+      .select(`id, user_id, users (id, username, avatar_url)`)
+      .eq('post_id', postId);
+
+    if(!error && data){
+      setLiked(data);
+      //ngecheck apakah user yang like adalah user saat ini
+      const userhasliked = data.some((like) => like.user_id === currentUserId);
+      setIsLiked(userhasliked);
+    }
+  };
+
+  useEffect(() => {
+    fetchLikes();
+  }, [post.id, currentUserId]);
+
+  const toggleLike = async () => {
+    if(!currentUserId){
+      alert("Silahkan login");
+      return;
+    }
+    if(isLiked){
+      //unliked
+      const { error } = await supabase
+        .from("likes")
+        .delete()
+        .eq("post_id", post.id)
+        .eq("user_id", currentUserId);
+
+      if(!error){
+        setIsLiked(false);
+        fetchLikes();
+      }
+    } else {
+      //liked
+      const { error } = await supabase.from("likes").insert([
+        {
+          post_id: post.id,
+          user_id:currentUserId,
+        },
+      ]);
+      
+      if(!error){
+        setIsLiked(true);
+        fetchLikes();
+      }
+    }
+  };
+
   const handleToggleComment = () => setIsCommentOpen((prev) => !prev);
   const handle_share = () => setIsshare_open(true);
 
@@ -65,14 +121,19 @@ export default function Post({ post }) {
                     <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
                   </svg>
                 </button>
-
+                {/*Jumlah liked*/}
+                <span 
+                  onClick={() => like.length > 0 && setShow_wholike(true)} 
+                  className="font-bold text-sm text-[#a50034] cursor-pointer hover:underline">
+                    {like.length}
+                </span>
                 {/* COMMENT */}
                 <button onClick={handleToggleComment} className="focus:outline-none cursor-pointer">
                   <svg className="w-10 h-10 fill-[#a50034] hover:scale-110 transition-transform cursor-pointer" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
                     <path d="M115.9 448.9C83.3 408.6 64 358.4 64 304C64 171.5 178.6 64 320 64C461.4 64 576 171.5 576 304C576 436.5 461.4 544 320 544C283.5 544 248.8 536.8 217.4 524L101 573.9C97.3 575.5 93.5 576 89.5 576C75.4 576 64 564.6 64 550.5C64 546.2 65.1 542 67.1 538.3L115.9 448.9zM153.2 418.7C165.4 433.8 167.3 454.8 158 471.9L140 505L198.5 479.9C210.3 474.8 223.7 474.7 235.6 479.6C261.3 490.1 289.8 496 319.9 496C437.7 496 527.9 407.2 527.9 304C527.9 200.8 437.8 112 320 112C202.2 112 112 200.8 112 304C112 346.8 127.1 386.4 153.2 418.7z"/>
                   </svg>
                 </button>
-
+                sharing
                 {/* SHARE */}
                 <button onClick={handle_share} className="focus:outline-none cursor-pointer">
                   <svg
@@ -101,6 +162,7 @@ export default function Post({ post }) {
           onclose={() => setIsshare_open(false)}
         />
       )}
+
     </div>
   );
 }
