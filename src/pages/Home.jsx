@@ -9,45 +9,39 @@ export default function Home({ user, onLogout, onNavigate }) {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // Ambil ID user yang lagi login (masih dipakai untuk keperluan lain, misal cek "ini post kamu")
+  const currentUserId = user?.id || localStorage.getItem("user_id");
+
   useEffect(() => {
-    async function fetchPosts() {
+    async function fetchAllPosts() {
       setLoading(true);
 
-      // 1. Fetch data posts
-      const { data: postsData, error: postsError } = await supabase
+      // Mengambil SEMUA post dari semua user (feed publik)
+      const { data, error } = await supabase
         .from("posts")
-        .select("*")
+        .select(`
+          id,
+          title,
+          description,
+          image_url,
+          created_at,
+          user_id,
+          users (
+            username,
+            avatar_url
+          )
+        `)
         .order("created_at", { ascending: false });
 
-      if (postsError) {
-        console.error("Gagal mengambil posts:", postsError.message);
-        setLoading(false);
-        return;
+      if (error) {
+        console.error("Gagal mengambil posts:", error.message);
+      } else {
+        setPosts(data);
       }
-
-      // 2. Fetch data users untuk mencocokkan user_id
-      const { data: usersData, error: usersError } = await supabase
-        .from("users")
-        .select("id, username, avatar_url");
-
-      if (usersError) {
-        console.error("Gagal mengambil users:", usersError.message);
-      }
-
-      // 3. Gabungkan data user ke tiap post
-      const formattedPosts = postsData.map((p) => {
-        const author = usersData?.find((u) => u.id === p.user_id);
-        return {
-          ...p,
-          users: author || { username: "Anonim", avatar_url: "" },
-        };
-      });
-
-      setPosts(formattedPosts);
       setLoading(false);
     }
 
-    fetchPosts();
+    fetchAllPosts();
   }, []);
 
   if (loading) return <div className="p-10 text-center">Loading posts...</div>;
@@ -63,9 +57,11 @@ export default function Home({ user, onLogout, onNavigate }) {
           <Sidebar_Kiri onNavigate={onNavigate} />
         </aside>
 
-        <main className="flex-1 max-w-3xl mx-auto z-10 flex flex-col gap-6">
+        <main className="flex-1 max-w-3xl mx-auto z-10 flex flex-col ">
           {posts.length === 0 ? (
-            <div className="text-center text-gray-500 py-10">Belum ada postingan</div>
+            <div className="text-center text-gray-500 py-10">
+              Belum ada postingan.
+            </div>
           ) : (
             posts.map((postData) => <Post key={postData.id} post={postData} />)
           )}
