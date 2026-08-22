@@ -9,24 +9,24 @@ export default function Home({ user, onLogout, onNavigate}){
 
     return (
         <div className="min-h-screen bg-[#f7f7f7] flex flex-col">
-            <header className="fixed top-0 left-0 right-0 z-50 bg-[#f7f7f7] border-b border-gray-200 px-8 py-3">
-            <Navbar user = {user} openProfile={() => onNavigate && onNavigate('profile')}
-            />
-            </header>
+        <header className="fixed top-0 left-0 right-0 z-30 bg-[#f7f7f7] border-b border-gray-200 px-8 py-3">
+        <Navbar user = {user} openProfile={() => onNavigate && onNavigate('profile')}
+        />
+        </header>
 
-            <div className="flex flex-1 pt-20 px-8 gap-8 w-full justify-between items-start">
-            <aside className="min-w-xs flex-shrink-0 sticky top-24">
-                <Sidebar_Kiri onNavigate={onNavigate} />
-            </aside>
+        <div className="flex flex-1 pt-20 px-8 gap-8 w-full justify-between items-start">
+        <aside className="min-w-xs flex-shrink-0 sticky top-24 z-50">
+            <Sidebar_Kiri onNavigate={onNavigate} />
+        </aside>
 
-            <main className="flex-1 max-w-3xl mx-auto">
-                <Post />
-            </main>
+        <main className="flex-1 max-w-3xl mx-auto z-10">
+            <Post />
+        </main>
 
-            <aside className="w-[360px] flex-shrink-0 sticky top-24">
-                <Most_Polling />
-            </aside>
-            </div>
+        <aside className="w-[360px] flex-shrink-0 sticky top-24 z-0">
+            <Most_Polling />
+        </aside>
         </div>
+    </div>
     )
 }

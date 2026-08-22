@@ -50,11 +50,6 @@ export default function App() {
       />
 
       <Route
-        path="/newpost"
-         element={user ? <NewPost user={user} /> : <Navigate to="/login" />}
-      />
-
-      <Route
         path="/report"
          element={user ? <ReportProblem user={user} /> : <Navigate to="/login" />}
       />
