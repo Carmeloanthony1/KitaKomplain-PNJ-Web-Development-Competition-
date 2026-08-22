@@ -1,12 +1,18 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import { supabase } from "../supabaseClient";
 
 export function NewPost() {
     const navigate = useNavigate();
+
+    const [title, setTitle] = useState("");
+    const [description, setDescription] = useState("");
+    const [tag, setTag] = useState("");
     const [image, setImage] = useState(null);
     const [preview, setPreview] = useState(null);
-    const [lokasi, setLokasi] = useState("");
+    const [loading, setLoading] = useState(false);
+
+    const userId = localStorage.getItem("user_id");
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
@@ -21,6 +27,21 @@ export function NewPost() {
         setPreview(null);
     };
 
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        if(!title.trim() || !description.trim() || !tag.trim()){
+            alert("Judul, tag dan deskripsi wajib di isi");
+            return;
+        }
+
+        if(!userId){
+            alert("Silahkan login terlebih dahulu!");
+            return;
+        }
+
+        setLoading(true);
+    }
     return ( 
         <div className="flex ">
             <div className="flex flex-col flex-1">
