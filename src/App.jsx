@@ -1,10 +1,11 @@
-import Signup from "./pages/SignUp";
+import SignUp from "./pages/SignUp";
 import Login from "./pages/Login";
 import Home from "./pages/Home";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 import ReportProblem from "./pages/ReportProblem";
-import { NewPost } from "./components/newpost";
+import History from "./pages/History";
+import Notification from "./components/Notification";
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom'
 import { useState } from "react";
 
@@ -35,7 +36,7 @@ export default function App() {
         path="/login"
         element={<Login onLoginSuccess={handleLoginSuccess} />}
       />
-      <Route path="/signup" element={<Signup />} />
+      
       <Route
         path="/home"
         element={user ? <Home user={user} onLogout={handleLogout} /> : <Navigate to="/login" />}
@@ -44,9 +45,25 @@ export default function App() {
         path="/profile"
         element={user ? <Profile user={user} /> : <Navigate to="/login" />}
       />
+      
       <Route
         path="/settings"
         element={user ? <Settings user={user} /> : <Navigate to="/login" />}
+      />
+
+      <Route
+        path="/SignUp"
+        element={<SignUp />}
+      /> 
+
+      <Route
+        path="/History"
+         element={user ? <History user={user} /> : <Navigate to="/login" />}
+      />
+
+      <Route
+        path="/Notification"
+         element={user ? <Notification user={user} /> : <Navigate to="/login" />}
       />
 
       <Route
