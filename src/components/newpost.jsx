@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar";
-import Sidebar_Kiri from "../components/Sidebar_Kiri";
+
 
 export function NewPost() {
     const navigate = useNavigate();
@@ -24,9 +23,7 @@ export function NewPost() {
 
     return ( 
         <div className="flex ">
-            <Sidebar_Kiri />
             <div className="flex flex-col flex-1">
-                <Navbar />
                 <div className="mt-4 w-full bg-white rounded-lg shadow p-6">
                     <h2 className="text-xl font-bold mb-4">Tuliskan pengalaman anda</h2>
                     <textarea 

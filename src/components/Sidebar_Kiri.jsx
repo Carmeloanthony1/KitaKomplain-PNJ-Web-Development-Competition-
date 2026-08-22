@@ -1,21 +1,31 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { NewPost } from "./newpost";
 
 export default function Sidebar_kiri({ onNavigate }) {
   const [search, setSearch] = useState("");
   const navigate = useNavigate();
 
+  const [handlePost, setHandlePost] = useState(false);
+
+  const togglePost = () => {
+    setHandlePost(!handlePost);
+  };
+
+
   return (
     <aside className="h-full mt-4 w-64 flex flex-col justify-between py-0 px-2 pb-4 bg-[#f7f7f7]">
       <div className="flex flex-col gap-10">
+
         <div className="flex flex-col gap-12">
-          <Link to="/newpost"
+          <button 
+          onClick={togglePost}
           className="flex items-center text-3xl gap-4 font-bold text-[#a50034] cursor-pointer hover:opacity-80 transition">
             <svg className="w-12 h-12 fill-[#a50034] flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
               <path d="M352 128C352 110.3 337.7 96 320 96C302.3 96 288 110.3 288 128L288 288L128 288C110.3 288 96 302.3 96 320C96 337.7 110.3 352 128 352L288 352L288 512C288 529.7 302.3 544 320 544C337.7 544 352 529.7 352 512L352 352L512 352C529.7 352 544 337.7 544 320C544 302.3 529.7 288 512 288L352 288L352 128z"/>
             </svg> Post
-          </Link>
-
+          </button>
+        
           <button className="flex items-center text-3xl font-bold cursor-pointer gap-4 text-[#a50034] hover:opacity-80 transition">
             <svg className="w-12 h-12 fill-[#a50034] flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
               <path d="M480 272C480 317.9 465.1 360.3 440 394.7L566.6 521.4C579.1 533.9 579.1 554.2 566.6 566.7C554.1 579.2 533.8 579.2 521.3 566.7L394.7 440C360.3 465.1 317.9 480 272 480C157.1 480 64 386.9 64 272C64 157.1 157.1 64 272 64C386.9 64 480 157.1 480 272zM272 416C351.5 416 416 351.5 416 272C416 192.5 351.5 128 272 128C192.5 128 128 192.5 128 272C128 351.5 192.5 416 272 416z"/>
@@ -39,6 +49,29 @@ export default function Sidebar_kiri({ onNavigate }) {
           </svg> Setting
         </button>
       </div>  
+
+{/* modal content post */}
+      {handlePost && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          {/* MODAL OVERLAY */}
+          <div 
+            onClick={togglePost} 
+            className="fixed inset-0 bg-black/50"
+          /> 
+
+          {/* MODAL CONTENT */}
+          <div className="relative z-10">
+            <NewPost />
+
+            <button onClick={togglePost} 
+                    className="absolute top-4 right-4 text-2xl hover:text-red-500">
+                  &times;  
+            </button>
+          </div>
+        </div>
+      )}
     </aside>
+
+    
   );  
 }
