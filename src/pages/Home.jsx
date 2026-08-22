@@ -5,65 +5,72 @@ import Sidebar_Kiri from "../components/Sidebar_Kiri";
 import Post from "../components/Post";
 import Most_Polling from "../components/Most_Polling";
 
-export default function Home({ user, onLogout, onNavigate }){
-    const [posts, setPosts] = useState([]); // Fixed: panggil 'posts'
-    const [loading, setLoading] = useState(true);
+export default function Home({ user, onLogout, onNavigate }) {
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        async function fetchPosts(){
-            setLoading(true);
+  // Ambil ID user yang lagi login (masih dipakai untuk keperluan lain, misal cek "ini post kamu")
+  const currentUserId = user?.id || localStorage.getItem("user_id");
 
-            // Fixed: query kolom sesuai tabel 'posts' & 'users'
-            const { data, error } = await supabase
-                .from("posts")
-                .select(`
-                  id, 
-                  title, 
-                  description, 
-                  image_url, 
-                  created_at, 
-                  user_id, 
-                  users ( username, avatar_url )
-                `)
-                .order("created_at", { ascending: false });
+  useEffect(() => {
+    async function fetchAllPosts() {
+      setLoading(true);
 
-            if(error){
-                console.error("Gagal mengambil posts:", error.message);
-            } else {
-                setPosts(data);
-            }
-            setLoading(false);
-        }
-        fetchPosts();
-    }, []);
+      // Mengambil SEMUA post dari semua user (feed publik)
+      const { data, error } = await supabase
+        .from("posts")
+        .select(`
+          id,
+          title,
+          description,
+          image_url,
+          created_at,
+          user_id,
+          users (
+            username,
+            avatar_url
+          )
+        `)
+        .order("created_at", { ascending: false });
 
-    if (loading) return <div className="p-10 text-center">Loading posts...</div>;
+      if (error) {
+        console.error("Gagal mengambil posts:", error.message);
+      } else {
+        setPosts(data);
+      }
+      setLoading(false);
+    }
 
-    return (
-        <div className="min-h-screen bg-[#f7f7f7] flex flex-col">
-            <header className="fixed top-0 left-0 right-0 z-30 bg-[#f7f7f7] border-b border-gray-200 px-8 py-3">
-                <Navbar user={user} openProfile={() => onNavigate && onNavigate('profile')}/>
-            </header>
+    fetchAllPosts();
+  }, []);
 
-            <div className="flex flex-1 pt-20 px-8 gap-8 w-full justify-between items-start">
-                <aside className="min-w-xs flex-shrink-0 sticky top-24 z-50">
-                    <Sidebar_Kiri onNavigate={onNavigate} />
-                </aside>
+  if (loading) return <div className="p-10 text-center">Loading posts...</div>;
 
-                <main className="flex-1 max-w-3xl mx-auto z-10 flex flex-col gap-6">
-                    {posts.length === 0 ? (
-                        <div className="text-center text-gray-500 py-10">Belum ada postingan</div>
-                    ) : (
-                        posts.map((postData) => (
-                            <Post key={postData.id} post={postData} />
-                        ))
-                    )}
-                </main>
+  return (
+    <div className="min-h-screen bg-[#f7f7f7] flex flex-col">
+      <header className="fixed top-0 left-0 right-0 z-30 bg-[#f7f7f7] border-b border-gray-200 px-8 py-3">
+        <Navbar user={user} openProfile={() => onNavigate && onNavigate("profile")} />
+      </header>
 
-                <aside className="w-[360px] flex-shrink-0 sticky top-24 z-0">
-                    <Most_Polling />
-                </aside>
+      <div className="flex flex-1 pt-20 px-8 gap-8 w-full justify-between items-start">
+        <aside className="min-w-xs flex-shrink-0 sticky top-24 z-50">
+          <Sidebar_Kiri onNavigate={onNavigate} />
+        </aside>
+
+        <main className="flex-1 max-w-3xl mx-auto z-10 flex flex-col gap-6">
+          {posts.length === 0 ? (
+            <div className="text-center text-gray-500 py-10">
+              Belum ada postingan.
             </div>
-        </div>
-    );
+          ) : (
+            posts.map((postData) => <Post key={postData.id} post={postData} />)
+          )}
+        </main>
+
+        <aside className="w-[360px] flex-shrink-0 sticky top-24 z-0">
+          <Most_Polling />
+        </aside>
+      </div>
+    </div>
+  );
 }
