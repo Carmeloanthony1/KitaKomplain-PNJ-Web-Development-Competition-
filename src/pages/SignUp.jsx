@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import "./SignUp.css"
+import { useNavigate } from 'react-router-dom'
 
 function SignUp({ switchToLogin })
 {
@@ -9,6 +10,9 @@ function SignUp({ switchToLogin })
   const [confirmPassword, setConfirmPassword] = useState('')
   const [loading, setLoading] = useState(false); //awalnya ga loading karena memang belum loading
   //Arrow operators: const func = (parameter) => {return value} 
+
+  const navigate = useNavigate() 
+  
 
   const handleSubmit = async (event) => 
   {
@@ -114,7 +118,8 @@ function SignUp({ switchToLogin })
 
             <p className = "signup-login">
               Already have an account?{' '}
-              <button type = "button"  onClick = {switchToLogin} className = "signup-login-button">
+              <button type = "button"  onClick = {() => navigate('/Login')} 
+                      className = "signup-login-button">
                 Login
               </button>
             </p>  

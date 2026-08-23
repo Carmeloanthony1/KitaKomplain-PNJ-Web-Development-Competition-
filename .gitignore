@@ -14,3 +14,4 @@ yarn-error.log*
 # Production build output
 dist/
 build/
+env.example
