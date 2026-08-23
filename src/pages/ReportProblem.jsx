@@ -3,49 +3,69 @@ import "./ReportProblem.css"
 
 export default function ReportProblem()
 {
-    const developerEmail = "kentdjiorlando90@gmail.com";
-
-    const[email, setEmail] = useState('');
+    //const[email, setEmail] = useState('');
     const[category, setCategory] = useState('');
     const[details, setDetails] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const [lastoken, setLasttoken] = useState(null);
 
-    const handleSubmit = (event) =>
+    const handleSubmit = async (event) =>
     {
         event.preventDefault();
 
-        if(!email || !category || !details)
+        if (!category || !details)
             return;
 
-        const randomNum = Math.floor(10000 + Math.random() * 90000);
-        const ticket = `Ticket-${randomNum}`;
+        setIsSubmitting(true);
 
-        const subject = encodeURIComponent(`[Support Ticket ${ticket} - ${category}]`);
-        const bodytext = 
-        `
-        [Ticket : ${ticket}]
-        Email: ${email}
-        Category: ${category}
-        
-        Details:
-        ${details}`;
+        try
+        {
+            const token = localStorage.getItem("token");
+            const response = await fetch(
+                "http://localhost:5000/api/reports",
+                {
+                    method: "POST",
 
-        const body = encodeURIComponent(bodytext);
+                    headers:
+                    {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
 
-        const gmailUrl =
-        `https://mail.google.com/mail/?view=cm&fs=1` +
-        `&to=${encodeURIComponent(developerEmail)}` +
-        `&su=${subject}` +
-        `&body=${body}`;
+                    body: JSON.stringify(
+                    {
+                        category,
+                        details
+                    })
+                }
+            );
 
-        window.open(gmailUrl, '_blank');
+            const data = await response.json();
 
-        //window.location.href = `mailto:${developerEmail}?subject=${subject}&body=${body}`;
+            if (!response.ok)
+            {
+                alert(data.message);
+                return;
+            }
 
-        //otomatis bikin email biar user langsung bisa kirim aja
-        setLasttoken(ticket);
-    }
+            setLasttoken(data.ticket);
+
+            alert(`Report berhasil dikirim!\nTicket: ${data.ticket}`);
+
+            setCategory('');
+            setDetails('');
+        }
+        catch (error)
+        {
+            console.error("Error:", error);
+            alert("Tidak dapat terhubung ke server.");
+        }
+        finally
+        {
+            setIsSubmitting(false);
+        }
+    };
 
     return(
         <div className = "report-background">
@@ -57,6 +77,7 @@ export default function ReportProblem()
                 </h1>
 
                 <form onSubmit = {handleSubmit} className = "report-form">
+                    {/*
                     <input
                         type = "email"
                         placeholder = "Email"
@@ -65,18 +86,22 @@ export default function ReportProblem()
                         className = "report-input"
                         required
                     />
+                    */}
+
+                    <div className = "input-text-description-container">
+                        <p className = "input-text-description"> Subject: </p>
+                    </div>
 
                     <input
                         type = "text"
-                        placeholder = "Category"
                         value = {category}
                         onChange = {(event) => setCategory(event.target.value)}
                         className = "report-input"
                         required
                     />
 
-                    <div className = "details-text-container">
-                        <p className = "details-text"> Details: </p>
+                    <div className = "input-text-description-container">
+                        <p className = "input-text-description"> Details: </p>
                     </div>
                     
                     <textarea
@@ -88,9 +113,9 @@ export default function ReportProblem()
                         required
                     />
 
-                    <div className = "submit-button-container">
+                    <div className = "submit-button-container" disabled = {isSubmitting}>
                         <button className = "submit-button">
-                            Submit
+                            {isSubmitting ? "Sending..." : "Submit"}
                         </button>
                     </div>
                 </form>

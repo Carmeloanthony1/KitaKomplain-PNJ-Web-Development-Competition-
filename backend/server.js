@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import bcrypt from 'bcryptjs';
 import JWT from 'jsonwebtoken';
+import nodemailer from 'nodemailer';
 import { createClient } from '@supabase/supabase-js';
 
 dotenv.config(); //biar bisa di proses dalam code, ngebaca .env
@@ -17,6 +18,15 @@ const supabase = createClient(
     process.env.SUPABASE_URL,
     process.env.SUPABASE_ANON_KEY //anon key ini di pake untuk akses databasenya
 );
+
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth:
+    {
+        user: process.env.EMAIL_USER, //email user
+        pass: process.env.EMAIL_APP_PASSWORD //email password
+    }
+});
 
 const verifytoken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
@@ -142,6 +152,62 @@ app.post('/api/auth/login', async (req, res) => {
         console.error("Error login: ", error.message);
         return res.status(500).json({
             message: "Terjadi kesalahan di server!"
+        });
+    }
+});
+
+app.post('/api/reports', verifytoken, async (req, res) =>
+{
+    const { category, details } = req.body;
+
+    if (!category || !details)
+    {
+        return res.status(400).json(
+        {
+            message: "Category dan detail wajib diisi!"
+        });
+    }
+    try
+    {
+
+        // Generate ticket number
+        const randomNum = Math.floor(10000 + Math.random() * 90000);
+        const ticket = `Ticket-${randomNum}`;
+
+        // Get user information from JWT
+        const userId = req.user.id;
+        const userEmail = req.user.email;
+
+        const emailText =
+            "User ID: " + userId + "\n" +
+            "User Email: " + userEmail + "\n" +
+            "Category: " + category + "\n\n" +
+            "Details:\n" +
+            details;
+
+        // Send email
+        await transporter.sendMail(
+        {
+            from: process.env.EMAIL_USER,
+            to: process.env.DEVELOPER_EMAIL,
+            subject: `[Support ${ticket} - ${category}]`,
+            text: emailText
+        });
+
+        return res.status(200).json(
+        {
+            message: "Report berhasil dikirim!",
+            ticket
+        });
+
+    }
+    catch (error)
+    {
+        console.error("Error sending report:", error);
+
+        return res.status(500).json(
+        {
+            message: "Gagal mengirim report."
         });
     }
 });
