@@ -50,7 +50,6 @@ export default function Post({ post }) {
       return;
     }
 
-    // Jalankan efek mekar/pop instan pas tombol dipencet
     triggerPop();
 
     if (isLiked) {
@@ -187,7 +186,7 @@ export default function Post({ post }) {
               </button>
             </div>
 
-            {isCommentOpen && <CommentSection comments={post.comments || []} />}
+            {isCommentOpen && <CommentSection postId={post.id}/>}
           </div>
         </div>
       </div>
