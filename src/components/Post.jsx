@@ -4,15 +4,24 @@ import CommentSection from "./Comment";
 import { supabase } from "../supabaseClient";
 
 export default function Post({ post }) {
+  //likes
   const [likes, setLikes] = useState([]);
   const [isLiked, setIsLiked] = useState(false);
-  const [isshare_open, setIsshare_open] = useState(false);
-  const [isCommentOpen, setIsCommentOpen] = useState(false);
-  const [showLikers, setShowLikers] = useState(false);
-  const [commentCount, setCommentCount] = useState(0);
   const [isPop, setIsPop] = useState(false);
+  const [showLikers, setShowLikers] = useState(false);
+
+  //comment
+  const [isCommentOpen, setIsCommentOpen] = useState(false);
+  const [commentCount, setCommentCount] = useState(0);
+
+  //share
+  const [isshare_open, setIsshare_open] = useState(false);
 
   const currentUserId = localStorage.getItem("user_id");
+
+  //menu (...)
+  const [ismenu_open, setIsmenu_open] = useState(false);
+  const ismypost = post.user_id === currentUserId
 
   if (!post) return null;
 
@@ -109,7 +118,65 @@ export default function Post({ post }) {
                 <span className="font-bold text-gray-800">{username}</span>
                 <span className="text-[#a50034] font-bold text-xs">#{post.title}</span>
               </div>
-              <button className="text-2xl mb-1 cursor-pointer">...</button>
+              <div className="relative">
+                {/* Tombol Titik Tiga */}
+                <button 
+                  onClick={() => setIsmenu_open((prev) => !prev)} 
+                  className="text-xl font-bold px-2 py-1 text-gray-500 hover:text-black hover:bg-gray-100 rounded-full transition-colors cursor-pointer"
+                >
+                  •••
+                </button>
+
+                {/* Dropdown Menu */}
+                {ismenu_open && (
+                  <div className="absolute right-0 mt-1 w-44 bg-white border border-gray-200 rounded-xl shadow-lg z-20 py-1.5 text-sm">
+                    {ismypost ? (
+                      <>
+                        <button 
+                          onClick={() => {
+                            setIsmenu_open(false);
+                            // TODO: panggil fungsi edit
+                          }}
+                          className="w-full text-left px-4 py-2 hover:bg-gray-50 text-gray-700 flex items-center gap-2 cursor-pointer"
+                        >
+                          ✏️ Edit
+                        </button>
+                        <button 
+                          onClick={() => {
+                            setIsmenu_open(false);
+                            // TODO: panggil fungsi delete
+                          }}
+                          className="w-full text-left px-4 py-2 hover:bg-red-50 text-red-600 font-semibold flex items-center gap-2 cursor-pointer"
+                        >
+                          🗑️ Hapus
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <button 
+                          onClick={() => {
+                            setIsmenu_open(false);
+                            navigator.clipboard.writeText(window.location.href);
+                            alert("Tautan berhasil disalin");
+                          }}
+                          className="w-full text-left px-4 py-2 hover:bg-gray-50 text-gray-700 flex items-center gap-2 cursor-pointer"
+                        >
+                          Salin Tautan
+                        </button>
+                        <button 
+                          onClick={() => {
+                            setIsmenu_open(false);
+                            // TODO: panggil fungsi report
+                          }}
+                          className="w-full text-left px-4 py-2 hover:bg-red-50 text-red-600 font-semibold flex items-center gap-2 cursor-pointer"
+                        >
+                          Laporkan
+                        </button>
+                      </>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
 
             <p className="text-gray-900 text-sm leading-relaxed break-words">
