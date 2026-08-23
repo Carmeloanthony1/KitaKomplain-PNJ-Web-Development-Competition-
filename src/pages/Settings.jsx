@@ -6,17 +6,30 @@ export default function Settings({ user, onNavigate }) {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const navigate = useNavigate();
 
+  // State Permission
   const [permission, setPermission] = useState({
     Camera: false,
     Notification: false
   });
 
-  // 1. Fetch & Sinkronisasi Permission dengan Browser & Backend
+  // State UI Mockup Privacy
+  const [privacy, setPrivacy] = useState({
+    anonymousMode: false,
+    hideContactInfo: false,
+    hideHistory: false
+  });
+
+  // State UI Mockup Notification
+  const [notifSettings, setNotifSettings] = useState({
+    emailNotif: true,
+    activityAlerts: true
+  });
+
+  // Fetch & Sinkronisasi Permission dengan Browser & Backend
   useEffect(() => {
     const syncPermissions = async () => {
       let initialPerms = { Camera: false, Notification: false };
 
-      // Cek status izin browser langsung
       try {
         if ("Notification" in window) {
           initialPerms.Notification = Notification.permission === "granted";
@@ -25,7 +38,6 @@ export default function Settings({ user, onNavigate }) {
         console.warn("Permissions API check failed:", err);
       }
 
-      // Sync dari backend jika ada
       try {
         const res = await fetch("http://localhost:5000/api/users/permissions");
         if (res.ok) {
@@ -65,7 +77,7 @@ export default function Settings({ user, onNavigate }) {
     }
   };
   
-  {/* Handler Kamera */}
+  /* Handler Kamera */
   const handleCamera = async (e) => {
     const isChecked = e.target.checked;
     if (!isChecked) {
@@ -86,7 +98,7 @@ export default function Settings({ user, onNavigate }) {
     }
   };
 
-  {/* Handler Notifikasi */}
+  /* Handler Notifikasi */
   const handleNotification = async (e) => {
     const isChecked = e.target.checked;
     if (!isChecked) {
@@ -172,7 +184,7 @@ export default function Settings({ user, onNavigate }) {
             </div>
             <div className={`flex flex-col gap-4 p-6 rounded-2xl shadow-sm transition-colors ${isDarkMode ? "bg-[#1e1e1e] border-2 border-[#f1ece1]" : "bg-white border-2 border-[#a50034]"}`}>
               <div className={`flex flex-row items-center justify-between pb-4 border-b ${isDarkMode ? "border-gray-700" : "border-gray-100"}`}>
-                <div className="flex flex-col">
+                <div className="flex flex-col pr-4">
                   <h3 className={`text-xl font-bold ${isDarkMode ? "text-[#f1ece1]" : "text-[#a50034]"}`}>Camera & Gallery</h3>
                   <p className={`text-sm ${isDarkMode ? "text-gray-300" : "text-gray-500"}`}>Mengambil foto langsung atau mengunggah gambar bukti komplain.</p>
                 </div>
@@ -183,7 +195,7 @@ export default function Settings({ user, onNavigate }) {
               </div>
 
               <div className="flex flex-row items-center justify-between pb-4">
-                <div className="flex flex-col">
+                <div className="flex flex-col pr-4">
                   <h3 className={`text-xl font-bold ${isDarkMode ? "text-[#f1ece1]" : "text-[#a50034]"}`}>Notification</h3>
                   <p className={`text-sm ${isDarkMode ? "text-gray-300" : "text-gray-500"}`}>Menerima notifikasi saat ada kegiatan pada website</p>
                 </div>
@@ -208,7 +220,6 @@ export default function Settings({ user, onNavigate }) {
                   Light Mode
                 </span>
                 
-                {/* Switcher Dark Mode */}
                 <label className="relative inline-flex items-center cursor-pointer shrink-0">
                   <input 
                     type="checkbox" 
@@ -226,25 +237,105 @@ export default function Settings({ user, onNavigate }) {
             </div>
           </section>
 
-          {/* SECTION 3: PRIVACY */}
+          {/* SECTION 3: PRIVACY (UI MOCKUP) */}
           <section id="privacy-section" className="scroll-mt-28 max-w-3xl flex flex-col gap-6">
             <div>
               <h1 className={`text-3xl font-bold mb-2 ${isDarkMode ? "text-[#f1ece1]" : "text-[#a50034]"}`}>Privacy Settings</h1>
-              <p className={isDarkMode ? "text-[#f1ece1]" : "text-gray-600"}>Kelola visibilitas profil dan mode anonim.</p>
+              <p className={isDarkMode ? "text-[#f1ece1]" : "text-gray-600"}>Kelola kerahasiaan identitas, visibilitas riwayat, dan data kontak kamu.</p>
             </div>
-            <div className={`p-6 rounded-2xl shadow-sm transition-colors ${isDarkMode ? "bg-[#1e1e1e] border-2 border-[#f1ece1]" : "bg-white border-2 border-[#a50034]"}`}>
-              <p className={isDarkMode ? "text-gray-300" : "text-gray-500"}>Pengaturan anonimitas laporan...</p>
+            <div className={`flex flex-col gap-4 p-6 rounded-2xl shadow-sm transition-colors ${isDarkMode ? "bg-[#1e1e1e] border-2 border-[#f1ece1]" : "bg-white border-2 border-[#a50034]"}`}>
+              
+              <div className={`flex flex-row items-center justify-between pb-4 border-b ${isDarkMode ? "border-gray-700" : "border-gray-100"}`}>
+                <div className="flex flex-col pr-4">
+                  <h3 className={`text-xl font-bold ${isDarkMode ? "text-[#f1ece1]" : "text-[#a50034]"}`}>Mode Anonim (Default)</h3>
+                  <p className={`text-sm ${isDarkMode ? "text-gray-300" : "text-gray-500"}`}>Sembunyikan nama dan foto profil kamu secara otomatis saat membuat laporan baru.</p>
+                </div>
+                <label className="relative inline-flex items-center cursor-pointer shrink-0">
+                  <input 
+                    type="checkbox" 
+                    checked={privacy.anonymousMode} 
+                    onChange={() => setPrivacy(prev => ({ ...prev, anonymousMode: !prev.anonymousMode }))} 
+                    className="sr-only peer" 
+                  />
+                  <div className="w-[52px] h-[28px] bg-gray-300 rounded-full peer peer-checked:bg-[#a50034] transition-colors relative after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-[24px] after:w-[24px] after:transition-all peer-checked:after:translate-x-[24px]"></div>
+                </label>
+              </div>
+
+              <div className={`flex flex-row items-center justify-between pb-4 border-b ${isDarkMode ? "border-gray-700" : "border-gray-100"}`}>
+                <div className="flex flex-col pr-4">
+                  <h3 className={`text-xl font-bold ${isDarkMode ? "text-[#f1ece1]" : "text-[#a50034]"}`}>Privasi Kontak</h3>
+                  <p className={`text-sm ${isDarkMode ? "text-gray-300" : "text-gray-500"}`}>Sembunyikan nomor HP dan email pribadi dari petugas penangan komplain.</p>
+                </div>
+                <label className="relative inline-flex items-center cursor-pointer shrink-0">
+                  <input 
+                    type="checkbox" 
+                    checked={privacy.hideContactInfo} 
+                    onChange={() => setPrivacy(prev => ({ ...prev, hideContactInfo: !prev.hideContactInfo }))} 
+                    className="sr-only peer" 
+                  />
+                  <div className="w-[52px] h-[28px] bg-gray-300 rounded-full peer peer-checked:bg-[#a50034] transition-colors relative after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-[24px] after:w-[24px] after:transition-all peer-checked:after:translate-x-[24px]"></div>
+                </label>
+              </div>
+
+              <div className="flex flex-row items-center justify-between pb-4">
+                <div className="flex flex-col pr-4">
+                  <h3 className={`text-xl font-bold ${isDarkMode ? "text-[#f1ece1]" : "text-[#a50034]"}`}>Sembunyikan Riwayat Laporan</h3>
+                  <p className={`text-sm ${isDarkMode ? "text-gray-300" : "text-gray-500"}`}>Jangan tampilkan laporan yang pernah kamu buat di feed publik atau profil kamu.</p>
+                </div>
+                <label className="relative inline-flex items-center cursor-pointer shrink-0">
+                  <input 
+                    type="checkbox" 
+                    checked={privacy.hideHistory} 
+                    onChange={() => setPrivacy(prev => ({ ...prev, hideHistory: !prev.hideHistory }))} 
+                    className="sr-only peer" 
+                  />
+                  <div className="w-[52px] h-[28px] bg-gray-300 rounded-full peer peer-checked:bg-[#a50034] transition-colors relative after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-[24px] after:w-[24px] after:transition-all peer-checked:after:translate-x-[24px]"></div>
+                </label>
+              </div>
+
             </div>
           </section>
 
-          {/* SECTION 4: NOTIFICATION */}
+          {/* SECTION 4: NOTIFICATION (UI MOCKUP) */}
           <section id="notification-section" className="scroll-mt-28 max-w-3xl flex flex-col gap-6">
             <div>
               <h1 className={`text-3xl font-bold mb-2 ${isDarkMode ? "text-[#f1ece1]" : "text-[#a50034]"}`}>Notification Settings</h1>
               <p className={isDarkMode ? "text-[#f1ece1]" : "text-gray-600"}>Atur notifikasi push dan email yang ingin kamu terima.</p>
             </div>
-            <div className={`p-6 rounded-2xl shadow-sm transition-colors ${isDarkMode ? "bg-[#1e1e1e] border-2 border-[#f1ece1]" : "bg-white border-2 border-[#a50034]"}`}>
-              <p className={isDarkMode ? "text-gray-300" : "text-gray-500"}>Pengaturan notifikasi email & push...</p>
+            <div className={`flex flex-col gap-4 p-6 rounded-2xl shadow-sm transition-colors ${isDarkMode ? "bg-[#1e1e1e] border-2 border-[#f1ece1]" : "bg-white border-2 border-[#a50034]"}`}>
+              
+              <div className={`flex flex-row items-center justify-between pb-4 border-b ${isDarkMode ? "border-gray-700" : "border-gray-100"}`}>
+                <div className="flex flex-col pr-4">
+                  <h3 className={`text-xl font-bold ${isDarkMode ? "text-[#f1ece1]" : "text-[#a50034]"}`}>Notifikasi Email</h3>
+                  <p className={`text-sm ${isDarkMode ? "text-gray-300" : "text-gray-500"}`}>Kirim pembaruan status laporan langsung ke email akun kamu.</p>
+                </div>
+                <label className="relative inline-flex items-center cursor-pointer shrink-0">
+                  <input 
+                    type="checkbox" 
+                    checked={notifSettings.emailNotif} 
+                    onChange={() => setNotifSettings(prev => ({ ...prev, emailNotif: !prev.emailNotif }))} 
+                    className="sr-only peer" 
+                  />
+                  <div className="w-[52px] h-[28px] bg-gray-300 rounded-full peer peer-checked:bg-[#a50034] transition-colors relative after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-[24px] after:w-[24px] after:transition-all peer-checked:after:translate-x-[24px]"></div>
+                </label>
+              </div>
+
+              <div className="flex flex-row items-center justify-between pb-4">
+                <div className="flex flex-col pr-4">
+                  <h3 className={`text-xl font-bold ${isDarkMode ? "text-[#f1ece1]" : "text-[#a50034]"}`}>Notifikasi Aktivitas Laporan</h3>
+                  <p className={`text-sm ${isDarkMode ? "text-gray-300" : "text-gray-500"}`}>Dapatkan pemberitahuan saat ada komentar atau tanggapan baru dari petugas.</p>
+                </div>
+                <label className="relative inline-flex items-center cursor-pointer shrink-0">
+                  <input 
+                    type="checkbox" 
+                    checked={notifSettings.activityAlerts} 
+                    onChange={() => setNotifSettings(prev => ({ ...prev, activityAlerts: !prev.activityAlerts }))} 
+                    className="sr-only peer" 
+                  />
+                  <div className="w-[52px] h-[28px] bg-gray-300 rounded-full peer peer-checked:bg-[#a50034] transition-colors relative after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-[24px] after:w-[24px] after:transition-all peer-checked:after:translate-x-[24px]"></div>
+                </label>
+              </div>
+
             </div>
           </section>
 

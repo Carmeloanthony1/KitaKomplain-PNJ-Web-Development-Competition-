@@ -1,10 +1,11 @@
 import { useState } from "react";
 import "./Login.css";
-
+import { useNavigate } from "react-router-dom";
 export default function Login({ switchToSignup, onLoginSuccess }) {
     const [identifier, setIdentifier] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
 
     const handleSubmit = async (event) => {
         event.preventDefault(); // Mencegah reload halaman
@@ -21,6 +22,7 @@ export default function Login({ switchToSignup, onLoginSuccess }) {
             });
 
             const data = await response.json();
+            console.log("data dari backend:", data);
 
             if (!response.ok) {
                 throw new Error(data.message || 'Login gagal! Periksa kembali akunmu.');
@@ -29,12 +31,15 @@ export default function Login({ switchToSignup, onLoginSuccess }) {
             // Simpan token JWT ke browser
             localStorage.setItem('token', data.token);
 
+            if(data.user && data.user.id){
+                localStorage.setItem('user_id', data.user.id);
+            }
             // Langsung panggil callback buat pindah halaman di App.jsx tanpa alert
             if (onLoginSuccess) {
                 onLoginSuccess(data.user);
             }
 
-        } catch (error) {
+        } catch (error) {   
             alert(error.message);
         } finally {
             setLoading(false);
@@ -93,7 +98,7 @@ export default function Login({ switchToSignup, onLoginSuccess }) {
                             Don't have an account?{' '}
                             <button
                                 type="button"
-                                onClick={switchToSignup}
+                                onClick={() => navigate('/SignUp')}
                                 className="login-signup-button"
                             >
                                 Sign Up
