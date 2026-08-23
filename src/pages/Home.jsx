@@ -57,7 +57,11 @@ export default function Home({ user, onLogout, onNavigate }) {
           <Sidebar_Kiri onNavigate={onNavigate} />
         </aside>
 
+<<<<<<< HEAD
         <main className="flex-1 max-w-3xl mx-auto z-10 flex flex-col">
+=======
+        <main className="flex-1 max-w-3xl mx-auto z-10 flex flex-col ">
+>>>>>>> melo
           {posts.length === 0 ? (
             <div className="text-center text-gray-500 py-10">
               Belum ada postingan.
