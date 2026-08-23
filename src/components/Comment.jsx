@@ -2,10 +2,10 @@ import { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient";
 import Comment_detail from "./Comment_detail";
 
-export default function CommentSection({ postId, initialComments = [] }) {
+export default function CommentSection({ postId, initialComments = [], onCommentAdded }) {
   const [commentList, setCommentList] = useState(initialComments);
   const [inputText, setInputText] = useState("");
-  const [visibleCount, setVisibleCount] = useState(2);
+  const [visibleCount, setVisibleCount] = useState(3);
   const [loading, setLoading] = useState(false);
 
   const currentUserId = localStorage.getItem("user_id");
@@ -52,7 +52,12 @@ export default function CommentSection({ postId, initialComments = [] }) {
       if (!error) {
         setInputText("");
         fetchComments(); // Reload komentar biar avatar & nama user yang baru muncul
+
+        if(onCommentAdded){
+          onCommentAdded();
+        }
       }
+
     } else {
       // Fallback lokal jika belum pakai DB
       const newComment = {
