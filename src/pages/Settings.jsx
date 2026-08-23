@@ -3,7 +3,24 @@ import { useNavigate } from "react-router-dom";
 import Navbar from '../components/Navbar';
 
 export default function Settings({ user, onNavigate }) {
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    return localStorage.getItem("theme") === "dark";
+  });
+
+  useEffect(() => {
+    if(isDarkMode){
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
+  }, [isDarkMode]);
+
+  const toggle_dark_mode = () => {
+    setIsDarkMode((prev) => !prev);
+  };
+
   const navigate = useNavigate();
 
   // State Permission

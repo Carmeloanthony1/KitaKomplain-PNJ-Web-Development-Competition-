@@ -7,7 +7,7 @@ import ReportProblem from "./pages/ReportProblem";
 import History from "./pages/History";
 import Notification from "./components/Notification";
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom'
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function App() {
   const [user, setUser] = useState(() => {
@@ -30,6 +30,15 @@ export default function App() {
     navigate("/login");
   };
 
+  useEffect(() => {
+    const saved_theme = localStorage.getItem("theme");
+    if(saved_theme === "dark"){
+      document.documentElement.classList.add("add");
+    } else {
+      document.documentElement.classList.remove("remove");
+    }
+  }, []);
+  
   return (
     <Routes>
       <Route
