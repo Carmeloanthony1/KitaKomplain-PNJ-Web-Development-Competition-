@@ -10,6 +10,8 @@ export default function Post({ post }) {
   const [isCommentOpen, setIsCommentOpen] = useState(false);
   const [showLikers, setShowLikers] = useState(false);
 
+  const [isPop, setIsPop] = useState(false);
+
   const currentUserId = localStorage.getItem("user_id");
 
   if (!post) return null;
@@ -17,7 +19,6 @@ export default function Post({ post }) {
   const username = post.users?.username || "Unknown";
   const avatar = post.users?.avatar_url || "/default-avatar.png";
 
-  // Fetch data likes untuk post ini
   const fetchLikes = async () => {
     const { data, error } = await supabase
       .from("likes")
@@ -35,12 +36,22 @@ export default function Post({ post }) {
     fetchLikes();
   }, [post.id, currentUserId]);
 
-  // Toggle Like / Unlike ke Supabase
+  // Pemicu pop up like
+  const triggerPop = () => {
+    setIsPop(true);
+    setTimeout(() => {
+      setIsPop(false);
+    }, 200); 
+  };
+
   const toggleLike = async () => {
     if (!currentUserId) {
       alert("Silakan login untuk memberikan like!");
       return;
     }
+
+    // Jalankan efek mekar/pop instan pas tombol dipencet
+    triggerPop();
 
     if (isLiked) {
       const { error } = await supabase
@@ -104,11 +115,16 @@ export default function Post({ post }) {
 
             <div className="flex justify-between gap-2 mt-2 items-center">
               <div className="flex flex-row gap-3 items-center">
-                {/* LIKE BUTTON + TOTAL LIKES */}
+                
+                {/* Like button*/}
                 <div className="flex items-center gap-2">
                   <button onClick={toggleLike} className="focus:outline-none cursor-pointer">
                     <svg
-                      className={`w-9 h-9 transition-transform hover:scale-110 ${
+                      style={{
+                        transform: isPop ? "scale(1.3)" : "scale(1)",
+                        transition: "transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275)"
+                      }}
+                      className={`w-9 h-9 ${
                         isLiked
                           ? "fill-[#a50034] stroke-[#a50034]"
                           : "fill-none stroke-[#a50034]"
@@ -122,12 +138,20 @@ export default function Post({ post }) {
                     </svg>
                   </button>
 
-                  <span
-                    onClick={() => likes.length > 0 && setShowLikers(true)}
-                    className="font-bold text-sm text-[#a50034] cursor-pointer hover:underline"
-                  >
-                    {likes.length} Like
-                  </span>
+                  {/* Jumlah like */}
+                  {likes.length > 0 && (
+                    <span
+                      onClick={() => setShowLikers(true)}
+                      style={{
+                        transform: isPop ? "scale(1.6)" : "scale(1)",
+                        transition: "transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
+                        display: "inline-block"
+                      }}
+                      className="font-bold text-sm text-[#a50034] cursor-pointer hover:underline"
+                    >
+                      {likes.length}
+                    </span>
+                  )}
                 </div>
 
                 {/* COMMENT */}
