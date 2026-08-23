@@ -1,11 +1,33 @@
 // CommentSection.jsx
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { supabase } from "../supabaseClient";
 
-export default function CommentSection({ comments = [] }) {
+export default function CommentSection({ postId, initialComments = [] }) {
+
   const [commentList, setCommentList] = useState(comments);
   const [inputText, setInputText] = useState("");
   const [visibleCount, setVisibleCount] = useState(2);
   const [liked_comment, setLiked_comment] = useState({});
+
+  const currentUserId = localStorage.getItem("user_id");
+  
+  const fetch_comments = async () => {
+    if(!postId) return;
+    const { data, error } = await supabase
+      .from("comments")
+      .select(`id, content, created_at, user_id, users (id, username, avatar_url)`)
+      .eq("post_id", postId)
+      .order("created_at", { ascending: false });
+      //nanti di ganti jadi like nya yang paling banyak 
+
+    if(!error && data){
+      setCommentList(data);
+    }
+  };
+
+  useEffect(() => {
+    fetch_comments();
+  }, [postId]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
