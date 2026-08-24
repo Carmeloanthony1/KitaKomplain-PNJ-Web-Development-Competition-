@@ -3,8 +3,10 @@ import Share_post from "./Share_post";
 import CommentSection from "./Comment";
 import { supabase } from "../supabaseClient";
 import Edit_post from "./edit_post";
+import { useNavigate } from "react-router-dom";
 
 export default function Post({ post }) {
+  const navigate = useNavigate();
   // Likes
   const [likes, setLikes] = useState([]);
   const [isLiked, setIsLiked] = useState(false);
@@ -31,6 +33,10 @@ export default function Post({ post }) {
   const ismypost = post.user_id === currentUserId;
   const username = post.users?.username || "Unknown";
   const avatar = post.users?.avatar_url || "/default-avatar.png";
+
+  const tag_mentah = post.tags || (post.title ? [post.title] : []);
+  const tag_list = tag_mentah.map((t) => t.replace(/\s+/g, "").toLowerCase());
+
 
   const fetchLikes = async () => {
     const { data, error } = await supabase
@@ -136,9 +142,13 @@ export default function Post({ post }) {
             <div className="flex items-center gap-2 flex-wrap justify-between">
               <div className="flex flex-col">
                 <span className="font-bold text-gray-800">{username}</span>
-                <span className="text-[#a50034] font-bold text-xs">
-                  #{post.title}
-                </span>
+                <div className="flex flex-wrap gap-1.5 mt-1">
+                  {tag_list.map((tag, idx) => (
+                    <span key={idx}
+                      onClick={() => navigate(`/search?tag=${tag}`)}
+                      className="text-[#a50034] bg-[#a50034]/10 hover:bg-[#a50034] hover:text-white px-2 py-0.5 rounded-md font-bold text-xs transition-colors cursor-pointer">#{tag}</span>
+                  ))}
+                </div>
               </div>
 
               <div className="relative">
