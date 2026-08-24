@@ -156,6 +156,25 @@ app.post('/api/auth/login', async (req, res) => {
     }
 });
 
+app.get('/api/tags', async (req, res) => {
+    try {
+        const { query } = req.query;
+
+        const tags = await db.tag.findMany({
+            where: {
+                name: {
+                    contains: query || "",
+                    mode: 'insensitive',
+                },
+            },
+        });
+
+        res.json(tags);
+    } catch (error){
+        res.status(500).json({message: "Gagal mengambil data tag"});
+    }
+});
+
 app.post('/api/reports', verifytoken, async (req, res) =>
 {
     const { category, details } = req.body;
