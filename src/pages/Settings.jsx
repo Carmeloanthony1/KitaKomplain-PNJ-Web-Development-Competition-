@@ -154,18 +154,9 @@ export default function Settings({ user, onNavigate }) {
 
   return (
     <div className={`min-h-screen flex flex-col transition-colors duration-300 ${isDarkMode ? "bg-[#292828] text-white" : "bg-[#f7f7f7] text-gray-800"}`}>    
-      {/* Header Fixed */}
-      <header className={`fixed top-0 left-0 right-0 z-50 border-b px-8 py-3 transition-colors duration-300 ${isDarkMode ? "bg-[#1e1e1e] border-gray-800" : "bg-[#f7f7f7] border-gray-200"}`}>
-        <Navbar 
-          user={user} 
-          openProfile={() => onNavigate && onNavigate("profile")} 
-          onNavigate={onNavigate} 
-        />
-      </header>
-
-      <div className="flex flex-row flex-1 pt-24">
+      <div className="flex flex-row flex-1 pt-6">
         {/* Sidebar Navigation Shortcut (Sticky) */}
-        <aside className="sticky top-24 h-[calc(100vh-6rem)] flex flex-col px-8 gap-3 w-fit border-r-4 border-[#a50034]">
+        <aside className="sticky top-6 h-[calc(100vh-1.5rem)] flex flex-col px-8 gap-3 w-fit border-r-4 border-[#a50034]">
           <div 
             onClick={() => navigate('/home')}
             className="flex flex-row items-center gap-3 cursor-pointer hover:opacity-80 transition w-fit mb-4"
@@ -191,7 +182,7 @@ export default function Settings({ user, onNavigate }) {
         </aside>
 
         {/* Konten Utama */}
-        <main className="flex-1 p-8 flex flex-col gap-16 pb-32">
+        <main className="flex-1 pl-8 flex flex-col gap-16 pb-28">
           
           {/* SECTION 1: PERMISSION */}
           <section id="permission-section" className="scroll-mt-28 max-w-3xl flex flex-col gap-6">

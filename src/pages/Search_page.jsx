@@ -2,8 +2,9 @@ import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import Post from "../components/Post";
+import Navbar from "../components/Navbar";
 
-export default function Search_page() {
+export default function Search_page({ user, onNavigate }) {
   const [searchparams, setSearchparams] = useSearchParams();
   const query_tag = searchparams.get("tag") || "";
 
@@ -13,7 +14,7 @@ export default function Search_page() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // 1. Ambil data tag & hitung frekuensi saat pertama kali halaman dimuat
+  // 1. Ambil data tag & hitung frekuensi
   const fetch_tag = async () => {
     const { data, error } = await supabase.from("posts").select("tags, title");
 
@@ -30,13 +31,12 @@ export default function Search_page() {
         });
       });
 
-      // Urutkan dari yang postingannya terbanyak ke sedikit
       const sorted_tags = Object.keys(tag_count)
         .map((tag) => ({ tag, count: tag_count[tag] }))
         .sort((a, b) => b.count - a.count);
 
       setPopular_tags(sorted_tags);
-      setOutput_search(sorted_tags); // Default tampilkan semua urut terpopuler
+      setOutput_search(sorted_tags);
     }
   };
 
@@ -44,7 +44,7 @@ export default function Search_page() {
     fetch_tag();
   }, []);
 
-  // 2. Filter tag secara real-time saat user mengetik
+  // 2. Filter tag secara real-time
   useEffect(() => {
     const clean_input = search_input.trim().toLowerCase().replace(/^#/, "");
 
@@ -89,97 +89,81 @@ export default function Search_page() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto p-6 flex flex-col gap-8">
-      {/* Header & Search Bar Pill (Sesuai Desain Canva) */}
-      <div className="flex items-center justify-between gap-4">
-        <h1 className="text-3xl font-extrabold text-[#a50034]">KitaKomplain</h1>
+    <div className="min-h-screen bg-white">
+      {/* Header Fixed di Atas */}
+      <header className="fixed top-0 left-0 right-0 z-30 bg-white">
+        <Navbar user={user} openProfile={() => onNavigate && onNavigate("profile")} />
+      </header>
 
-        <div className="relative flex-1 max-w-md">
-          <input
-            type="text"
-            value={search_input}
-            onChange={(e) => setSearch_input(e.target.value)}
-            placeholder="Hitam"
-            className="w-full px-5 py-2 border-2 border-[#a50034] rounded-full text-center text-gray-800 font-bold focus:outline-none bg-white shadow-xs"
-          />
-          <svg
-            className="w-5 h-5 absolute right-4 top-3 stroke-[#a50034] fill-none"
-            viewBox="0 0 24 24"
-            strokeWidth="2.5"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
-            />
-          </svg>
-        </div>
-
-        <button className="bg-[#a50034] text-white px-5 py-2 rounded-full font-bold flex items-center gap-2 cursor-pointer">
-          <span>Akusuka</span>
-          <div className="w-6 h-6 rounded-full bg-white/30" />
-        </button>
-      </div>
-
-      {/* TAMPILAN 1: GRID 2 KOLOM (Daftar Tag) */}
-      {!query_tag && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {output_search.length > 0 ? (
-            output_search.map((item) => (
-              <div
-                key={item.tag}
-                onClick={() => handle_select_tag(item.tag)}
-                className="border-2 border-[#a50034] bg-[#fdfaf8] hover:bg-[#a50034] hover:text-white rounded-3xl p-6 flex justify-between items-center cursor-pointer transition-all duration-200 group shadow-xs"
-              >
-                <span className="font-extrabold text-lg text-gray-800 group-hover:text-white">
-                  #{item.tag}
-                </span>
-                <span className="text-xs font-bold px-3 py-1 bg-[#a50034]/10 text-[#a50034] rounded-full group-hover:bg-white group-hover:text-[#a50034]">
-                  {item.count} Postingan
-                </span>
-              </div>
-            ))
-          ) : (
-            <div className="col-span-2 text-center text-gray-400 font-bold py-10">
-              Tidak ada tag yang sesuai.
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* TAMPILAN 2: LIST POSTINGAN (Muncul pas Tag diklik) */}
-      {query_tag && (
-        <div className="flex flex-col gap-4">
-          <div className="flex justify-between items-center">
-            <h2 className="text-xl font-bold text-gray-800">
-              Hasil untuk: <span className="text-[#a50034]">#{query_tag}</span>
+      {/* Main Container: diberi pt-28 / pt-32 biar gak ketutupan Navbar yang makin tinggi */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-12 flex flex-col gap-8">
+        
+        {/* TAMPILAN 1: GRID DAFTAR TAG (Ubah ke grid-cols-1 md:grid-cols-2 lg:grid-cols-3 biar proporsional dan gagah) */}
+        {!query_tag && (
+          <div className="flex flex-col gap-6">
+            <h2 className="text-2xl font-black text-gray-800">
+              Tag Populer
             </h2>
-            <button
-              onClick={() => {
-                setSearchparams({});
-                setSearch_input("");
-              }}
-              className="text-xs font-bold text-[#a50034] hover:underline cursor-pointer"
-            >
-              ← Kembali ke daftar tag
-            </button>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {output_search.length > 0 ? (
+                output_search.map((item) => (
+                  <div
+                    key={item.tag}
+                    onClick={() => handle_select_tag(item.tag)}
+                    /* Card dibuat lebih padat (p-6) & ada shadow hover effect biar keliatan gede & interaktif */
+                    className="border-2 border-[#a50034] bg-[#fdfaf8] hover:bg-[#a50034] rounded-2xl p-6 flex justify-between items-center cursor-pointer transition-all duration-200 group shadow-sm hover:shadow-md"
+                  >
+                    <span className="font-extrabold text-xl text-gray-800 group-hover:text-white">
+                      #{item.tag}
+                    </span>
+                    <span className="text-sm font-bold px-3.5 py-1.5 bg-[#a50034]/10 text-[#a50034] rounded-full group-hover:bg-white group-hover:text-[#a50034]">
+                      {item.count} Postingan
+                    </span>
+                  </div>
+                ))
+              ) : (
+                <div className="col-span-full text-center text-gray-400 font-bold py-16 text-lg">
+                  Tidak ada tag yang sesuai.
+                </div>
+              )}
+            </div>
           </div>
+        )}
 
-          {loading ? (
-            <p className="text-center text-gray-400 font-semibold py-8">
-              Memuat postingan...
-            </p>
-          ) : posts.length > 0 ? (
-            posts.map((postData) => (
-              <Post key={postData.id} post={postData} />
-            ))
-          ) : (
-            <p className="text-center text-gray-400 py-8 font-semibold">
-              Belum ada postingan untuk tag ini.
-            </p>
-          )}
-        </div>
-      )}
+        {/* TAMPILAN 2: LIST POSTINGAN */}
+        {query_tag && (
+          <div className="flex flex-col gap-6 max-w-3xl mx-auto w-full">
+            <div className="flex justify-between items-center border-b pb-4">
+              <h2 className="text-2xl font-black text-gray-800">
+                Hasil untuk: <span className="text-[#a50034]">#{query_tag}</span>
+              </h2>
+              <button
+                onClick={() => {
+                  setSearchparams({});
+                  setSearch_input("");
+                }}
+                className="text-sm font-bold text-[#a50034] hover:underline cursor-pointer bg-[#a50034]/10 px-4 py-2 rounded-full transition"
+              >
+                ← Kembali ke daftar tag
+              </button>
+            </div>
+
+            {loading ? (
+              <p className="text-center text-gray-400 font-bold py-16 text-lg">
+                Memuat postingan...
+              </p>
+            ) : posts.length > 0 ? (
+              posts.map((postData) => (
+                <Post key={postData.id} post={postData} />
+              ))
+            ) : (
+              <p className="text-center text-gray-400 py-16 font-bold text-lg">
+                Belum ada postingan untuk tag ini.
+              </p>
+            )}
+          </div>
+        )}
+      </main>
     </div>
   );
 }

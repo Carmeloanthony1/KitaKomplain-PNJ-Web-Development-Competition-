@@ -48,7 +48,7 @@ export default function Home({ user, onLogout, onNavigate }) {
 
   return (
     <div className="min-h-screen bg-[#f7f7f7] flex flex-col">
-      <header className="fixed top-0 left-0 right-0 z-30 bg-[#f7f7f7] border-b border-gray-200 px-8 py-3">
+      <header className="fixed top-0 left-0 right-0 z-30 bg-[#f7f7f7] border-b border-gray-200">
         <Navbar user={user} openProfile={() => onNavigate && onNavigate("profile")} />
       </header>
 
