@@ -241,7 +241,7 @@ export default function Settings({ user, onNavigate }) {
                   <input 
                     type="checkbox" 
                     checked={isDarkMode} 
-                    onChange={(e) => setIsDarkMode(e.target.checked)} 
+                    onChange={toggle_dark_mode} 
                     className="sr-only peer" 
                   />
                   <div className="w-[52px] h-[28px] bg-gray-300 rounded-full peer peer-checked:bg-[#a50034] transition-colors relative after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-[24px] after:w-[24px] after:transition-all peer-checked:after:translate-x-[24px]"></div>

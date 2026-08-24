@@ -24,6 +24,17 @@ export default function Profile() {
   const [tempUsername, setTempUsername] = useState("");
   const [tempBio, setTempBio] = useState("");
 
+  const isDark = localStorage.getItem("theme") === "dark";
+  
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("theme");
+    if(savedTheme === "dark"){
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, []);
+
   useEffect(() => {
     if (!userId) {
       setLoading(false);
