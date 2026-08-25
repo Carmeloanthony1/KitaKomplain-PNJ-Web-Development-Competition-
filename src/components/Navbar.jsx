@@ -1,8 +1,13 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
+<<<<<<< HEAD
 export default function Navbar({ openProfile, user }) {
   const [search_params] = useSearchParams();
+=======
+export default function Navbar({ openProfile, user, openNotifications}) {
+  const [search, setSearch] = useState("");
+>>>>>>> 62929c5880aad18b442e188958d1401fbf2e85bb
   const navigate = useNavigate();
 
   const quert_tag = search_params.get("tag") || "";
