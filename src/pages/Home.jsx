@@ -21,7 +21,6 @@ export default function Home({ user, onLogout, onNavigate }) {
         .from("posts")
         .select(`
           id,
-          title,
           description,
           image_url,
           tag,

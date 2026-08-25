@@ -16,7 +16,6 @@ import { supabase } from "../supabaseClient";
     export function NewPost() {
     const navigate = useNavigate();
 
-    const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [tag, setTag] = useState("");
     const [image, setImage] = useState(null);
@@ -41,8 +40,8 @@ import { supabase } from "../supabaseClient";
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!title.trim() || !description.trim() || !tag.trim()) {
-            alert("Judul, tag dan deskripsi wajib diisi!");
+        if (!description.trim() || !tag.trim()) {
+            alert("tag dan deskripsi wajib diisi!");
             return;
         }
 
@@ -82,7 +81,6 @@ import { supabase } from "../supabaseClient";
             const { error: insert_error } = await supabase.from("posts").insert([
             {
                 user_id: userId,
-                title: title,
                 description: description,
                 tag: cleanedTag,
                 image_url: imageURL, // Jangan sampai typo jadi image_url: image_url
@@ -93,7 +91,6 @@ import { supabase } from "../supabaseClient";
             alert("Postingan berhasil dibuat!");
 
             // Reset Form & Navigate
-            setTitle("");
             setDescription("");
             setTag("");
             setImage(null);
@@ -113,21 +110,12 @@ import { supabase } from "../supabaseClient";
         <form onSubmit={handleSubmit} className="mt-4 w-full bg-white rounded-lg shadow p-6">
           <h2 className="text-xl font-bold mb-4">Tuliskan pengalaman anda</h2>
 
-          {/* Input Title */}
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="Judul postingan"
-            className="w-full mt-3 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 font-semibold"
-          />
-
           {/* Input Tag */}
           <input
             type="text"
             value={tag}
             onChange={(e) => setTag(e.target.value)}
-            placeholder="Tambahkan tag (pisahkan dengan koma, contoh: nignig, pnj)"
+            placeholder="Tambahkan tag/topik"
             className="w-full mt-3 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
 

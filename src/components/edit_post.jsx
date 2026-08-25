@@ -3,7 +3,6 @@ import { createPortal } from "react-dom";
 import { supabase } from "../supabaseClient";
 
 export default function Edit_post({ post, onclose, onpost_update }) {
-  const [edit_title, setEdit_title] = useState(post?.title || "");
   const [edit_tag, setEdit_tag] = useState(post?.tag || "");
   const [edit_description, setEdit_description] = useState(post?.description || "");
   const [edit_photo, setEdit_photo] = useState(post?.image_url || "");
@@ -26,8 +25,8 @@ export default function Edit_post({ post, onclose, onpost_update }) {
   const handleSave_edit = async (e) => {
     e.preventDefault();
 
-    if (!edit_title.trim() || !edit_description.trim() || !edit_tag.trim()) {
-      alert("Judul, tag, dan deskripsi wajib diisi");
+    if (!edit_description.trim() || !edit_tag.trim()) {
+      alert("tag dan deskripsi wajib diisi");
       return;
     }
 
@@ -61,7 +60,6 @@ export default function Edit_post({ post, onclose, onpost_update }) {
       const { error } = await supabase
         .from("posts")
         .update({
-          title: edit_title,
           tag: edit_tag,
           description: edit_description,
           image_url: final_image_url,
@@ -86,7 +84,7 @@ export default function Edit_post({ post, onclose, onpost_update }) {
   // Komponen Modal yang akan ditarik keluar DOM
   const modalContent = (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-[99999] p-4">
-      <div className="bg-white rounded-2xl max-w-2xl w-full shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+      <div className="bg-white rounded-2xl max-w-xl w-full shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
         
         {/* Header Modal */}
         <div className="flex justify-between items-center px-6 pt-5 pb-2">
@@ -102,14 +100,6 @@ export default function Edit_post({ post, onclose, onpost_update }) {
 
         {/* Form Body */}
         <form onSubmit={handleSave_edit} className="px-6 pb-6 pt-2 flex flex-col gap-3 overflow-y-auto">
-          <input
-            type="text"
-            value={edit_title}
-            onChange={(e) => setEdit_title(e.target.value)}
-            placeholder="Judul postingan"
-            className="w-full p-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#a50034] text-sm"
-          />
-
           <input
             type="text"
             value={edit_tag}
