@@ -12,22 +12,33 @@ export default function Navbar({ openProfile, user }) {
     setSearch_term(quert_tag);
   }, [quert_tag]);
 
-  // Handler Submit Form (Key Enter / Click Icon)
+  // Real-time Search dengan Debounce (100ms)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const clean_keyword = search_term.replace("#", "").trim().toLowerCase(); 
+      if (clean_keyword !== "") {
+        if (clean_keyword !== quert_tag) {
+          navigate(`/search?tag=${clean_keyword}`, { replace: true });
+        }
+      } else {
+        if (quert_tag !== "") {
+          navigate(`/search`, { replace: true });
+        }
+      }
+    }, 100);
+    return () => clearTimeout(timer);
+  }, [search_term, navigate, quert_tag]);
+
+  // Handler Submit Form
   const handleSearch = (e) => {
-    if (e) e.preventDefault(); // Mencegah reload halaman
-    
-    if (search_term.trim()) {
-      const clean_keyword = search_term.replace("#", "").trim().toLowerCase();
-      navigate(`/search?tag=${clean_keyword}`);
-    }
+    if (e) e.preventDefault();
   };
 
   return (
     <div className="w-full bg-white border-b border-gray-200 shadow-xs">
-      {/* Pakai w-full dan px-6/px-8 biar narik penuh sejajar dengan sidebar kiri dan most polling kanan */}
       <nav className="w-full px-6 md:px-10 py-4 grid grid-cols-12 items-center">
         
-        {/* 1. Logo Kiri (Sejajar dengan Sidebar + Post) */}
+        {/* 1. Logo Kiri */}
         <div 
           onClick={() => navigate('/home')}
           className="col-span-3 cursor-pointer transition hover:scale-105 active:scale-95 justify-self-start"
@@ -37,7 +48,7 @@ export default function Navbar({ openProfile, user }) {
           </h1>
         </div>
         
-        {/* 2. Search Bar Tengah (Sejajar dengan Feed Utama) */}
+        {/* 2. Search Bar Tengah */}
         <div className="col-span-6 flex justify-center w-full">
           <form 
             onSubmit={handleSearch}
@@ -66,7 +77,7 @@ export default function Navbar({ openProfile, user }) {
           </form>
         </div>
 
-        {/* 3. Profile Akun Kanan (Sejajar dengan Ujung Most Polling) */}
+        {/* 3. Profile Akun Kanan */}
         <div className="col-span-3 justify-self-end">
           <div 
             onClick={() => openProfile ? openProfile() : navigate('/profile')}
