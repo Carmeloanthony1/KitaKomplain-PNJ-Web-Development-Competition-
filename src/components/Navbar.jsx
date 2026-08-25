@@ -1,19 +1,29 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 export default function Navbar({ openProfile, user }) {
-  const [search, setSearch] = useState("");
+  const [search_params] = useSearchParams();
   const navigate = useNavigate();
 
+  const quert_tag = search_params.get("tag") || "";
+  const [search_term, setSearch_term] = useState(quert_tag);
+
+  useEffect(() => {
+    setSearch_term(quert_tag);
+  }, [quert_tag]);
+
+  // Handler Submit Form (Key Enter / Click Icon)
   const handleSearch = (e) => {
-    e.preventDefault();
-    if (search.trim()) {
-      navigate(`/search?tag=${encodeURIComponent(search.trim())}`);
+    if (e) e.preventDefault(); // Mencegah reload halaman
+    
+    if (search_term.trim()) {
+      const clean_keyword = search_term.replace("#", "").trim().toLowerCase();
+      navigate(`/search?tag=${clean_keyword}`);
     }
   };
 
   return (
-    <header className="w-full bg-white border-b border-gray-200 shadow-xs">
+    <div className="w-full bg-white border-b border-gray-200 shadow-xs">
       {/* Pakai w-full dan px-6/px-8 biar narik penuh sejajar dengan sidebar kiri dan most polling kanan */}
       <nav className="w-full px-6 md:px-10 py-4 grid grid-cols-12 items-center">
         
@@ -36,11 +46,15 @@ export default function Navbar({ openProfile, user }) {
             <input 
               type="text" 
               placeholder="Cari topik" 
-              value={search}
-              onChange={(e) => setSearch(e.target.value)} 
+              value={search_term}
+              onChange={(e) => setSearch_term(e.target.value)} 
               className="w-full bg-transparent text-black placeholder-[#a50034]/60 text-center font-semibold focus:outline-none text-base"
             />
-            <button type="submit" aria-label="Search" className="focus:outline-none">
+            <button 
+              type="submit" 
+              aria-label="Search" 
+              className="focus:outline-none"
+            >
               <svg 
                 className="w-5 h-5 fill-[#a50034] flex-shrink-0 cursor-pointer hover:scale-110 transition-transform" 
                 xmlns="http://www.w3.org/2000/svg" 
@@ -54,12 +68,13 @@ export default function Navbar({ openProfile, user }) {
 
         {/* 3. Profile Akun Kanan (Sejajar dengan Ujung Most Polling) */}
         <div className="col-span-3 justify-self-end">
-        <div onClick={() => navigate('/profile')}
+          <div 
+            onClick={() => openProfile ? openProfile() : navigate('/profile')}
             className="flex items-center gap-3 bg-[#a50034] text-white px-5 py-2 rounded-full font-bold shadow-md cursor-pointer hover:bg-[#801427] transition active:scale-95 select-none"
           >
-            <span className="text-base capitalize">{user?.name || "Kenji"}</span>
+            <span className="text-base capitalize">{user?.name || user?.username || "Kenji"}</span>
             <img 
-              src={user?.avatar || "/assets/Dummy_photo.png"} 
+              src={user?.avatar || user?.avatar_url || "/assets/Dummy_photo.png"} 
               alt="avatar" 
               className="w-8 h-8 rounded-full bg-white object-cover border-2 border-white"
             />
@@ -67,6 +82,6 @@ export default function Navbar({ openProfile, user }) {
         </div>
 
       </nav>
-    </header>
+    </div>
   );  
 }
