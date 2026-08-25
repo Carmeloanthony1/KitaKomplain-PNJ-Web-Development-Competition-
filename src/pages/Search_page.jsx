@@ -1,103 +1,147 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
+import { supabase } from "../supabaseClient";
 import Navbar from "../components/Navbar";
 
-export default function SearchPage({ user }) {
+export default function SearchPage({ user, onNavigate }) {
   const [searchParams] = useSearchParams();
   const queryTag = searchParams.get("tag") || "";
-
-  const [tags, setTags] = useState([]);
+  
   const [posts, setPosts] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        // Fetch Tags
-        const resTags = await fetch(`http://localhost:5000/api/tags?query=${encodeURIComponent(queryTag)}`);
-        const dataTags = await resTags.json();
-        setTags(Array.isArray(dataTags) ? dataTags : []);
-
-        // Fetch Posts
-        const resPosts = await fetch(`http://localhost:5000/api/posts?query=${encodeURIComponent(queryTag)}`);
-        const dataPosts = await resPosts.json();
-        setPosts(Array.isArray(dataPosts) ? dataPosts : []);
-
-      } catch (err) {
-        console.error("Gagal load data:", err);
-      } finally {
+    async function fetchSearchPosts() {
+      if (!queryTag) {
+        setPosts([]);
         setLoading(false);
+        return;
       }
-    };
 
-    fetchData();
+      setLoading(true);
+
+      const { data, error } = await supabase
+        .from("posts")
+        .select(`
+          id,
+          description,
+          image_url,
+          tag,
+          created_at,
+          user_id,
+          users (
+            username,
+            avatar_url
+          )
+        `)
+        .ilike("tag", `%${queryTag}%`)
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        console.error("Gagal melakukan pencarian:", error.message);
+      } else {
+        setPosts(data || []);
+      }
+      setLoading(false);
+    }
+
+    fetchSearchPosts();
   }, [queryTag]);
 
   return (
-    <div className="min-h-screen bg-white">
-      <Navbar user={user} />
+    <div className="min-h-screen bg-[#f7f7f7] flex flex-col">
+      <header className="fixed top-0 left-0 right-0 z-30 bg-[#f7f7f7] border-b border-gray-200">
+        <Navbar user={user} openProfile={() => onNavigate && onNavigate("profile")} />
+      </header>
 
-      <main className="max-w-4xl mx-auto px-6 py-8 flex flex-col gap-6">
-        
-        {/* Section Tag Populer */}
-        <div>
-          <h1 className="text-xl font-bold mb-3 text-gray-800">Tag Populer</h1>
-          <div className="flex flex-wrap gap-2">
-            {tags.length > 0 ? (
-              tags.map((item) => (
-                <span 
-                  key={item.id} 
-                  className="bg-[#a50034] text-white px-3.5 py-1 rounded-full text-sm font-bold cursor-pointer hover:bg-[#801427] transition"
-                >
-                  #{item.name}
-                </span>
-              ))
-            ) : (
-              <p className="text-gray-400 text-sm">Tidak ada tag yang sesuai.</p>
-            )}
-          </div>
-        </div>
-
-        {/* Section List Posts (Ukuran Lebih Ringkas) */}
-        <div className="mt-2 flex flex-col gap-4">
-          {loading ? (
-            <p className="text-gray-500 font-semibold text-center py-6">Memuat postingan...</p>
-          ) : posts.length > 0 ? (
-            posts.map((post) => (
-              <div 
-                key={post.id} 
-                className="w-full bg-[#fdfaf8] cursor-pointer border-2 border-[#a50034] rounded-[24px] p-4 shadow-sm hover:shadow-md hover:scale-102 transition flex flex-col gap-2"
-              >
-                <div className="flex justify-between items-center">
-                  <h2 className="text-base font-bold text-gray-900">{post.title}</h2>
-                  {post.tag && (
-                    <span className="bg-[#a50034] text-white text-xs px-2.5 py-0.5 rounded-full font-semibold">
-                      {post.tag.startsWith('#') ? post.tag : `#${post.tag}`}
-                    </span>
-                  )}
-                </div>
-                
-                <p className="text-gray-600 text-sm line-clamp-2">{post.description}</p>
-
-                {post.image_url && (
-                  <div className="w-xs h-48 sm:h-56 mt-1 overflow-hidden rounded-xl border border-gray-200">
-                    <img 
-                      src={post.image_url} 
-                      alt={post.title} 
-                      className="min-w-xs h-full object-cover"
-                    />
-                  </div>
-                )}
-              </div>
-            ))
-          ) : (
-            <div className="text-center py-12 text-gray-400 font-medium">
-              Belum ada postingan komplain untuk pencarian ini.
-            </div>
+      <main className="flex-1 max-w-3xl mx-auto w-full pt-24 pb-12 px-4">
+        {/* Header Tag Populer / Active Tag */}
+        <div className="mb-6">
+          <h2 className="text-gray-700 font-semibold mb-2">Tag Populer</h2>
+          {queryTag && (
+            <span className="inline-block bg-[#8B0021] text-white px-4 py-1.5 rounded-full text-sm font-medium">
+              #{queryTag}
+            </span>
           )}
         </div>
 
+        {/* Content List */}
+        {loading ? (
+          <div className="text-center py-10 text-gray-500">Mencari postingan...</div>
+        ) : posts.length === 0 ? (
+          <div className="text-center py-10 text-gray-500">
+            Tidak ada postingan dengan tag #{queryTag}
+          </div>
+        ) : (
+          <div className="flex flex-col gap-4">
+            {posts.map((post) => {
+              let attachmentCount = 0;
+              if (Array.isArray(post.image_url)) {
+                attachmentCount = post.image_url.length;
+              } else if (post.image_url) {
+                attachmentCount = 1;
+              }
+
+              return (
+                <div
+                  key={post.id}
+                  className="bg-white border-2 border-[#8B0021]/30 rounded-2xl p-5 shadow-sm hover:border-[#8B0021] transition-all"
+                >
+                  {/* Header User + Tag Sebelah Kanan */}
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-3">
+                      <img
+                        src={post.users?.avatar_url || "https://via.placeholder.com/40"}
+                        alt={post.users?.username || "User"}
+                        className="w-10 h-10 rounded-full object-cover border border-gray-200"
+                      />
+                      <h4 className="font-bold text-gray-900 text-sm">
+                        {post.users?.username || "Anonim"}
+                      </h4>
+                    </div>
+
+                    {/* Tag Posisi Kanan */}
+                    {post.tag && (
+                      <span className="inline-block bg-[#8B0021]/10 text-[#8B0021] text-xs font-semibold px-2.5 py-1 rounded-full">
+                        #{post.tag}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Body Deskripsi */}
+                  <p className="text-gray-800 text-sm leading-relaxed pl-[52px]">
+                    {post.description}
+                  </p>
+
+                  {/* Attachment Index Indicator (W-FIT Pill Badge) */}
+                  {attachmentCount > 0 && (
+                    <div className="mt-3 pt-2 pl-[52px]">
+                      <div className="inline-flex items-center gap-1.5 bg-[#8B0021] text-white text-xs font-medium px-3 py-1.5 rounded-lg w-fit">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-4 w-4"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"
+                          />
+                        </svg>
+                        <span className="font-bold">
+                          {attachmentCount} {attachmentCount === 1 ? "Attachment" : "Attachments"}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
       </main>
     </div>
   );

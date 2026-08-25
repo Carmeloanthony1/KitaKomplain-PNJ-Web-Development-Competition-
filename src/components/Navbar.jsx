@@ -35,7 +35,7 @@ export default function Navbar({ openProfile, user }) {
           >
             <input 
               type="text" 
-              placeholder="Cari komplain atau tag..." 
+              placeholder="Cari topik" 
               value={search}
               onChange={(e) => setSearch(e.target.value)} 
               className="w-full bg-transparent text-black placeholder-[#a50034]/60 text-center font-semibold focus:outline-none text-base"
