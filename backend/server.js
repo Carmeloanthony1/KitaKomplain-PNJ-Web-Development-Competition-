@@ -160,21 +160,55 @@ app.get('/api/tags', async (req, res) => {
     try {
         const { query } = req.query;
 
-        const tags = await db.tag.findMany({
-            where: {
-                name: {
-                    contains: query || "",
-                    mode: 'insensitive',
-                },
-            },
-        });
+        // Ambil kolom 'tag' dari tabel 'posts'
+        let supabase_query = supabase.from('posts').select('tag');
 
-        res.json(tags);
-    } catch (error){
-        res.status(500).json({message: "Gagal mengambil data tag"});
+        if (query && query.trim() !== '') {
+            // Filter pencarian pada kolom tag
+            supabase_query = supabase_query.ilike('tag', `%${query.trim()}%`);
+        }
+
+        const { data, error } = await supabase_query;
+
+        if (error) {
+            throw error;
+        }
+
+        const tags = data
+            .map(item => item.tag)
+            .filter(tag => tag !== null && tag !== "")
+            .map((tagName, index) => ({ id: index + 1, name: tagName.replace('#', '') })); // buang tanda # kalau ada
+
+        return res.status(200).json(tags);
+
+    } catch (error) {
+        console.error("Error fetching tags:", error.message);
+        return res.status(500).json({ message: "Gagal mengambil data tag" });
     }
 });
 
+app.get('/api/posts', async (req, res) => {
+    try {
+        const { query } = req.query;
+        let supabase_query = supabase.from('posts').select('*').order('created_at', {ascending: false});
+
+        if(query && query.trim() !== ''){
+            const search_term = `%${query.trim()}%`;
+            supabase_query = supabase_query.or(`title.ilike.${search_term},description.ilike.${search_term},tag.ilike.${search_term}`);
+        }
+
+        const {data:posts, error} = await supabase_query;
+        
+        if (error) {
+            console.error("Supabase error /posts:", error);
+            return res.status(400).json({ message: error.message });
+        }        
+        return res.status(200).json(posts || []);
+    } catch (error) {
+        console.error("Error fetching posts:", error.message);
+        return res.status(500).json({message: "Gagal mengambil data postingan"});
+    }
+})
 app.post('/api/reports', verifytoken, async (req, res) =>
 {
     const { category, details } = req.body;
