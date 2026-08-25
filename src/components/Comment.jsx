@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient";
 import Comment_detail from "./Comment_detail";
 
-export default function CommentSection({ initialComments = [], onCommentAdded, postId, postOwnerId}) {
+export default function CommentSection({ initialComments = [], onCommentAdded, postId, postOwnerId }) {
   const [commentList, setCommentList] = useState(initialComments);
   const [inputText, setInputText] = useState("");
   const [visibleCount, setVisibleCount] = useState(3);
@@ -12,65 +12,57 @@ export default function CommentSection({ initialComments = [], onCommentAdded, p
     e.preventDefault();
     if (!inputText.trim()) return;
 
-    if (postId && currentUserId) {
-      setLoading(true);
-      const { error } = await supabase.from("comments").insert([
-        {
-          post_id: postId,
-          user_id: currentUserId,
-          content: inputText,
-        },
-      ]);
-      setLoading(false);
+    const currentUserId = localStorage.getItem("user_id");
 
-      if (!error) {
-        setInputText("");
-        fetchComments(); // Reload komentar biar avatar & nama user yang baru muncul
+    if (!currentUserId) {
+      alert("Silakan login untuk memberikan komentar!");
+      return;
+    }
 
-        if(onCommentAdded){
-          onCommentAdded();
-        }
-      }
+    setLoading(true);
 
-    } else {
-      // Fallback lokal jika belum pakai DB
-      const newComment = {
-        id: Date.now(),
-        username: "Kamu",
+    // UI Update
+    const newComment = {
+      id: Date.now(),
+      username: "Kamu", 
+      content: inputText,
+    };
+    setCommentList([newComment, ...commentList]);
+    setInputText(""); // Clear input box
+
+    // Comment to supabase
+    const { error: commentError } = await supabase.from("comments").insert([
+      {
+        post_id: postId,
+        user_id: currentUserId,
         content: inputText,
-      };
-      setCommentList([newComment, ...commentList]);
-      setInputText("");
+      },
+    ]);
 
-      const { error: commentError } = await supabase
-        .from("comments")
-        .insert([
-          {
-            post_id: postId,
-            user_id: currentUserId,
-            content: inputText
-          }
-        ]);
+    if (commentError) {
+      console.error("Gagal mengirim komentar:", commentError);
+      setLoading(false);
+      return;
+    }
 
-      if (commentError) 
-      {
-        console.error("Gagal mengirim komentar:", commentError);
-        return;
-      }
+    // Create notif if commenting on people's post
+    if (postOwnerId !== currentUserId) {
+      await supabase.from("notifications").insert([
+        {
+          user_id: postOwnerId,     // The owner of the post
+          actor_id: currentUserId,  // The commenter
+          post_id: postId,
+          type: "comment",
+          is_read: false
+        }
+      ]);
+    }
 
-      // Create Notification (If commenting on someone else's post)
-      if (postOwnerId !== currentUserId)
-      {
-        await supabase.from("notifications").insert([
-          {
-            user_id: postOwnerId,     // The owner of the post
-            actor_id: currentUserId,  // The commenter
-            post_id: postId,
-            type: "comment",
-            is_read: false
-          }
-        ]);
-      }
+    if (onCommentAdded) {
+      onCommentAdded();
+    }
+
+    setLoading(false);
   };
 
   const handleLoadMore = () => setVisibleCount((prev) => prev + 3);
