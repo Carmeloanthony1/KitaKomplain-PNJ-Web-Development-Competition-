@@ -24,6 +24,7 @@ export default function Home({ user, onLogout, onNavigate }) {
           title,
           description,
           image_url,
+          tag,
           created_at,
           user_id,
           users (
