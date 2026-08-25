@@ -11,7 +11,7 @@ export default function Home({ user, onLogout, onNavigate }) {
   const [loading, setLoading] = useState(true);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
 
-  // Ambil ID user yang lagi login (masih dipakai untuk keperluan lain, misal cek "ini post kamu")
+  // Ambil ID user yang lagi login
   const currentUserId = user?.id || localStorage.getItem("user_id");
 
   useEffect(() => {
@@ -50,7 +50,8 @@ export default function Home({ user, onLogout, onNavigate }) {
 
   return (
     <div className="min-h-screen bg-[#f7f7f7] flex flex-col">
-      <header className="fixed top-0 left-0 right-0 z-30 bg-[#f7f7f7] border-b border-gray-200 px-8 py-3">
+      {/* 1. Header dibuat w-full p-0 tanpa px-8 biar Navbar narik mentok ujung ke ujung */}
+      <header className="fixed top-0 left-0 right-0 z-30 bg-white border-b border-gray-200">
         <Navbar 
           user={user} 
           openProfile={() => onNavigate && onNavigate("profile")} 
@@ -58,15 +59,16 @@ export default function Home({ user, onLogout, onNavigate }) {
         />
       </header>
 
-      <div className="flex flex-1 pt-20 px-8 gap-8 w-full justify-between items-start">
-        <aside className="min-w-xs flex-shrink-0 sticky top-24 z-50">
+      {/* 2. Container body disesuaikan padding-nya */}
+      <div className="flex flex-1 pt-24 px-6 md:px-10 gap-8 w-full justify-between items-start">
+        <aside className="min-w-xs flex-shrink-0 sticky top-24 z-20">
           <Sidebar_Kiri 
             onNavigate={onNavigate}
             openNotifications={() => setIsNotificationOpen(true)}
           />
         </aside>
 
-        <main className="flex-1 max-w-3xl mx-auto z-10 flex flex-col ">
+        <main className="flex-1 max-w-3xl mx-auto z-10 flex flex-col">
           {posts.length === 0 ? (
             <div className="text-center text-gray-500 py-10">
               Belum ada postingan.
@@ -81,11 +83,10 @@ export default function Home({ user, onLogout, onNavigate }) {
         </aside>
       </div>
 
-    <Notification
-      isOpen={isNotificationOpen}
-      setIsOpen={setIsNotificationOpen}
-    />
-
+      <Notification
+        isOpen={isNotificationOpen}
+        setIsOpen={setIsNotificationOpen}
+      />
     </div>
   );
 }
