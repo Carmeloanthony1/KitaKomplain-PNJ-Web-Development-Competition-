@@ -12,14 +12,24 @@ export default function Navbar({ openProfile, user }) {
     setSearch_term(quert_tag);
   }, [quert_tag]);
 
-  // Handler Submit Form (Key Enter / Click Icon)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const clean_keyword = search_term.replace("#", "").trim().toLowerCase(); 
+      if(clean_keyword !== "") {
+        if(clean_keyword !== quert_tag){
+          navigate(`/search?tag=${clean_keyword}`, { replace: true });
+        }
+      } else {
+        if(quert_tag !== ""){
+          navigate(`/search`, {replace: true});
+        }
+      }
+    }, 100);
+    return () => clearTimeout(timer);
+  }, [search_term, navigate, quert_tag]);
+
   const handleSearch = (e) => {
     if (e) e.preventDefault(); // Mencegah reload halaman
-    
-    if (search_term.trim()) {
-      const clean_keyword = search_term.replace("#", "").trim().toLowerCase();
-      navigate(`/search?tag=${clean_keyword}`);
-    }
   };
 
   return (
