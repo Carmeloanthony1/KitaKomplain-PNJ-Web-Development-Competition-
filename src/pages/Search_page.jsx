@@ -59,7 +59,7 @@ export default function SearchPage({ user, onNavigate }) {
         <div className="mb-6">
           <h2 className="text-gray-700 font-semibold mb-2">Tag Populer</h2>
           {queryTag && (
-            <span className="inline-block bg-[#8B0021] text-white px-4 py-1.5 rounded-full text-sm font-medium">
+            <span className="inline-block bg-[#8B0021] text-white px-4 py-1.5 rounded-full text-sm font-bold">
               #{queryTag}
             </span>
           )}
