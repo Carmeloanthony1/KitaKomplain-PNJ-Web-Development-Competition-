@@ -1,13 +1,13 @@
 // CommentSection.jsx
 import { useState } from "react";
 
-export default function CommentSection({ comments = [] }) {
+export default function CommentSection({ comments = [], postId, postOwnerId}) {
   const [commentList, setCommentList] = useState(comments);
   const [inputText, setInputText] = useState("");
   const [visibleCount, setVisibleCount] = useState(2);
   const [liked_comment, setLiked_comment] = useState({});
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!inputText.trim()) return;
 
@@ -19,6 +19,36 @@ export default function CommentSection({ comments = [] }) {
 
     setCommentList([newComment, ...commentList]);
     setInputText("");
+
+    const { error: commentError } = await supabase
+      .from("comments")
+      .insert([
+        {
+          post_id: postId,
+          user_id: currentUserId,
+          content: inputText
+        }
+      ]);
+
+    if (commentError) 
+    {
+      console.error("Gagal mengirim komentar:", commentError);
+      return;
+    }
+
+    // Create Notification (If commenting on someone else's post)
+    if (postOwnerId !== currentUserId)
+    {
+      await supabase.from("notifications").insert([
+        {
+          user_id: postOwnerId,     // The owner of the post
+          actor_id: currentUserId,  // The commenter
+          post_id: postId,
+          type: "comment",
+          is_read: false
+        }
+      ]);
+    }
   };
 
   const handleLoadMore = () => {

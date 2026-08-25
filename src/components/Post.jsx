@@ -63,6 +63,13 @@ export default function Post({ post }) {
       if (!error) {
         setIsLiked(false);
         fetchLikes();
+
+        await supabase
+          .from("notifications")
+          .delete()
+          .eq("post_id", post.id)
+          .eq("actor_id", currentUserId)
+          .eq("type", "like");
       }
     } else {
       const { error } = await supabase.from("likes").insert([
@@ -75,6 +82,19 @@ export default function Post({ post }) {
       if (!error) {
         setIsLiked(true);
         fetchLikes();
+
+        if (post.user_id !== currentUserId)
+        {
+          await supabase.from("notifications").insert([
+            {
+              user_id: post.user_id, // The post creator
+              actor_id: currentUserId, // The liker
+              post_id: post.id,
+              type: "like",
+              is_read: false
+            }
+          ]);
+        }
       }
     }
   };
@@ -187,7 +207,17 @@ export default function Post({ post }) {
               </button>
             </div>
 
-            {isCommentOpen && <CommentSection comments={post.comments || []} />}
+            {/*isCommentOpen && <CommentSection comments={post.comments || []} />'*/}
+
+            {isCommentOpen && 
+            (
+              <CommentSection 
+                comments={post.comments || []} 
+                postId={post.id} 
+                postOwnerId={post.user_id} 
+              />
+            )}
+
           </div>
         </div>
       </div>

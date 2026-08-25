@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function Navbar({ openProfile, user}) {
+export default function Navbar({ openProfile, user, openNotifications}) {
   const [search, setSearch] = useState("");
   const navigate = useNavigate();
 

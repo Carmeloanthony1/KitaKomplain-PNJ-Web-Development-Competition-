@@ -61,10 +61,12 @@ export default function App() {
          element={user ? <History user={user} /> : <Navigate to="/login" />}
       />
 
+      {/*
       <Route
         path="/Notification"
          element={user ? <Notification user={user} /> : <Navigate to="/login" />}
       />
+      */}
 
       <Route
         path="/report"
