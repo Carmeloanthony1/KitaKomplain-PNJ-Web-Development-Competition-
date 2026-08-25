@@ -48,6 +48,16 @@ export default function SearchPage({ user, onNavigate }) {
     fetchSearchPosts();
   }, [queryTag]);
 
+  useEffect(() => {
+    const search_input = document.querySelector('input[placeholder="Cari topik"]');
+
+    if(search_input){
+      search_input.focus();
+      const valLength = search_input.value.length;
+      search_input.setSelectionRange(valLength, valLength);
+    }
+  }, []);
+
   return (
     <div className="w-full min-h-screen bg-[#f7f7f7] flex flex-col overflow-x-hidden">
       <header className="fixed top-0 left-0 right-0 z-30 bg-[#f7f7f7] border-b border-gray-200">
