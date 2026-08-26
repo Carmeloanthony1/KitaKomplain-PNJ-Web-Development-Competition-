@@ -5,12 +5,14 @@ import Sidebar_Kiri from "../components/Sidebar_Kiri";
 import Post from "../components/Post";
 import Most_Polling from "../components/Most_Polling";
 import Notification from "../components/Notification";
+import UserProfileModal from "../components/Other_profile";
 
 export default function Home({ user, onLogout, onNavigate }) {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
-
+  const [selecteduser, setSelecteduser] = useState(null);
+  const [is_otherprofile_open, setIs_otherprofile_open] = useState(false);
   // Ambil ID user yang lagi login
   const currentUserId = user?.id || localStorage.getItem("user_id");
 
@@ -46,6 +48,18 @@ export default function Home({ user, onLogout, onNavigate }) {
     fetchAllPosts();
   }, []);
 
+  const handleUserClick = (targetUserId) => {
+      const currentUserId = user?.id || localStorage.getItem("user_id");
+
+      if (targetUserId === currentUserId) {
+        if (onNavigate) onNavigate("profile");
+      } else {
+        setSelecteduser(targetUserId);
+        setIs_otherprofile_open(true);
+      }
+  };
+
+
   if (loading) return <div className="p-10 text-center">Loading posts...</div>;
 
   return (
@@ -74,7 +88,9 @@ export default function Home({ user, onLogout, onNavigate }) {
               Belum ada postingan.
             </div>
           ) : (
-            posts.map((postData) => <Post key={postData.id} post={postData} />)
+            posts.map((postData) => 
+            <Post key={postData.id} post={postData} 
+              onUserClick = {handleUserClick}/>)
           )}
         </main>
 
@@ -86,6 +102,12 @@ export default function Home({ user, onLogout, onNavigate }) {
       <Notification
         isOpen={isNotificationOpen}
         setIsOpen={setIsNotificationOpen}
+      />
+
+      <UserProfileModal
+        userId={selecteduser}
+        isOpen={is_otherprofile_open}
+        onClose={() => setIs_otherprofile_open(false)}
       />
     </div>
   );

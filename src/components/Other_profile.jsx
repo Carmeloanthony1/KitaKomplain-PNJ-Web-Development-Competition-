@@ -1,178 +1,116 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
+import Post from "./Post";
 
-// Helper Sanitasi Tag
-    export const filter_tag = (raw_input) => {
-    if (typeof raw_input === "string") {
-        // Hapus semua spasi dan karakter non-alphanumeric
-        const clean = raw_input.replace(/[^a-zA-Z0-9]/g, "").toLowerCase().trim();
-        return clean;
+export default function UserProfileModal({ userId, isOpen, onClose }) {
+  const [targetUser, setTargetUser] = useState(null);
+  const [userPosts, setUserPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!isOpen || !userId) return;
+
+    async function fetchUserData() {
+      setLoading(true);
+
+      // 1. Fetch data profil user target
+      const { data: userData } = await supabase
+        .from("users")
+        .select("id, username, avatar_url")
+        .eq("id", userId)
+        .single();
+
+      setTargetUser(userData);
+
+      // 2. Fetch postingan milik user target ini
+      const { data: postsData } = await supabase
+        .from("posts")
+        .select(`
+          id,
+          description,
+          image_url,
+          tag,
+          created_at,
+          user_id,
+          users (
+            username,
+            avatar_url
+          )
+        `)
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false });
+
+      setUserPosts(postsData || []);
+      setLoading(false);
     }
-    return "";
-    };
 
-    // Komponen Utama (Named Export & Default Export disatukan)
-    export function NewPost() {
-    const navigate = useNavigate();
+    fetchUserData();
+  }, [userId, isOpen]);
 
-    const [description, setDescription] = useState("");
-    const [tag, setTag] = useState("");
-    const [image, setImage] = useState(null);
-    const [preview, setPreview] = useState(null);
-    const [loading, setLoading] = useState(false);
+  if (!isOpen) return null;
 
-    const userId = localStorage.getItem("user_id");
-
-    const handleImageChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-        setImage(file);
-        setPreview(URL.createObjectURL(file));
-        }
-    };
-
-    const handleRemoveImage = () => {
-        setImage(null);
-        setPreview(null);
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-
-        if (!description.trim() || !tag.trim()) {
-            alert("tag dan deskripsi wajib diisi!");
-            return;
-        }
-
-        if (!userId) {
-            alert("Silakan login terlebih dahulu!");
-            return;
-        }
-
-        setLoading(true);
-
-        try {
-            // 1. DEKLARASIKAN VARIABEL imageURL DI SINI BIAR BISA DIAKSES OLEH SUPABASE INSERT
-            let imageURL = null; 
-
-            if (image) {
-            const fileEXT = image.name.split(".").pop();
-            const filename = `${userId}_${Date.now()}.${fileEXT}`;
-            const filepath = `posts/${filename}`;
-
-            const { error: uploadError } = await supabase.storage
-                .from("posts")
-                .upload(filepath, image);
-
-            if (uploadError) throw uploadError;
-
-            const { data: url_data } = supabase.storage
-                .from("posts")
-                .getPublicUrl(filepath);
-
-            // Isi nilainya jika upload gambar berhasil
-            imageURL = url_data.publicUrl; 
-            }
-
-            const cleanedTag = filter_tag(tag);
-
-            // 2. MASUKKAN VARIABEL imageURL KE PERINTAH INSERT
-            const { error: insert_error } = await supabase.from("posts").insert([
-            {
-                user_id: userId,
-                description: description,
-                tag: cleanedTag,
-                image_url: imageURL, // Jangan sampai typo jadi image_url: image_url
-            },
-            ]);
-
-            if (insert_error) throw insert_error;
-            alert("Postingan berhasil dibuat!");
-
-            // Reset Form & Navigate
-            setDescription("");
-            setTag("");
-            setImage(null);
-            setPreview(null);
-
-            navigate("/home");
-        } catch (error) {
-            console.error("Gagal membuat post:", error.message);
-            alert("Gagal mengirim postingan: " + error.message);
-        } finally {
-            setLoading(false);
-        }
-    };
   return (
-    <div className="flex">
-      <div className="flex flex-col flex-1">
-        <form onSubmit={handleSubmit} className="mt-4 w-full bg-white rounded-lg shadow p-6">
-          <h2 className="text-xl font-bold mb-4">Tuliskan pengalaman anda</h2>
-
-          {/* Input Tag */}
-          <input
-            type="text"
-            value={tag}
-            onChange={(e) => setTag(e.target.value)}
-            placeholder="Tambahkan tag/topik"
-            className="w-full mt-3 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-
-          {/* Input Description */}
-          <textarea
-            placeholder="Apa yang ingin kamu bagikan?"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            className="w-full mt-3 h-32 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-
-          {/* Input Gambar */}
-          <div className="mt-3">
-            <label className="flex items-center gap-2 cursor-pointer text-blue-500 hover:text-blue-600 w-fit">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
-              </svg>
-              <span>Tambahkan gambar</span>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-                className="hidden"
-              />
-            </label>
-          </div>
-
-          {/* Preview Gambar */}
-          {preview && (
-            <div className="relative mt-3 w-fit">
-              <img
-                src={preview}
-                alt="preview"
-                className="max-h-64 rounded-lg object-cover"
-              />
-              <button
-                type="button"
-                onClick={handleRemoveImage}
-                className="absolute top-1 right-1 bg-black/60 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-black/80"
-              >
-                ×
-              </button>
-            </div>
-          )}
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="mt-4 bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-800 transition-colors duration-150 cursor-pointer"
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4">
+      {/* Box Modal Profil */}
+      <div className="bg-[#f7f7f7] border-2 border-[#a50034] rounded-2xl w-full max-w-2xl max-h-[85vh] flex flex-col overflow-hidden shadow-2xl relative">
+        
+        {/* Header Modal & Tombol Close */}
+        <div className="bg-white px-6 py-4 border-b border-gray-200 flex justify-between items-center sticky top-0 z-10">
+          <h2 className="text-xl font-bold text-[#a50034]">Profil Pengguna</h2>
+          <button 
+            onClick={onClose}
+            className="text-gray-500 hover:text-[#a50034] font-bold text-xl transition"
           >
-            {loading ? "Mengirim..." : "Posting"}
+            ✕
           </button>
-        </form>
+        </div>
+
+        {/* Isi Content Modal (Scrollable) */}
+        <div className="p-6 overflow-y-auto space-y-6">
+          {loading ? (
+            <div className="text-center py-10 font-semibold text-gray-500">
+              Memuat profil...
+            </div>
+          ) : (
+            <>
+              {/* Header Info User */}
+              <div className="bg-white border-2 border-[#a50034] rounded-2xl p-6 flex items-center justify-center gap-5 shadow-xs">
+                <img 
+                  src={targetUser?.avatar_url || "/assets/Dummy_photo.png"} 
+                  alt="Avatar" 
+                  className="w-20 h-20 rounded-full object-cover border-4 border-[#a50034] bg-white"
+                />
+                <div>
+                  <h3 className="text-2xl font-black text-[#a50034]">
+                    @{targetUser?.username || "Pengguna"}
+                  </h3>
+                  <p className="text-gray-600 text-sm mt-1">
+                    Total Komplain: <span className="font-bold text-gray-800">{userPosts.length}</span> Post
+                  </p>
+                </div>
+              </div>
+
+              {/* Feed Komplain milik User */}
+              <div>
+                <h4 className="text-lg flex justify-center font-bold text-gray-800 border-b border-gray-300 pb-2">
+                  Riwayat Komplain
+                </h4>
+
+                {userPosts.length === 0 ? (
+                  <div className="text-center text-gray-500 bg-white rounded-xl border border-gray-200">
+                    Pengguna ini belum pernah membuat postingan.
+                  </div>
+                ) : (
+                  userPosts.map((postData) => (
+                    <Post key={postData.id} post={postData} />
+                  ))
+                )}
+              </div>
+            </>
+          )}
+        </div>
+
       </div>
     </div>
   );
 }
-
-// Menambahkan default export sebagai cadangan
-export default NewPost;

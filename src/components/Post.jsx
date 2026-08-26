@@ -5,7 +5,7 @@ import { supabase } from "../supabaseClient";
 import Edit_post from "./edit_post";
 import { useNavigate } from "react-router-dom";
 
-export default function Post({ post }) {
+export default function Post({ post, onUserClick }) {
   const navigate = useNavigate();
   
   // Likes State
@@ -45,9 +45,6 @@ export default function Post({ post }) {
       tag_list = tag_mentah.split(",");
     }
   }
-
-  // Cek data tag di DevTools Console (F12)
-  console.log(`[Post ID: ${post.id}] Tag Raw:`, tag_mentah, "Parsed Tag List:", tag_list);
 
   const fetchLikes = async () => {
     const { data, error } = await supabase
@@ -122,12 +119,11 @@ export default function Post({ post }) {
         setIsLiked(true);
         fetchLikes();
 
-        if (post.user_id !== currentUserId)
-        {
+        if (post.user_id !== currentUserId) {
           await supabase.from("notifications").insert([
             {
-              user_id: post.user_id, // The post creator
-              actor_id: currentUserId, // The liker
+              user_id: post.user_id,
+              actor_id: currentUserId,
               post_id: post.id,
               type: "like",
               is_read: false
@@ -158,13 +154,16 @@ export default function Post({ post }) {
   };
 
   return (
-    <div className="min-w-2xl w-full bg-slate-50/70 p-4 rounded-2xl flex flex-col gap-4">
+    <div className="max-w-2xl w-full bg-slate-50/70 p-4 rounded-2xl flex flex-col gap-4">
       <div className="flex flex-col gap-3 p-4 border-4 border-[#a50034]/50 rounded-lg bg-white shadow-xs">
         <div className="flex items-start gap-3">
+          
+          {/* AVATAR DENGAN HANDLER KLIK PROFIL */}
           <img
             src={avatar}
             alt={username}
-            className="w-10 h-10 mt-1 rounded-full object-cover flex-shrink-0"
+            onClick={() => onUserClick && onUserClick(post.user_id)}
+            className="w-10 h-10 mt-1 rounded-full object-cover flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity"
           />
 
           <div className="flex flex-col gap-1 flex-1 min-w-0">
@@ -172,7 +171,13 @@ export default function Post({ post }) {
               
               {/* HEADER NAMA USER + LIST TAGS */}
               <div className="flex flex-col">
-                <span className="font-bold text-gray-800">{username}</span>
+                {/* USERNAME DENGAN HANDLER KLIK PROFIL */}
+                <span 
+                  onClick={() => onUserClick && onUserClick(post.user_id)}
+                  className="font-bold text-gray-800 cursor-pointer hover:underline hover:text-[#a50034] transition-colors w-fit"
+                >
+                  {username}
+                </span>
                 
                 {/* RENDER TAGS */}
                 {tag_list.length > 0 && (
@@ -354,10 +359,7 @@ export default function Post({ post }) {
               </button>
             </div>
 
-            {/*isCommentOpen && <CommentSection comments={post.comments || []} />'*/}
-
-            {isCommentOpen && 
-            (
+            {isCommentOpen && (
               <CommentSection 
                 comments={post.comments || []} 
                 postId={post.id} 
@@ -382,6 +384,7 @@ export default function Post({ post }) {
         />
       )}
 
+      {/* MODAL LIST LIKE (JUGA DIPASANGKAN KLIK PROFIL BILA DIPERLUKAN) */}
       {showLikers && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white p-5 rounded-lg max-w-sm w-full shadow-lg">
@@ -391,14 +394,21 @@ export default function Post({ post }) {
               </h3>
               <button
                 onClick={() => setShowLikers(false)}
-                className="text-gray-500 hover:text-black font-bold"
+                className="text-gray-500 hover:text-black font-bold cursor-pointer"
               >
                 ✕
               </button>
             </div>
             <div className="max-h-60 overflow-y-auto flex flex-col gap-3">
               {likes.map((likeItem) => (
-                <div key={likeItem.id} className="flex items-center gap-3">
+                <div 
+                  key={likeItem.id} 
+                  onClick={() => {
+                    setShowLikers(false);
+                    if (onUserClick) onUserClick(likeItem.user_id);
+                  }}
+                  className="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-1.5 rounded-lg transition-colors"
+                >
                   <img
                     src={likeItem.users?.avatar_url || "/default-avatar.png"}
                     alt="avatar"
