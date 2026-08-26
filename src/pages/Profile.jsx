@@ -14,7 +14,7 @@ export default function Profile() {
 
   // State Data
   const [posts, setPosts] = useState([]);
-  const [commentsCount, setCommentsCount] = useState(0);
+  const [user_comment, setUser_comment] = useState([]);
   const [pollsCount, setPollsCount] = useState(0);
 
   // State Tab & Edit
@@ -24,8 +24,6 @@ export default function Profile() {
   const [tempUsername, setTempUsername] = useState("");
   const [tempBio, setTempBio] = useState("");
 
-  const isDark = localStorage.getItem("theme") === "dark";
-  
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
     if(savedTheme === "dark"){
@@ -44,15 +42,15 @@ export default function Profile() {
     async function fetchUserData() {
       setLoading(true);
 
-      // Fetch Profile User
-      const { data, error } = await supabase
+      // 1. Fetch Profile User
+      const { data, error: userError } = await supabase
         .from("users")
         .select("username, bio, avatar_url, created_at")
         .eq("id", userId)
         .single();
 
-      if (error) {
-        console.error("Gagal mengambil data user: ", error.message);
+      if (userError) {
+        console.error("Gagal mengambil data user: ", userError.message);
       } else if (data) {
         setUsername(data.username || "");
         setBio(data.bio || "Belum ada deskripsi");
@@ -61,7 +59,7 @@ export default function Profile() {
         setTempBio(data.bio || "");
       }
 
-      // Fetch Post User
+      // 2. Fetch Post User
       const { data: userPosts, error: postError } = await supabase
         .from("posts")
         .select("*")
@@ -71,6 +69,19 @@ export default function Profile() {
         console.error("Gagal mengambil post: ", postError.message);
       } else if (userPosts) {
         setPosts(userPosts);
+      }
+
+      // 3. Fetch Comments User
+      const { data: commentsData, error: commentError } = await supabase
+        .from("comments")
+        .select(`id, content, created_at, post_id, posts ( description, tag )`)
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false });
+
+      if (commentError) {
+        console.error("Gagal mengambil komentar: ", commentError.message);
+      } else if (commentsData) {
+        setUser_comment(commentsData);
       }
 
       setLoading(false);
@@ -254,7 +265,7 @@ export default function Profile() {
                 <span className="text-gray-500 dark:text-gray-900 font-medium">Posts</span>
               </div>
               <div>
-                <span className="font-bold text-gray-900">{commentsCount}</span>{" "}
+                <span className="font-bold text-gray-900">{user_comment.length}</span>{" "}
                 <span className="text-gray-500 dark:text-gray-900 font-medium">Comments</span>
               </div>
               <div>
@@ -341,7 +352,7 @@ export default function Profile() {
                     key={item.id}
                     className="bg-white dark:bg-[#f1ece1] rounded-xl shadow-sm border border-gray-100 p-2 flex flex-col gap-3"
                   >
-                    <div className="h-48 w-full overflow-hidden rounded-lg flex justify-center items-center">
+                    <div className="h-48 w-full overflow-hidden rounded-lg flex justify-center items-center bg-[#f1ece1]">
                       {item.image_url ? (
                         <img
                           src={item.image_url}
@@ -349,7 +360,6 @@ export default function Profile() {
                           className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                         />
                       ) : ( 
-                        /* Kalau ga ada gambar */
                         <p className="text-[#a50034] font-semibold text-center text-xl line-clamp-4">
                           {`#${item.tag}`}
                         </p>
@@ -360,9 +370,32 @@ export default function Profile() {
               </div>
             ))}
 
-          {activeTab === "comments" && (
-            <p className="text-gray-400 dark:text-[#f1ece1] text-sm font-medium">Belum ada komentar</p>
-          )}
+          {activeTab === "comments" &&
+            (user_comment.length === 0 ? (
+              <p className="text-gray-400 dark:text-[#f1ece1] text-sm font-medium">
+                Belum ada komentar yang dibuat.
+              </p>
+            ) : (
+              <div className="flex flex-col gap-3 w-full">
+                {user_comment.map((item) => (
+                  <div
+                    key={item.id}
+                    className="bg-gray-50 dark:bg-[#292828] border border-gray-200 dark:border-gray-700 rounded-xl p-4 flex flex-col gap-1 text-left"
+                  >
+                    <div className="flex justify-between items-center text-xs text-gray-400 dark:text-gray-400 mb-1">
+                      <span>
+                        Membalas post: <strong className="text-[#a50034] dark:text-[#f1ece1]">{item.posts?.tag || "komplain"}</strong>
+                      </span>
+                      <span>{new Date(item.created_at).toLocaleDateString("id-ID")}</span>
+                    </div>
+
+                    <p className="text-sm font-semibold text-gray-800 dark:text-[#f1ece1]">
+                      "{item.content}"
+                    </p>
+                  </div>
+                ))}
+              </div>
+            ))}
 
           {activeTab === "polling" && (
             <p className="text-gray-400 dark:text-[#f1ece1] text-sm font-medium">Belum ada polling</p>
