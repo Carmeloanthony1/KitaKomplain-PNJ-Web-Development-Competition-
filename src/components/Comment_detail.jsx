@@ -2,45 +2,49 @@ import { useState } from "react";
 
 export default function Comment_detail({ comment }) {
   const [isCommentLiked, setIsCommentLiked] = useState(false);
+  const [isComment_getcomment, setIsCOmment_getcomment] = useState(false);
 
   // Ambil data user dari relasi Supabase (atau fallback jika belum ada)
-  const username = comment.users?.username || comment.username 
-  const avatar = comment.users?.avatar_url || comment.avatar;
-  const content = comment.content || comment.comment_text || comment.text;
+  const username = comment?.users?.username || comment?.username || "Anonim";
+  const avatar = comment?.users?.avatar_url || comment?.avatar;
+  const content = comment?.content || comment?.comment_text || comment?.text || "";
 
   return (
-    <div className="flex gap-3 text-sm">
+    <div className="flex gap-3 text-sm p-2 rounded-xl hover:bg-slate-50 transition-colors">
       {/* Avatar User */}
       {avatar ? (
         <img
           src={avatar}
           alt={username}
-          className="w-8 h-8 rounded-full object-cover flex-shrink-0 mt-0.5"
+          className="w-8 h-8 rounded-full object-cover flex-shrink-0 mt-0.5 border border-gray-200"
         />
       ) : (
-        <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center font-bold text-gray-600 text-xs flex-shrink-0">
+        <div className="w-8 h-8 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center font-bold text-xs flex-shrink-0 border border-gray-300">
           {username[0]?.toUpperCase()}
         </div>
       )}
 
       {/* Content Komentar */}
       <div className="flex flex-col flex-1 gap-1">
-        <span className="font-bold text-xs text-gray-900">{username}</span>
-        <p className="text-xs text-gray-800 leading-relaxed break-words">
+        <span className="font-bold text-xs text-gray-800 hover:underline cursor-pointer w-fit">
+          {username}
+        </span>
+        <p className="text-xs text-gray-700 leading-relaxed break-words">
           {content}
         </p>
 
         {/* Action Buttons */}
-        <div className="flex items-center gap-3 mt-1 text-[11px] text-gray-500 font-medium">
+        <div className="flex items-center gap-3 mt-1 font-medium">
+          {/* Tombol Like Komentar (Awal: Abu-abu -> Klik: Maroon) */}
           <button
             onClick={() => setIsCommentLiked((prev) => !prev)}
-            className="focus:outline-none cursor-pointer flex items-center gap-1"
+            className="focus:outline-none cursor-pointer flex items-center gap-1 group"
           >
             <svg
-              className={`w-4 h-4 transition-transform hover:scale-110 ${
+              className={`w-4 h-4 transition-all group-hover:scale-110 ${
                 isCommentLiked
                   ? "fill-[#a50034] stroke-[#a50034]"
-                  : "fill-none stroke-gray-500 hover:stroke-[#a50034]"
+                  : "fill-none stroke-gray-400 group-hover:stroke-[#a50034]"
               }`}
               viewBox="0 0 24 24"
               strokeWidth="2"
@@ -51,9 +55,13 @@ export default function Comment_detail({ comment }) {
             </svg>
           </button>
 
-          <button className="focus:outline-none cursor-pointer">
+          {/* Tombol Reply / Balas Komentar (Awal: Abu-abu -> Klik/Hover: Maroon) */}
+          <button
+            onClick={() => setIsCOmment_getcomment((prev) => !prev)}
+            className="focus:outline-none cursor-pointer flex items-center gap-1 group"
+          >
             <svg
-              className="w-4 h-4 fill-none stroke-gray-500 hover:scale-110 transition-transform cursor-pointer"
+              className="w-4 h-4 transition-all group-hover:scale-110 fill-gray-400"
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 640 640"
             >
