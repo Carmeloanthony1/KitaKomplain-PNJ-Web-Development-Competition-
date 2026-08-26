@@ -341,12 +341,19 @@ export default function Profile() {
                     key={item.id}
                     className="bg-white dark:bg-[#f1ece1] rounded-xl shadow-sm border border-gray-100 p-2 flex flex-col gap-3"
                   >
-                    <div className="h-48 w-full overflow-hidden rounded-lg">
-                      <img
-                        src={item.image_url || "/assets/Dummy_photo.jpeg"}
-                        alt="Post media"
-                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                      />
+                    <div className="h-48 w-full overflow-hidden rounded-lg flex justify-center items-center">
+                      {item.image_url ? (
+                        <img
+                          src={item.image_url}
+                          alt="Post media"
+                          className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                        />
+                      ) : ( 
+                        /* Kalau ga ada gambar */
+                        <p className="text-[#a50034] font-semibold text-center text-xl line-clamp-4">
+                          {`#${item.tag}`}
+                        </p>
+                      )}
                     </div>
                   </div>
                 ))}
