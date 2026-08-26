@@ -101,7 +101,14 @@ export default function CommentSection({ comments = [], onCommentAdded, postId, 
         {commentList.length > 0 ? (
           commentList
             .slice(0, visibleCount)
-            .map((c) => <Comment_detail key={c.id || Math.random()} comment={c} />)
+            .map((c) => (
+              <Comment_detail
+                key={c.id || Math.random()}
+                comment={c}
+                postId={postId} // <-- DISINI PERBAIKANNYA MAS RUSDI!
+                onCommentAdded={onCommentAdded} // <-- SUPAYA SETELAH BALAS BISA REFRESH
+              />
+            ))
         ) : (
           <p className="text-xs text-gray-400 text-center py-2">
             Belum ada komentar.

@@ -5,9 +5,33 @@ import { supabase } from "../supabaseClient";
 import Edit_post from "./edit_post";
 import { useNavigate } from "react-router-dom";
 
+// Helper function untuk menyusun struktur Pohon (Tree) Komentar & Balasan
+const buildCommentTree = (comments = []) => {
+  const commentMap = {};
+  const tree = [];
+
+  // Inisialisasi map dan siapkan array replies
+  comments.forEach((c) => {
+    commentMap[c.id] = { ...c, replies: [] };
+  });
+
+  // Hubungkan anak (reply) ke induk (parent_id)
+  comments.forEach((c) => {
+    if (c.parent_id) {
+      if (commentMap[c.parent_id]) {
+        commentMap[c.parent_id].replies.push(commentMap[c.id]);
+      }
+    } else {
+      tree.push(commentMap[c.id]);
+    }
+  });
+
+  return tree;
+};
+
 export default function Post({ post, onUserClick }) {
   const navigate = useNavigate();
-  
+
   // Likes State
   const [likes, setLikes] = useState([]);
   const [isLiked, setIsLiked] = useState(false);
@@ -17,7 +41,7 @@ export default function Post({ post, onUserClick }) {
   // Comment State
   const [isCommentOpen, setIsCommentOpen] = useState(false);
   const [commentCount, setCommentCount] = useState(0);
-  const [commentsList, setCommentsList] = useState([]); // State untuk menampung array komentar
+  const [commentsList, setCommentsList] = useState([]); // State array komentar
 
   // Share & Menu State
   const [isshare_open, setIsshare_open] = useState(false);
@@ -60,19 +84,52 @@ export default function Post({ post, onUserClick }) {
     }
   };
 
-  // --- PERBAIKAN FUNGSI FETCH COMMENT ---
   const fetch_comment = async () => {
     const { data, error } = await supabase
       .from("comments")
-      .select(`id, content, created_at, user_id, users ( username, avatar_url)`)
-      .eq("post_id", post.id) // Pakai post.id (BUKAN postId)
+      .select(`
+        id, 
+        content, 
+        created_at, 
+        user_id, 
+        post_id, 
+        parent_id, 
+        users (username, avatar_url)
+      `)
+      .eq("post_id", post.id)
       .order("created_at", { ascending: true });
 
     if (error) {
       console.error("Gagal ambil komentar:", error.message);
-    } else if (data) {
-      setCommentsList(data); // Simpan array komentar ke state
-      setCommentCount(data.length); // Update counter jumlah komentar
+      return;
+    }
+
+    if (data) {
+      // Pisahkan komentar utama (parent_id null) dan semua balasan
+      const mainComments = data.filter((c) => !c.parent_id);
+      const replies = data.filter((c) => c.parent_id);
+
+      // Masukkan SEMUA balasan ke komentar utama tempat ia bernaung (Max 1 level)
+      const structured = mainComments.map((main) => {
+        // Cari semua balasan yang berelasi langsung maupun turunan
+        const findReplies = (parentId) => {
+          let direct = replies.filter((r) => r.parent_id === parentId);
+          let nested = direct.flatMap((r) => findReplies(r.id));
+          return [...direct, ...nested];
+        };
+
+        const allReplies = findReplies(main.id).sort(
+          (a, b) => new Date(a.created_at) - new Date(b.created_at)
+        );
+
+        return {
+          ...main,
+          replies: allReplies,
+        };
+      });
+
+      setCommentsList(structured);
+      setCommentCount(data.length);
     }
   };
 
@@ -169,7 +226,6 @@ export default function Post({ post, onUserClick }) {
     <div className="max-w-2xl w-full bg-slate-50/70 p-4 rounded-2xl flex flex-col gap-4">
       <div className="flex flex-col gap-3 p-4 border-4 border-[#a50034]/50 rounded-lg bg-white shadow-xs">
         <div className="flex items-start gap-3">
-          
           {/* AVATAR */}
           <img
             src={avatar}
@@ -180,25 +236,29 @@ export default function Post({ post, onUserClick }) {
 
           <div className="flex flex-col gap-1 flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap justify-between">
-              
               {/* HEADER NAMA USER + LIST TAGS */}
               <div className="flex flex-col">
-                <span 
+                <span
                   onClick={() => onUserClick && onUserClick(post.user_id)}
                   className="font-bold text-gray-800 cursor-pointer hover:underline hover:text-[#a50034] transition-colors w-fit"
                 >
                   {username}
                 </span>
-                
+
                 {tag_list.length > 0 && (
                   <div className="flex flex-wrap gap-1.5 mt-1">
                     {tag_list.map((tagItem, idx) => {
-                      const cleanTag = String(tagItem).replace(/[^a-zA-Z0-9_]/g, "").toLowerCase().trim();
+                      const cleanTag = String(tagItem)
+                        .replace(/[^a-zA-Z0-9_]/g, "")
+                        .toLowerCase()
+                        .trim();
                       if (!cleanTag) return null;
                       return (
                         <span
                           key={idx}
-                          onClick={() => navigate(`/search?tag=${encodeURIComponent(cleanTag)}`)}
+                          onClick={() =>
+                            navigate(`/search?tag=${encodeURIComponent(cleanTag)}`)
+                          }
                           className="text-[#a50034] bg-[#a50034]/10 hover:bg-[#a50034] hover:text-white px-2 py-0.5 rounded-md font-bold text-xs transition-colors cursor-pointer"
                         >
                           #{cleanTag}
@@ -288,10 +348,13 @@ export default function Post({ post, onUserClick }) {
                     <svg
                       style={{
                         transform: isPop ? "scale(1.3)" : "scale(1)",
-                        transition: "transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
+                        transition:
+                          "transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
                       }}
                       className={`w-9 h-9 ${
-                        isLiked ? "fill-[#a50034] stroke-[#a50034]" : "fill-none stroke-[#a50034]"
+                        isLiked
+                          ? "fill-[#a50034] stroke-[#a50034]"
+                          : "fill-none stroke-[#a50034]"
                       }`}
                       viewBox="0 0 24 24"
                       strokeWidth="2"
@@ -313,7 +376,10 @@ export default function Post({ post, onUserClick }) {
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <button onClick={handleToggleComment} className="focus:outline-none cursor-pointer">
+                  <button
+                    onClick={handleToggleComment}
+                    className="focus:outline-none cursor-pointer"
+                  >
                     <svg
                       className="w-9 h-9 fill-[#a50034] hover:scale-110 transition-transform cursor-pointer"
                       xmlns="http://www.w3.org/2000/svg"
@@ -353,16 +419,15 @@ export default function Post({ post, onUserClick }) {
               </button>
             </div>
 
-            {/* --- PERBAIKAN PROPS COMMENTSECTION --- */}
+            {/* COMMENT SECTION */}
             {isCommentOpen && (
-              <CommentSection 
-                comments={commentsList} 
-                postId={post.id} 
+              <CommentSection
+                comments={commentsList}
+                postId={post.id}
                 postOwnerId={post.user_id}
-                onCommentAdded={fetch_comment} 
+                onCommentAdded={fetch_comment}
               />
             )}
-            
           </div>
         </div>
       </div>
@@ -396,8 +461,8 @@ export default function Post({ post, onUserClick }) {
             </div>
             <div className="max-h-60 overflow-y-auto flex flex-col gap-3">
               {likes.map((likeItem) => (
-                <div 
-                  key={likeItem.id} 
+                <div
+                  key={likeItem.id}
                   onClick={() => {
                     setShowLikers(false);
                     if (onUserClick) onUserClick(likeItem.user_id);
