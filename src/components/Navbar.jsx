@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
-export default function Navbar({ openProfile, user, openNotifications }) {
+export default function Navbar({ user, openNotifications }) {
   const [search_params] = useSearchParams();
   const navigate = useNavigate();
 
@@ -29,7 +29,7 @@ export default function Navbar({ openProfile, user, openNotifications }) {
     return () => clearTimeout(timer);
   }, [search_term, navigate, quert_tag]);
 
-  // Handler Submit Form
+  // Handler Submit Form Search
   const handleSearch = (e) => {
     if (e) e.preventDefault();
   };
@@ -77,7 +77,7 @@ export default function Navbar({ openProfile, user, openNotifications }) {
           </form>
         </div>
 
-        {/* 3. Profile Akun Kanan */}
+        {/* 3. Profile Akun Kanan (Navigasi Langsung ke Profil Sendiri) */}
         <div className="col-span-3 justify-self-end">
           <div 
             onClick={() => navigate('/profile')}

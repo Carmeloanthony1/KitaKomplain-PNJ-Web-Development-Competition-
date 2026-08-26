@@ -54,7 +54,7 @@ export default function Home({ user, onLogout, onNavigate }) {
       <header className="fixed top-0 left-0 right-0 z-30 bg-white border-b border-gray-200">
         <Navbar 
           user={user} 
-          openProfile={() => onNavigate && onNavigate("profile")} 
+          openProfile={() => onNavigate && onNavigate("/profile")} 
           openNotifications={() => setIsNotificationOpen(true)}
         />
       </header>
