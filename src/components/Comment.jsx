@@ -2,11 +2,16 @@ import { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient";
 import Comment_detail from "./Comment_detail";
 
-export default function CommentSection({ initialComments = [], onCommentAdded, postId, postOwnerId }) {
-  const [commentList, setCommentList] = useState(initialComments);
+export default function CommentSection({ comments = [], onCommentAdded, postId, postOwnerId }) {
+  const [commentList, setCommentList] = useState(comments);
   const [inputText, setInputText] = useState("");
   const [visibleCount, setVisibleCount] = useState(3);
   const [loading, setLoading] = useState(false);
+
+  // SINKRONISASI: Tiap kali prop 'comments' dari Post.jsx berubah, update state lokal
+  useEffect(() => {
+    setCommentList(comments);
+  }, [comments]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,15 +25,6 @@ export default function CommentSection({ initialComments = [], onCommentAdded, p
     }
 
     setLoading(true);
-
-    // UI Update
-    const newComment = {
-      id: Date.now(),
-      username: "Kamu", 
-      content: inputText,
-    };
-    setCommentList([newComment, ...commentList]);
-    setInputText(""); // Clear input box
 
     // Comment to supabase
     const { error: commentError } = await supabase.from("comments").insert([
@@ -58,8 +54,11 @@ export default function CommentSection({ initialComments = [], onCommentAdded, p
       ]);
     }
 
+    setInputText(""); // Clear input box
+
+    // Re-fetch data dari Supabase via parent agar data user (avatar & username) terambil lengkap
     if (onCommentAdded) {
-      onCommentAdded();
+      await onCommentAdded();
     }
 
     setLoading(false);

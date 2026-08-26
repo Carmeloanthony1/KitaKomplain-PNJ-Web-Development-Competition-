@@ -84,6 +84,10 @@ export default function Profile() {
         setUser_comment(commentsData);
       }
 
+      // 4. Fetch Polling nanti User
+
+      
+
       setLoading(false);
     }
     fetchUserData();
@@ -384,7 +388,7 @@ export default function Profile() {
                   >
                     <div className="flex justify-between items-center text-xs text-gray-400 dark:text-gray-400 mb-1">
                       <span>
-                        Membalas post: <strong className="text-[#a50034] dark:text-[#f1ece1]">{item.posts?.tag || "komplain"}</strong>
+                        Membalas post: <strong className="text-[#a50034] dark:text-[#f1ece1]">#{item.posts?.tag || "komplain"}</strong>
                       </span>
                       <span>{new Date(item.created_at).toLocaleDateString("id-ID")}</span>
                     </div>
