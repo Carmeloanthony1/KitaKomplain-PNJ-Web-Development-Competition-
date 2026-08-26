@@ -115,20 +115,25 @@ export default function Post({ post, onUserClick }) {
         },
       ]);
 
+      // Di dalam function toggleLike (Post.jsx)
       if (!error) {
         setIsLiked(true);
         fetchLikes();
 
         if (post.user_id !== currentUserId) {
-          await supabase.from("notifications").insert([
-            {
-              user_id: post.user_id,
-              actor_id: currentUserId,
-              post_id: post.id,
-              type: "like",
-              is_read: false
-            }
-          ]);
+          try {
+            await supabase.from("notifications").insert([
+              {
+                user_id: post.user_id,
+                actor_id: currentUserId,
+                post_id: post.id,
+                type: "like",
+                is_read: false
+              }
+            ]);
+          } catch (err) {
+            console.error("Notifikasi gagal dikirim:", err);
+          }
         }
       }
     }
