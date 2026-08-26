@@ -80,7 +80,7 @@ export default function Navbar({ openProfile, user, openNotifications }) {
         {/* 3. Profile Akun Kanan */}
         <div className="col-span-3 justify-self-end">
           <div 
-            onClick={() => openProfile ? openProfile() : navigate('/profile')}
+            onClick={() => navigate('/profile')}
             className="flex items-center gap-3 bg-[#a50034] text-white px-5 py-2 rounded-full font-bold shadow-md cursor-pointer hover:bg-[#801427] transition active:scale-95 select-none"
           >
             <span className="text-base capitalize">{user?.name || user?.username || "Kenji"}</span>

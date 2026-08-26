@@ -5,10 +5,13 @@ import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 import ReportProblem from "./pages/ReportProblem";
 import History from "./pages/History";
+import Status from "./components/Status";
 import Notification from "./components/Notification";
 import Search_page from "./pages/Search_page";
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from "react";
+
+
 
 export default function App() {
   const [user, setUser] = useState(() => {
@@ -70,6 +73,11 @@ export default function App() {
         path="/SignUp"
         element={<SignUp />}
       /> 
+
+      <Route
+        path="/settings"
+        element={user ? <Settings user={user} /> : <Navigate to="/login" />}
+      />
 
       <Route
         path="/History"
