@@ -308,7 +308,7 @@ app.post('/api/reports', verifytoken, async (req, res) => {
         console.error("Error sending report:", error);
 
         return res.status(500).json({
-            message: "Gagal mengirim report."
+            message: "Gagal mengirim report.", errordetail: error.message
         });
     }
 });

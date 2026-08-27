@@ -431,7 +431,7 @@ export default function Post({ post, onUserClick }) {
           </div>
         </div>
       </div>
-
+            
       {isshare_open && (
         <Share_post post={post} onclose={() => setIsshare_open(false)} />
       )}
