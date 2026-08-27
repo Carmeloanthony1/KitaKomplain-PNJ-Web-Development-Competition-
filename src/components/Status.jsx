@@ -1,6 +1,7 @@
 
 import { useNavigate } from "react-router-dom";
 
+// PROPS
 export default function Status({ status }) {
     const navigate = useNavigate();
 
