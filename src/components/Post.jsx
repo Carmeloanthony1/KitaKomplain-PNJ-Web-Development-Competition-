@@ -4,6 +4,7 @@ import CommentSection from "./Comment";
 import { supabase } from "../supabaseClient";
 import Edit_post from "./edit_post";
 import { useNavigate } from "react-router-dom";
+import VoteModal from "./Vote";
 
 // Helper function untuk menyusun struktur Pohon (Tree) Komentar & Balasan
 const buildCommentTree = (comments = []) => {
@@ -47,6 +48,8 @@ export default function Post({ post, onUserClick }) {
   const [isshare_open, setIsshare_open] = useState(false);
   const [ismenu_open, setIsmenu_open] = useState(false);
   const [isedit_open, setIsedit_open] = useState(false);
+
+  const [isVote_open, setIsVote_open] = useState(false);
 
   const currentUserId = localStorage.getItem("user_id");
 
@@ -422,9 +425,16 @@ export default function Post({ post, onUserClick }) {
                 </div>
               </div>
 
-              <button className="bg-red-50 p-2 leading-relaxed rounded-lg border-2 border-[#a50034] font-semibold cursor-pointer">
-                Polling
+              <button 
+                onClick={() => setIsVote_open(true)}
+                className="bg-red-50 p-2 leading-relaxed rounded-lg border-2 border-[#a50034] font-semibold cursor-pointer">
+                Vote
               </button>
+              {isVote_open && (
+                <VoteModal        
+                  post={post} 
+                  onClose = {() => setIsVote_open(false)} />
+              )}
             </div>
 
             {/* COMMENT SECTION */}

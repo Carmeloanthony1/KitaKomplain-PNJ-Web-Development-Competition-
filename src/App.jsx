@@ -8,6 +8,7 @@ import History from "./pages/History";
 import Status from "./components/Status";
 import Notification from "./components/Notification";
 import Search_page from "./pages/Search_page";
+import VotePage from "./components/Vote";
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from "react";
 
@@ -91,6 +92,9 @@ export default function App() {
         element={user ? <Settings user={user} /> : <Navigate to="/login" />}
       />
 
+      <Route 
+        path="/vote/:postId" 
+        element={<VotePage/>}/>
       <Route
         path="/History"
         element={user ? <History user={user} onNavigate={handleNavigate} /> : <Navigate to="/login" />}

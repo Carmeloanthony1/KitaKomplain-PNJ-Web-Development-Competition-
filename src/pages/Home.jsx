@@ -65,7 +65,7 @@ export default function Home({ user, onLogout, onNavigate }) {
   return (
     <div className="min-h-screen bg-[#f7f7f7] flex flex-col">
       {/* 1. Header dibuat w-full p-0 tanpa px-8 biar Navbar narik mentok ujung ke ujung */}
-      <header className="fixed top-0 left-0 right-0 z-30 bg-white border-b border-gray-200">
+      <header className="fixed top-0 left-0 right-0 z-5 bg-white border-b border-gray-200">
         <Navbar 
           user={user} 
           openProfile={() => onNavigate && onNavigate("/profile")} 
@@ -75,7 +75,7 @@ export default function Home({ user, onLogout, onNavigate }) {
 
       {/* 2. Container body disesuaikan padding-nya */}
       <div className="flex flex-1 pt-24 px-6 md:px-10 gap-8 w-full justify-between items-start">
-        <aside className="min-w-xs flex-shrink-0 sticky top-24 z-20">
+        <aside className="min-w-xs flex-shrink-0 sticky top-24 z-5">
           <Sidebar_Kiri 
             onNavigate={onNavigate}
             openNotifications={() => setIsNotificationOpen(true)}
