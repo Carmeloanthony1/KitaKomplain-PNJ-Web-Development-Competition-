@@ -227,12 +227,20 @@ export default function Post({ post, onUserClick }) {
       <div className="flex flex-col gap-3 p-4 border-4 border-[#a50034]/50 rounded-lg bg-white shadow-xs">
         <div className="flex items-start gap-3">
           {/* AVATAR */}
-          <img
-            src={avatar}
-            alt={username}
-            onClick={() => onUserClick && onUserClick(post.user_id)}
-            className="w-10 h-10 mt-1 rounded-full object-cover flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity"
-          />
+          {post.users?.avatar_url ? (
+            <img
+              src={avatar}
+              alt={username}
+              onClick={() => onUserClick && onUserClick(post.user_id)}
+              className="w-10 h-10 mt-1 rounded-full object-cover flex-shrink-0 cursor-pointer border-2 border-[#a50034] hover:opacity-80 transition-opacity"
+            />
+          ) : ( 
+            <div 
+              onClick={() => onUserClick && onUserClick(post.user_id)} 
+              className="w-10 h-10 mt-1 rounded-full flex justify-center bg-white text-[#a50034] border-2 border-[#a50034] font-bold items-center object-cover flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity">
+              {(username || "U")[0].toLowerCase()}
+            </div>
+          )}
 
           <div className="flex flex-col gap-1 flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap justify-between">
@@ -431,7 +439,7 @@ export default function Post({ post, onUserClick }) {
           </div>
         </div>
       </div>
-            
+
       {isshare_open && (
         <Share_post post={post} onclose={() => setIsshare_open(false)} />
       )}
