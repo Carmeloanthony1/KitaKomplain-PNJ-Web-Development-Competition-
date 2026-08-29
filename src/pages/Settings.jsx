@@ -346,8 +346,15 @@ export default function Settings({ user, onNavigate }) {
 
             </div>
           </section>
-
         </main>
+
+          <p
+            onClick={() => navigate("/report")}
+            className="fixed bottom-8 right-15 z-50 text-s text-blue-600 dark:text-[#a50034] font-medium cursor-pointer hover:underline"
+          >
+            Report a problem?
+          </p>
+
       </div>
     </div>
   );
