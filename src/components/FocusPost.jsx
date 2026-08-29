@@ -1,6 +1,6 @@
 import Post from "./Post";
 
-export default function Focuspost({ post, isOpen, onClose }) {
+export default function Focuspost({ post, focused_comment, isOpen, onClose }) {
   if (!isOpen || !post) return null;
 
   return (
@@ -8,24 +8,19 @@ export default function Focuspost({ post, isOpen, onClose }) {
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs"
       onClick={onClose}
     >
-      {/* Container background yang melebar membungkus Post + Tombol X */}
       <div
-        className="relative max-h-[90vh] overflow-y-auto bg-slate-100 dark:bg-[#292828] p-3.5 rounded-3xl shadow-2xl flex flex-row items-start gap-1 backdrop-blur-md"
+        className="relative max-h-[90vh] overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden bg-slate-100 dark:bg-[#292828] p-4 rounded-3xl shadow-2xl w-full max-w-2xl backdrop-blur-md"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Postingan */}
-        <div className="flex-1">
-          <Post post={post} hideaction={true} />
+        {/* Postingan dengan focused_comment + passing onClose */}
+        <div className="w-full">
+          <Post 
+            post={post} 
+            hideaction={true} 
+            focused_comment={focused_comment} 
+            onClose={onClose} 
+          />
         </div>
-
-        {/* Tombol X di dalam background card */}
-        <button
-          onClick={onClose}
-          className="sticky top-1 flex-shrink-0 mt-4 flex h-8 w-8 items-center justify-center rounded-full bg-gray-200/80 hover:bg-gray-300 dark:bg-neutral-700 dark:hover:bg-neutral-600 text-gray-700 dark:text-neutral-200 text-sm font-bold transition-all cursor-pointer shadow-xs"
-          title="Tutup"
-        >
-          ✕
-        </button>
       </div>
     </div>
   );

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import Focuspost from "../components/FocusPost";
+
 export default function Profile() {
   const navigate = useNavigate();
   const userId = localStorage.getItem("user_id");
@@ -26,6 +27,7 @@ export default function Profile() {
   const [tempBio, setTempBio] = useState("");
 
   const [selectedpost, setSelectedpost] = useState(null);
+  const [selectedcomment, setSelectedcomment] = useState(null);
   const [isfocusopen, setIsfocusopen] = useState(false);
 
   useEffect(() => {
@@ -75,10 +77,13 @@ export default function Profile() {
         setPosts(userPosts);
       }
 
-      // 3. Fetch Comments User
+      // 3. Fetch Comments User (PERBAIKAN: Lengkapi kolom select posts)
       const { data: commentsData, error: commentError } = await supabase
         .from("comments")
-        .select(`id, content, created_at, post_id, posts ( description, tag )`)
+        .select(`
+          id, content, created_at, post_id, 
+          posts ( id, description, image_url, tag, created_at, user_id, users (username, avatar_url) )
+        `)
         .eq("user_id", userId)
         .order("created_at", { ascending: false });
 
@@ -88,7 +93,7 @@ export default function Profile() {
         setUser_comment(commentsData);
       }
 
-      // 4. Fetch Polling User (Fixed Syntax)
+      // 4. Fetch Polling User
       const { data: vote_data, error: vote_error, count } = await supabase
         .from("votes")
         .select(`id, vote_type, created_at, post_id, posts ( id, tag, description )`, { count: "exact" })
@@ -175,17 +180,37 @@ export default function Profile() {
     }
   };
 
+  // Handler saat Post diklik dari Tab Posts
   const handlePost_click = (item) => {
     const fullpost_data = {
       ...item,
       users: item.users || {
-        username:username,
-        avatar_url:avatarUrl,
+        username: username,
+        avatar_url: avatarUrl,
       },
     };
     setSelectedpost(fullpost_data);
+    setSelectedcomment(null);
     setIsfocusopen(true);
   };
+
+  // Handler saat Komentar diklik dari Tab Comments
+  const handleComment_click = (item) => {
+    if (!item.posts) return;
+
+    const fullpost_data = {
+      ...item.posts,
+      users: item.posts.users || {
+        username: username,
+        avatar_url: avatarUrl,
+      },
+    };
+
+    setSelectedpost(fullpost_data);
+    setSelectedcomment(item); // Menyimpan komentar yang sedang di-focus
+    setIsfocusopen(true);
+  };
+
   if (loading)
     return <div className="p-10 text-center text-gray-500 dark:text-gray-400">Loading Profile...</div>;
 
@@ -193,7 +218,7 @@ export default function Profile() {
     <div className="min-h-screen bg-[#f8f9fa] dark:bg-[#292828] text-gray-900 dark:text-[#f1ece1] py-8 px-4 sm:px-8">
       <div className="max-w-4xl mx-auto flex flex-col gap-6">
         
-        {/* Top Header: Panah Back & Title */}
+        {/* Top Header */}
         <div className="flex items-center gap-3">
           <button
             onClick={() => window.history.back()}
@@ -212,15 +237,11 @@ export default function Profile() {
           <h1 className="text-3xl font-bold text-[#a50034] dark:text-[#f1ece1]">Profile</h1>
         </div>
 
-        {/* Profile Card dengan Banner */}
+        {/* Profile Card */}
         <div className="bg-white dark:bg-[#1e1e1e] rounded-2xl shadow-2xl overflow-hidden">
-          
-          {/* Top Crimson Banner */}
           <div className="h-32 bg-[#800020] dark:bg-[#f1ece1] w-full"></div>
 
           <div className="px-8 pb-8 relative">
-            
-            {/* Avatar (Overlapping Banner) */}
             <div className="-mt-14 mb-4 relative inline-block">
               <label className="relative cursor-pointer group rounded-full overflow-hidden block w-28 h-28 border-4 border-white dark:border-[#1e1e1e] shadow-md bg-white dark:bg-[#1e1e1e]">
                 {avatarUrl ? (
@@ -249,7 +270,6 @@ export default function Profile() {
               </label>
             </div>
 
-            {/* Username & Verification */}
             <div className="flex flex-col gap-1">
               <div className="flex items-center gap-2">
                 {isEditingName ? (
@@ -268,7 +288,6 @@ export default function Profile() {
                   </h2>
                 )}
 
-                {/* Edit Icon (Pensil) */}
                 <button
                   onClick={() => setIsEditingName((prev) => !prev)}
                   className="text-gray-500 hover:text-gray-700 dark:text-[#f1ece1] transition cursor-pointer"
@@ -287,7 +306,6 @@ export default function Profile() {
               </p>
             </div>
 
-            {/* Stats Counter Box */}
             <div className="my-5 inline-flex items-center gap-6 bg-gray-50/80 dark:bg-[#f1ece1] px-6 py-2.5 rounded-xl border border-gray-100 text-sm">
               <div>
                 <span className="font-bold text-gray-900">{posts.length}</span>{" "}
@@ -303,7 +321,6 @@ export default function Profile() {
               </div>
             </div>
 
-            {/* Section Deskripsi */}
             <div className="flex flex-col gap-1">
               <div className="flex items-center gap-2">
                 <h3 className="text-sm font-bold text-[#a50034] dark:text-[#f1ece1]">Deskripsi</h3>
@@ -380,7 +397,7 @@ export default function Profile() {
                   <div
                     key={item.id}
                     onClick={() => handlePost_click(item)}
-                    className="bg-white dark:bg-[#f1ece1] rounded-xl shadow-sm border border-gray-100 p-2 flex flex-col gap-3"
+                    className="bg-white dark:bg-[#f1ece1] rounded-xl shadow-sm border border-gray-100 p-2 flex flex-col gap-3 cursor-pointer hover:shadow-md transition-shadow"
                   >
                     <div className="h-48 w-full overflow-hidden rounded-lg flex justify-center items-center bg-[#f1ece1]">
                       {item.image_url ? (
@@ -400,6 +417,7 @@ export default function Profile() {
               </div>
             ))}
 
+          {/* TAB COMMENTS: Sekarang bisa diklik & membuka Focuspost */}
           {activeTab === "comments" &&
             (user_comment.length === 0 ? (
               <p className="text-gray-400 dark:text-[#f1ece1] text-sm font-medium">
@@ -410,11 +428,12 @@ export default function Profile() {
                 {user_comment.map((item) => (
                   <div
                     key={item.id}
-                    className="bg-gray-50 dark:bg-[#292828] border border-gray-200 dark:border-gray-700 rounded-xl p-4 flex flex-col gap-1 text-left"
+                    onClick={() => handleComment_click(item)}
+                    className="bg-gray-50 dark:bg-[#292828] border border-gray-200 dark:border-gray-700 rounded-xl p-4 flex flex-col gap-1 text-left cursor-pointer hover:border-[#a50034] dark:hover:border-[#f1ece1] transition-all group"
                   >
                     <div className="flex justify-between items-center text-xs text-gray-400 dark:text-gray-400 mb-1">
                       <span>
-                        Membalas post: <strong className="text-[#a50034] dark:text-[#f1ece1]">#{item.posts?.tag || "komplain"}</strong>
+                        Membalas post: <strong className="text-[#a50034] dark:text-[#f1ece1] group-hover:underline">#{item.posts?.tag || "komplain"}</strong>
                       </span>
                       <span>{new Date(item.created_at).toLocaleDateString("id-ID")}</span>
                     </div>
@@ -469,8 +488,13 @@ export default function Profile() {
         </div>
 
       </div>
-      <Focuspost post={selectedpost}
-        isOpen={isfocusopen} onClose={() => setIsfocusopen(false)}
+
+      {/* MODAL FOCUS POST */}
+      <Focuspost 
+        post={selectedpost}
+        focusedComment={selectedcomment} // Opsional: Bawa prop ini jika komponen Focuspost mau menghighlight komentar tertentu
+        isOpen={isfocusopen} 
+        onClose={() => setIsfocusopen(false)}
       />
     </div>
   );

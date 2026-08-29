@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Share_post from "./Share_post";
 import CommentSection from "./Comment";
 import { supabase } from "../supabaseClient";
@@ -27,15 +27,23 @@ const buildCommentTree = (comments = []) => {
   return tree;
 };
 
-export default function Post({ post, onUserClick, hideaction = false }) {
+export default function Post({ 
+  post, 
+  onUserClick, 
+  hideaction = false, 
+  focused_comment = null,
+  onClose = null // Added onClose prop here
+}) {
   const navigate = useNavigate();
+  const focused_comment_ref = useRef(null);
 
   const [likes, setLikes] = useState([]);
   const [isLiked, setIsLiked] = useState(false);
   const [isPop, setIsPop] = useState(false);
   const [showLikers, setShowLikers] = useState(false);
 
-  const [isCommentOpen, setIsCommentOpen] = useState(false);
+  // Jika hideaction true (misal dari modal Focuspost), otomatis buka komentar
+  const [isCommentOpen, setIsCommentOpen] = useState(hideaction);
   const [commentCount, setCommentCount] = useState(0);
   const [commentsList, setCommentsList] = useState([]);
 
@@ -127,12 +135,26 @@ export default function Post({ post, onUserClick, hideaction = false }) {
   };
 
   useEffect(() => {
-    if (post?.id && !hideaction) {
+    if (post?.id) {
       fetchLikes();
-      fetch_comment();
+      fetch_comment(); // Tetap di-fetch meskipun hideaction = true!
     }
-  }, [post.id, currentUserId, hideaction]);
+  }, [post.id, currentUserId]);
 
+  // AUTO SCROLL KE KOMENTAR PILIHAN
+  useEffect(() => {
+    if (focused_comment && focused_comment_ref.current) {
+      const timer = setTimeout(() => {
+        focused_comment_ref.current.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }, 250); // Waktu timeout dikit biar DOM modal udah ke-render sempurna
+      
+      return () => clearTimeout(timer);
+    }
+  }, [focused_comment]);
+  
   const triggerPop = () => {
     setIsPop(true);
     setTimeout(() => {
@@ -216,7 +238,7 @@ export default function Post({ post, onUserClick, hideaction = false }) {
   };
 
   return (
-    <div className={`max-w-2xl w-full ${hideaction ? "bg-transparent p-4" : "bg-slate-50/70 p-4"} p-4 rounded-2xl flex flex-col gap-4`}>
+    <div className={`max-w-2xl w-full ${hideaction ? "bg-transparent p-0" : "bg-slate-50/70 p-4"} rounded-2xl flex flex-col gap-4`}>
       <div className="flex flex-col gap-3 p-4 border-4 border-[#a50034]/50 rounded-lg bg-white shadow-xs">
         <div className="flex items-start gap-3">
           {/* AVATAR */}
@@ -270,8 +292,18 @@ export default function Post({ post, onUserClick, hideaction = false }) {
                 )}
               </div>
 
-              {/* DROPDOWN MENU */}
-              {!hideaction && (
+              {/* ACTION: TOMBOL CLOSE (JIKA HIDEACTION) / DROPDOWN MENU (JIKA REGULER) */}
+              {hideaction ? (
+                onClose && (
+                  <button
+                    onClick={onClose}
+                    className="flex h-8 w-8 mb-4 items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 dark:bg-neutral-700 dark:hover:bg-neutral-600 text-gray-700 dark:text-neutral-200 font-bold transition-all cursor-pointer text-sm"
+                    title="Tutup Modal"
+                  >
+                    ✕
+                  </button>
+                )
+              ) : (
                 <div className="relative">
                   <button
                     onClick={() => setIsmenu_open((prev) => !prev)}
@@ -343,7 +375,7 @@ export default function Post({ post, onUserClick, hideaction = false }) {
               />
             )}
 
-            {/* ACTION BUTTONS */}
+            {/* ACTION BUTTONS (Disembunyikan jika hideaction = true) */}
             {!hideaction && (
               <div className="flex justify-between gap-2 mt-2 items-center">
                 <div className="flex flex-row gap-3 items-center">
@@ -431,14 +463,31 @@ export default function Post({ post, onUserClick, hideaction = false }) {
               </div>
             )}
 
+            {/* HIGHLIGHT FOCUSED COMMENT DENGAN REF DIPASANG */}
+            {focused_comment && (
+              <div 
+                ref={focused_comment_ref} 
+                className="mt-3 bg-rose-50 border-2 border-[#a50034] rounded-xl p-3 shadow-xs scroll-mt-10"
+              >
+                <span className="text-[10px] font-bold text-[#a50034] uppercase tracking-wider block mb-1">
+                  📌 Komentar Pilihan Anda
+                </span>
+                <p className="text-sm font-semibold text-gray-800">
+                  "{focused_comment.content}"
+                </p>
+              </div>
+            )}
+
             {/* COMMENT SECTION */}
-            {!hideaction && isCommentOpen && (
-              <CommentSection
-                comments={commentsList}
-                postId={post.id}
-                postOwnerId={post.user_id}
-                onCommentAdded={fetch_comment}
-              />
+            {(hideaction || isCommentOpen) && (
+              <div className="mt-2">
+                <CommentSection
+                  comments={commentsList}
+                  postId={post.id}
+                  postOwnerId={post.user_id}
+                  onCommentAdded={fetch_comment}
+                />
+              </div>
             )}
           </div>
         </div>
