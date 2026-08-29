@@ -1,7 +1,7 @@
 import Post from "./Post";
 
-export default function Focuspost ({ post, isOpen, OnClose }) {
-    if(isOpen || !post) return null;
+export default function Focuspost ({ post, isOpen, onClose }) {
+    if(!isOpen || !post) return null;
     return (
     <div 
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs"

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
-
+import Focuspost from "../components/FocusPost";
 export default function Profile() {
   const navigate = useNavigate();
   const userId = localStorage.getItem("user_id");
@@ -24,6 +24,9 @@ export default function Profile() {
   const [isEditingBio, setIsEditingBio] = useState(false);
   const [tempUsername, setTempUsername] = useState("");
   const [tempBio, setTempBio] = useState("");
+
+  const [selectedpost, setSelectedpost] = useState(null);
+  const [isfocusopen, setIsfocusopen] = useState(false);
 
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
@@ -63,7 +66,7 @@ export default function Profile() {
       // 2. Fetch Post User
       const { data: userPosts, error: postError } = await supabase
         .from("posts")
-        .select("*")
+        .select(`id, description, image_url, tag, created_at, user_id, users (username, avatar_url)`)
         .eq("user_id", userId);
 
       if (postError) {
@@ -172,6 +175,17 @@ export default function Profile() {
     }
   };
 
+  const handlePost_click = (item) => {
+    const fullpost_data = {
+      ...item,
+      users: item.users || {
+        username:username,
+        avatar_url:avatarUrl,
+      },
+    };
+    setSelectedpost(fullpost_data);
+    setIsfocusopen(true);
+  };
   if (loading)
     return <div className="p-10 text-center text-gray-500 dark:text-gray-400">Loading Profile...</div>;
 
@@ -365,6 +379,7 @@ export default function Profile() {
                 {posts.map((item) => (
                   <div
                     key={item.id}
+                    onClick={() => handlePost_click(item)}
                     className="bg-white dark:bg-[#f1ece1] rounded-xl shadow-sm border border-gray-100 p-2 flex flex-col gap-3"
                   >
                     <div className="h-48 w-full overflow-hidden rounded-lg flex justify-center items-center bg-[#f1ece1]">
@@ -454,6 +469,9 @@ export default function Profile() {
         </div>
 
       </div>
+      <Focuspost post={selectedpost}
+        isOpen={isfocusopen} OnClose={() => setIsfocusopen(false)}
+      />
     </div>
   );
 }
