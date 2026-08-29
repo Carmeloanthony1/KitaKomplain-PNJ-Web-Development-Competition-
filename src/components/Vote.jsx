@@ -1,17 +1,23 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { supabase } from "../supabaseClient";
 
-export default function VoteModal({ post, onClose }) {
+export default function VoteModal({ post, onClose, onVoteSuccess }) { // 1. TANGKAP PROP DARI FOCUSPOST
   const [upvotes, setUpvotes] = useState(0);
   const [downvotes, setDownvotes] = useState(0);
   const [userVote, setUserVote] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const currentUserId = localStorage.getItem("user_id");
+  // Helper untuk mendapatkan User ID yang valid & konsisten
+  const getActiveUserId = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    return user?.id || localStorage.getItem("user_id");
+  };
 
-  const fetchVoteData = async () => {
+  const fetchVoteData = useCallback(async (isInitial = false) => {
     if (!post?.id) return;
-    setLoading(true);
+    if (isInitial) setLoading(true);
+
+    const activeUserId = await getActiveUserId();
 
     const { data: voteData, error: voteErr } = await supabase
       .from("votes")
@@ -26,27 +32,29 @@ export default function VoteModal({ post, onClose }) {
       setUpvotes(up);
       setDownvotes(down);
 
-      const myVote = voteData.find((v) => String(v.user_id) === String(currentUserId));
-      setUserVote(myVote ? myVote.vote_type : null);
+      // Cek vote milik user yang sedang aktif
+      if (activeUserId) {
+        const myVote = voteData.find((v) => String(v.user_id) === String(activeUserId));
+        setUserVote(myVote ? myVote.vote_type : null);
+      }
     }
 
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    fetchVoteData();
+    if (isInitial) setLoading(false);
   }, [post?.id]);
 
+  useEffect(() => {
+    fetchVoteData(true);
+  }, [fetchVoteData]);
+
   const handleVote = async (type) => {
-    // Ambil user ID valid dari session Supabase yang sedang login
-    const { data: { user } } = await supabase.auth.getUser();
-    const activeUserId = user?.id || localStorage.getItem("user_id");
+    const activeUserId = await getActiveUserId();
 
     if (!activeUserId) {
       alert("Silakan login terlebih dahulu!");
       return;
     }
 
+    // Unvote jika mengklik pilihan yang sama
     if (userVote === type) {
       const { error } = await supabase
         .from("votes")
@@ -60,6 +68,7 @@ export default function VoteModal({ post, onClose }) {
         return;
       }
     } else {
+      // Upsert vote baru / ganti pilihan
       const { error } = await supabase.from("votes").upsert(
         [
           {
@@ -78,7 +87,13 @@ export default function VoteModal({ post, onClose }) {
       }
     }
 
-    await fetchVoteData();
+    // Refresh data internal VoteModal
+    await fetchVoteData(false);
+
+    // 2. TRIGGER REFRESH HALAMAN PROFILE.JSX LEWAT PROP INI!
+    if (typeof onVoteSuccess === "function") {
+      await onVoteSuccess();
+    }
   };
 
   if (!post) return null;
@@ -150,7 +165,7 @@ export default function VoteModal({ post, onClose }) {
                 <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
                   <path d="M12 4l-8 8h5v8h6v-8h5z" />
                 </svg>
-                Sangat Penting
+                Setuju
               </button>
 
               <button
@@ -164,7 +179,7 @@ export default function VoteModal({ post, onClose }) {
                 <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
                   <path d="M12 20l8-8h-5V4h-6v8H4z" />
                 </svg>
-                Kurang Penting
+                Tidak Setuju
               </button>
             </div>
           </>
