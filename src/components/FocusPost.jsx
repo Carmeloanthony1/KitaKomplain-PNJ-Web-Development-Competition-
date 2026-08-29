@@ -1,24 +1,32 @@
 import Post from "./Post";
 
-export default function Focuspost ({ post, isOpen, onClose }) {
-    if(!isOpen || !post) return null;
-    return (
-    <div 
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs"
+export default function Focuspost({ post, isOpen, onClose }) {
+  if (!isOpen || !post) return null;
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs"
       onClick={onClose}
     >
-      <div 
-        className="relative max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-transparent"
+      {/* Container background yang melebar membungkus Post + Tombol X */}
+      <div
+        className="relative max-h-[90vh] overflow-y-auto bg-slate-100 dark:bg-[#292828] p-3.5 rounded-3xl shadow-2xl flex flex-row items-start gap-1 backdrop-blur-md"
         onClick={(e) => e.stopPropagation()}
       >
+        {/* Postingan */}
+        <div className="flex-1">
+          <Post post={post} hideaction={true} />
+        </div>
+
+        {/* Tombol X di dalam background card */}
         <button
           onClick={onClose}
-          className="absolute top-2 right-2 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-black/50 text-white hover:bg-black/70 cursor-pointer"
+          className="sticky top-1 flex-shrink-0 mt-4 flex h-8 w-8 items-center justify-center rounded-full bg-gray-200/80 hover:bg-gray-300 dark:bg-neutral-700 dark:hover:bg-neutral-600 text-gray-700 dark:text-neutral-200 text-sm font-bold transition-all cursor-pointer shadow-xs"
+          title="Tutup"
         >
           ✕
         </button>
-        <Post post={post} />
       </div>
     </div>
-    );
+  );
 }

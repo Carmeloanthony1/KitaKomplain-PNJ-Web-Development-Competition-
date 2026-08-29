@@ -6,17 +6,14 @@ import Edit_post from "./edit_post";
 import { useNavigate } from "react-router-dom";
 import VoteModal from "./Vote";
 
-// Helper function untuk menyusun struktur Pohon (Tree) Komentar & Balasan
 const buildCommentTree = (comments = []) => {
   const commentMap = {};
   const tree = [];
 
-  // Inisialisasi map dan siapkan array replies
   comments.forEach((c) => {
     commentMap[c.id] = { ...c, replies: [] };
   });
 
-  // Hubungkan anak (reply) ke induk (parent_id)
   comments.forEach((c) => {
     if (c.parent_id) {
       if (commentMap[c.parent_id]) {
@@ -30,21 +27,18 @@ const buildCommentTree = (comments = []) => {
   return tree;
 };
 
-export default function Post({ post, onUserClick }) {
+export default function Post({ post, onUserClick, hideaction = false }) {
   const navigate = useNavigate();
 
-  // Likes State
   const [likes, setLikes] = useState([]);
   const [isLiked, setIsLiked] = useState(false);
   const [isPop, setIsPop] = useState(false);
   const [showLikers, setShowLikers] = useState(false);
 
-  // Comment State
   const [isCommentOpen, setIsCommentOpen] = useState(false);
   const [commentCount, setCommentCount] = useState(0);
-  const [commentsList, setCommentsList] = useState([]); // State array komentar
+  const [commentsList, setCommentsList] = useState([]);
 
-  // Share & Menu State
   const [isshare_open, setIsshare_open] = useState(false);
   const [ismenu_open, setIsmenu_open] = useState(false);
   const [isedit_open, setIsedit_open] = useState(false);
@@ -59,7 +53,6 @@ export default function Post({ post, onUserClick }) {
   const username = post.users?.username || "Unknown";
   const avatar = post.users?.avatar_url || "/default-avatar.png";
 
-  // LOGIKA PARSING TAG
   const tag_mentah = post.tag || post.tags || "";
   let tag_list = [];
 
@@ -108,13 +101,10 @@ export default function Post({ post, onUserClick }) {
     }
 
     if (data) {
-      // Pisahkan komentar utama (parent_id null) dan semua balasan
       const mainComments = data.filter((c) => !c.parent_id);
       const replies = data.filter((c) => c.parent_id);
 
-      // Masukkan SEMUA balasan ke komentar utama tempat ia bernaung (Max 1 level)
       const structured = mainComments.map((main) => {
-        // Cari semua balasan yang berelasi langsung maupun turunan
         const findReplies = (parentId) => {
           let direct = replies.filter((r) => r.parent_id === parentId);
           let nested = direct.flatMap((r) => findReplies(r.id));
@@ -137,11 +127,11 @@ export default function Post({ post, onUserClick }) {
   };
 
   useEffect(() => {
-    if (post?.id) {
+    if (post?.id && !hideaction) {
       fetchLikes();
       fetch_comment();
     }
-  }, [post.id, currentUserId]);
+  }, [post.id, currentUserId, hideaction]);
 
   const triggerPop = () => {
     setIsPop(true);
@@ -226,7 +216,7 @@ export default function Post({ post, onUserClick }) {
   };
 
   return (
-    <div className="max-w-2xl w-full bg-slate-50/70 p-4 rounded-2xl flex flex-col gap-4">
+    <div className={`max-w-2xl w-full ${hideaction ? "bg-transparent p-4" : "bg-slate-50/70 p-4"} p-4 rounded-2xl flex flex-col gap-4`}>
       <div className="flex flex-col gap-3 p-4 border-4 border-[#a50034]/50 rounded-lg bg-white shadow-xs">
         <div className="flex items-start gap-3">
           {/* AVATAR */}
@@ -281,60 +271,62 @@ export default function Post({ post, onUserClick }) {
               </div>
 
               {/* DROPDOWN MENU */}
-              <div className="relative">
-                <button
-                  onClick={() => setIsmenu_open((prev) => !prev)}
-                  className="text-xl font-bold px-2 py-1 text-gray-500 hover:text-black hover:bg-gray-100 rounded-full transition-colors cursor-pointer"
-                >
-                  •••
-                </button>
+              {!hideaction && (
+                <div className="relative">
+                  <button
+                    onClick={() => setIsmenu_open((prev) => !prev)}
+                    className="text-xl font-bold px-2 py-1 text-gray-500 hover:text-black hover:bg-gray-100 rounded-full transition-colors cursor-pointer"
+                  >
+                    •••
+                  </button>
 
-                {ismenu_open && (
-                  <div className="absolute right-0 mt-1 w-44 bg-white border border-gray-200 rounded-xl shadow-lg z-20 py-1.5 text-sm">
-                    {ismypost ? (
-                      <>
-                        <button
-                          onClick={() => {
-                            setIsmenu_open(false);
-                            setIsedit_open(true);
-                          }}
-                          className="w-full text-left px-4 py-2 hover:bg-gray-50 text-gray-700 flex items-center gap-2 cursor-pointer"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => {
-                            setIsmenu_open(false);
-                            handle_delete();
-                          }}
-                          className="w-full text-left px-4 py-2 hover:bg-red-50 text-red-600 font-semibold flex items-center gap-2 cursor-pointer"
-                        >
-                          Hapus
-                        </button>
-                      </>
-                    ) : (
-                      <>
-                        <button
-                          onClick={() => {
-                            setIsmenu_open(false);
-                            navigator.clipboard.writeText(window.location.href);
-                            alert("Tautan berhasil disalin!");
-                          }}
-                          className="w-full text-left font-bold px-4 py-2 hover:bg-gray-50 text-gray-700 flex items-center gap-2 cursor-pointer"
-                        >
-                          Salin Tautan
-                        </button>
-                        <button
-                          onClick={() => setIsmenu_open(false)}
-                          className="w-full text-left px-4 py-2 hover:bg-red-50 text-red-600 font-semibold flex items-center gap-2 cursor-pointer"
-                        >
-                          Laporkan
-                        </button>
-                      </>
-                    )}
-                  </div>
-                )}
-              </div>
+                  {ismenu_open && (
+                    <div className="absolute right-0 mt-1 w-44 bg-white border border-gray-200 rounded-xl shadow-lg z-20 py-1.5 text-sm">
+                      {ismypost ? (
+                        <>
+                          <button
+                            onClick={() => {
+                              setIsmenu_open(false);
+                              setIsedit_open(true);
+                            }}
+                            className="w-full text-left px-4 py-2 hover:bg-gray-50 text-gray-700 flex items-center gap-2 cursor-pointer"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => {
+                              setIsmenu_open(false);
+                              handle_delete();
+                            }}
+                            className="w-full text-left px-4 py-2 hover:bg-red-50 text-red-600 font-semibold flex items-center gap-2 cursor-pointer"
+                          >
+                            Hapus
+                          </button>
+                        </>
+                      ) : (
+                        <>
+                          <button
+                            onClick={() => {
+                              setIsmenu_open(false);
+                              navigator.clipboard.writeText(window.location.href);
+                              alert("Tautan berhasil disalin!");
+                            }}
+                            className="w-full text-left font-bold px-4 py-2 hover:bg-gray-50 text-gray-700 flex items-center gap-2 cursor-pointer"
+                          >
+                            Salin Tautan
+                          </button>
+                          <button
+                            onClick={() => setIsmenu_open(false)}
+                            className="w-full text-left px-4 py-2 hover:bg-red-50 text-red-600 font-semibold flex items-center gap-2 cursor-pointer"
+                          >
+                            Laporkan
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
 
             {/* DESKRIPSI POST */}
@@ -352,93 +344,95 @@ export default function Post({ post, onUserClick }) {
             )}
 
             {/* ACTION BUTTONS */}
-            <div className="flex justify-between gap-2 mt-2 items-center">
-              <div className="flex flex-row gap-3 items-center">
-                <div className="flex items-center gap-2">
-                  <button onClick={toggleLike} className="focus:outline-none cursor-pointer">
-                    <svg
-                      style={{
-                        transform: isPop ? "scale(1.3)" : "scale(1)",
-                        transition:
-                          "transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
-                      }}
-                      className={`w-9 h-9 ${
-                        isLiked
-                          ? "fill-[#a50034] stroke-[#a50034]"
-                          : "fill-none stroke-[#a50034]"
-                      }`}
-                      viewBox="0 0 24 24"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                    </svg>
-                  </button>
-
-                  {likes.length > 0 && (
-                    <span
-                      onClick={() => setShowLikers(true)}
-                      className="font-bold text-sm text-[#a50034] cursor-pointer hover:underline"
-                    >
-                      {likes.length}
-                    </span>
-                  )}
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={handleToggleComment}
-                    className="focus:outline-none cursor-pointer"
-                  >
-                    <svg
-                      className="w-9 h-9 fill-[#a50034] hover:scale-110 transition-transform cursor-pointer"
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 640 640"
-                    >
-                      <path d="M115.9 448.9C83.3 408.6 64 358.4 64 304C64 171.5 178.6 64 320 64C461.4 64 576 171.5 576 304C576 436.5 461.4 544 320 544C283.5 544 248.8 536.8 217.4 524L101 573.9C97.3 575.5 93.5 576 89.5 576C75.4 576 64 564.6 64 550.5C64 546.2 65.1 542 67.1 538.3L115.9 448.9zM153.2 418.7C165.4 433.8 167.3 454.8 158 471.9L140 505L198.5 479.9C210.3 474.8 223.7 474.7 235.6 479.6C261.3 490.1 289.8 496 319.9 496C437.7 496 527.9 407.2 527.9 304C527.9 200.8 437.8 112 320 112C202.2 112 112 200.8 112 304C112 346.8 127.1 386.4 153.2 418.7z" />
-                    </svg>
-                  </button>
-
-                  {commentCount > 0 && (
-                    <span className="font-bold text-sm text-[#a50034]">
-                      {commentCount}
-                    </span>
-                  )}
-                </div>
-
-                <div className="flex items-center">
-                  <button onClick={handle_share} className="focus:outline-none cursor-pointer">
-                    <svg
-                      className="w-9 h-9 stroke-[#a50034] fill-none hover:scale-110 transition-transform cursor-pointer"
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
+            {!hideaction && (
+              <div className="flex justify-between gap-2 mt-2 items-center">
+                <div className="flex flex-row gap-3 items-center">
+                  <div className="flex items-center gap-2">
+                    <button onClick={toggleLike} className="focus:outline-none cursor-pointer">
+                      <svg
+                        style={{
+                          transform: isPop ? "scale(1.3)" : "scale(1)",
+                          transition:
+                            "transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
+                        }}
+                        className={`w-9 h-9 ${
+                          isLiked
+                            ? "fill-[#a50034] stroke-[#a50034]"
+                            : "fill-none stroke-[#a50034]"
+                        }`}
+                        viewBox="0 0 24 24"
+                        strokeWidth="2"
                         strokeLinecap="round"
                         strokeLinejoin="round"
-                        strokeWidth="1.8"
-                        d="m5 12l-.604-5.437C4.223 5.007 5.825 3.864 7.24 4.535l11.944 5.658c1.525.722 1.525 2.892 0 3.614L7.24 19.466c-1.415.67-3.017-.472-2.844-2.028zm0 0h7"
-                      />
-                    </svg>
-                  </button>
-                </div>
-              </div>
+                      >
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                      </svg>
+                    </button>
 
-              <button 
-                onClick={() => setIsVote_open(true)}
-                className="bg-red-50 p-2 leading-relaxed rounded-lg border-2 border-[#a50034] font-semibold cursor-pointer">
-                Vote
-              </button>
-              {isVote_open && (
-                <VoteModal        
-                  post={post} 
-                  onClose = {() => setIsVote_open(false)} />
-              )}
-            </div>
+                    {likes.length > 0 && (
+                      <span
+                        onClick={() => setShowLikers(true)}
+                        className="font-bold text-sm text-[#a50034] cursor-pointer hover:underline"
+                      >
+                        {likes.length}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={handleToggleComment}
+                      className="focus:outline-none cursor-pointer"
+                    >
+                      <svg
+                        className="w-9 h-9 fill-[#a50034] hover:scale-110 transition-transform cursor-pointer"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 640 640"
+                      >
+                        <path d="M115.9 448.9C83.3 408.6 64 358.4 64 304C64 171.5 178.6 64 320 64C461.4 64 576 171.5 576 304C576 436.5 461.4 544 320 544C283.5 544 248.8 536.8 217.4 524L101 573.9C97.3 575.5 93.5 576 89.5 576C75.4 576 64 564.6 64 550.5C64 546.2 65.1 542 67.1 538.3L115.9 448.9zM153.2 418.7C165.4 433.8 167.3 454.8 158 471.9L140 505L198.5 479.9C210.3 474.8 223.7 474.7 235.6 479.6C261.3 490.1 289.8 496 319.9 496C437.7 496 527.9 407.2 527.9 304C527.9 200.8 437.8 112 320 112C202.2 112 112 200.8 112 304C112 346.8 127.1 386.4 153.2 418.7z" />
+                      </svg>
+                    </button>
+
+                    {commentCount > 0 && (
+                      <span className="font-bold text-sm text-[#a50034]">
+                        {commentCount}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="flex items-center">
+                    <button onClick={handle_share} className="focus:outline-none cursor-pointer">
+                      <svg
+                        className="w-9 h-9 stroke-[#a50034] fill-none hover:scale-110 transition-transform cursor-pointer"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="1.8"
+                          d="m5 12l-.604-5.437C4.223 5.007 5.825 3.864 7.24 4.535l11.944 5.658c1.525.722 1.525 2.892 0 3.614L7.24 19.466c-1.415.67-3.017-.472-2.844-2.028zm0 0h7"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+
+                <button 
+                  onClick={() => setIsVote_open(true)}
+                  className="bg-red-50 p-2 leading-relaxed rounded-lg text-black border-2 border-[#a50034] font-semibold cursor-pointer">
+                  Vote
+                </button>
+                {isVote_open && (
+                  <VoteModal        
+                    post={post} 
+                    onClose={() => setIsVote_open(false)} />
+                )}
+              </div>
+            )}
 
             {/* COMMENT SECTION */}
-            {isCommentOpen && (
+            {!hideaction && isCommentOpen && (
               <CommentSection
                 comments={commentsList}
                 postId={post.id}
@@ -450,11 +444,11 @@ export default function Post({ post, onUserClick }) {
         </div>
       </div>
 
-      {isshare_open && (
+      {!hideaction && isshare_open && (
         <Share_post post={post} onclose={() => setIsshare_open(false)} />
       )}
 
-      {isedit_open && (
+      {!hideaction && isedit_open && (
         <Edit_post
           post={post}
           onclose={() => setIsedit_open(false)}
@@ -463,7 +457,7 @@ export default function Post({ post, onUserClick }) {
       )}
 
       {/* MODAL LIST LIKE */}
-      {showLikers && (
+      {!hideaction && showLikers && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white p-5 rounded-lg max-w-sm w-full shadow-lg">
             <div className="flex justify-between items-center mb-3">

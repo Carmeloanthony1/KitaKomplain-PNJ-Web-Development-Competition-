@@ -470,7 +470,7 @@ export default function Profile() {
 
       </div>
       <Focuspost post={selectedpost}
-        isOpen={isfocusopen} OnClose={() => setIsfocusopen(false)}
+        isOpen={isfocusopen} onClose={() => setIsfocusopen(false)}
       />
     </div>
   );
