@@ -423,7 +423,7 @@ export default function Profile() {
                   <div
                     key={item.id}
                     className="bg-gray-50 dark:bg-[#292828] border border-gray-200 dark:border-gray-700 rounded-xl p-4 flex flex-col gap-2 text-left"
-                  >
+                  > 
                     <div className="flex justify-between items-center text-xs text-gray-400 dark:text-gray-400">
                       <span>
                         tag: <strong className="text-[#a50034] dark:text-[#f1ece1]">#{item.posts?.tag || "isu"}</strong>
