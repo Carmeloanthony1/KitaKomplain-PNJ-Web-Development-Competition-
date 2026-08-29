@@ -16,6 +16,7 @@ export default function Profile() {
   const [posts, setPosts] = useState([]);
   const [user_comment, setUser_comment] = useState([]);
   const [pollsCount, setPollsCount] = useState(0);
+  const [user_vote, setUser_vote] = useState([]);
 
   // State Tab & Edit
   const [activeTab, setActiveTab] = useState("posts");
@@ -26,7 +27,7 @@ export default function Profile() {
 
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
-    if(savedTheme === "dark"){
+    if (savedTheme === "dark") {
       document.documentElement.classList.add("dark");
     } else {
       document.documentElement.classList.remove("dark");
@@ -84,9 +85,19 @@ export default function Profile() {
         setUser_comment(commentsData);
       }
 
-      // 4. Fetch Polling nanti User
+      // 4. Fetch Polling User (Fixed Syntax)
+      const { data: vote_data, error: vote_error, count } = await supabase
+        .from("votes")
+        .select(`id, vote_type, created_at, post_id, posts ( id, tag, description )`, { count: "exact" })
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false });
 
-      
+      if (vote_error) {
+        console.error("Gagal mengambil Vote: ", vote_error.message);
+      } else if (vote_data) {
+        setUser_vote(vote_data);
+        setPollsCount(count ?? vote_data.length);
+      }
 
       setLoading(false);
     }
@@ -401,9 +412,45 @@ export default function Profile() {
               </div>
             ))}
 
-          {activeTab === "polling" && (
-            <p className="text-gray-400 dark:text-[#f1ece1] text-sm font-medium">Belum ada polling</p>
-          )}
+          {activeTab === "polling" &&
+            (user_vote.length === 0 ? (
+              <p className="text-gray-400 dark:text-[#f1ece1] text-sm font-medium">
+                Belum ada kontribusi terhadap suatu isu.
+              </p>
+            ) : (
+              <div className="flex flex-col gap-3 w-full">
+                {user_vote.map((item) => (
+                  <div
+                    key={item.id}
+                    className="bg-gray-50 dark:bg-[#292828] border border-gray-200 dark:border-gray-700 rounded-xl p-4 flex flex-col gap-2 text-left"
+                  >
+                    <div className="flex justify-between items-center text-xs text-gray-400 dark:text-gray-400">
+                      <span>
+                        tag: <strong className="text-[#a50034] dark:text-[#f1ece1]">#{item.posts?.tag || "isu"}</strong>
+                      </span>
+                      <span>{new Date(item.created_at).toLocaleDateString("id-ID")}</span>
+                    </div>
+
+                    <p className="text-sm text-gray-700 dark:text-gray-300 line-clamp-2">
+                      {item.posts?.description || "Tidak ada deskripsi"}
+                    </p>
+
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className="text-xs text-gray-500 dark:text-gray-400">Pilihan Vote:</span>
+                      <span
+                        className={`text-xs font-bold px-2.5 py-1 rounded-full uppercase ${
+                          item.vote_type === "up"
+                            ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400"
+                            : "bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-400"
+                        }`}
+                      >
+                        {item.vote_type === "up" ? "Setuju" : "Tidak Setuju"}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ))}
         </div>
 
       </div>
