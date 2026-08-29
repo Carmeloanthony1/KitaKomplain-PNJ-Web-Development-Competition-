@@ -27,7 +27,13 @@ const buildCommentTree = (comments = []) => {
   return tree;
 };
 
-export default function Post({ post, onUserClick, hideaction = false, focused_comment = null }) {
+export default function Post({ 
+  post, 
+  onUserClick, 
+  hideaction = false, 
+  focused_comment = null,
+  onClose = null // Added onClose prop here
+}) {
   const navigate = useNavigate();
   const focused_comment_ref = useRef(null);
 
@@ -141,7 +147,7 @@ export default function Post({ post, onUserClick, hideaction = false, focused_co
       const timer = setTimeout(() => {
         focused_comment_ref.current.scrollIntoView({
           behavior: "smooth",
-          block: "center",
+          block: "start",
         });
       }, 250); // Waktu timeout dikit biar DOM modal udah ke-render sempurna
       
@@ -286,8 +292,18 @@ export default function Post({ post, onUserClick, hideaction = false, focused_co
                 )}
               </div>
 
-              {/* DROPDOWN MENU */}
-              {!hideaction && (
+              {/* ACTION: TOMBOL CLOSE (JIKA HIDEACTION) / DROPDOWN MENU (JIKA REGULER) */}
+              {hideaction ? (
+                onClose && (
+                  <button
+                    onClick={onClose}
+                    className="flex h-8 w-8 mb-4 items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 dark:bg-neutral-700 dark:hover:bg-neutral-600 text-gray-700 dark:text-neutral-200 font-bold transition-all cursor-pointer text-sm"
+                    title="Tutup Modal"
+                  >
+                    ✕
+                  </button>
+                )
+              ) : (
                 <div className="relative">
                   <button
                     onClick={() => setIsmenu_open((prev) => !prev)}
@@ -451,7 +467,7 @@ export default function Post({ post, onUserClick, hideaction = false, focused_co
             {focused_comment && (
               <div 
                 ref={focused_comment_ref} 
-                className="mt-3 bg-rose-50 border-2 border-[#a50034] rounded-xl p-3 shadow-xs scroll-mt-6"
+                className="mt-3 bg-rose-50 border-2 border-[#a50034] rounded-xl p-3 shadow-xs scroll-mt-10"
               >
                 <span className="text-[10px] font-bold text-[#a50034] uppercase tracking-wider block mb-1">
                   📌 Komentar Pilihan Anda
