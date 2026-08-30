@@ -9,6 +9,24 @@ export default function Navbar({ user, openNotifications }) {
   const quert_tag = search_params.get("tag") || "";
   const [search_term, setSearch_term] = useState(quert_tag);
 
+  const [isDark, setIsDark] = useState(false);
+
+  const toggle_darkmode = () => {
+    const isdark = document.documentElement.classList.toggle('dark');
+    if(isdark){
+      localStorage.setItem('theme', 'dark');
+    } else {
+      localStorage.setItem('theme', 'light');
+    }
+  };
+
+  useEffect(() => {
+    if(localStorage.getItem('theme') === 'dark') {
+      document.documentElement.classList.toggle('dark');
+      setIsDark(true);
+    };
+  }, []);
+
   // Sync state lokal kalau URL berubah dari luar
   useEffect(() => {
     setSearch_term(quert_tag);
@@ -47,7 +65,7 @@ export default function Navbar({ user, openNotifications }) {
   };
 
   return (
-    <div className="w-full bg-white border-b border-gray-200 shadow-xs">
+    <div className="w-full bg-white dark:bg-[#1e1e1e] border-b border-gray-200 dark:border-slate-800 shadow-xs transition-colors">
       <nav className="w-full px-6 md:px-10 py-4 grid grid-cols-12 items-center">
         
         {/* Logo Kiri */}
@@ -55,7 +73,7 @@ export default function Navbar({ user, openNotifications }) {
           onClick={() => navigate('/home')}
           className="col-span-3 cursor-pointer transition hover:scale-105 active:scale-95 justify-self-start"
         >
-          <h1 className="text-3xl font-black text-[#a50034] tracking-tight select-none">
+          <h1 className="text-3xl font-black text-[#a50034] dark: text-[#f1ece1] tracking-tight select-none">
             KitaKomplain
           </h1>
         </div>
@@ -64,7 +82,7 @@ export default function Navbar({ user, openNotifications }) {
         <div className="col-span-6 flex justify-center w-full">
           <form 
             onSubmit={handleSearch}
-            className="flex items-center gap-3 bg-white border-2 border-[#a50034] rounded-full px-5 py-2.5 w-full max-w-lg shadow-xs focus-within:ring-2 focus-within:ring-[#a50034]/50"
+            className="flex items-center gap-3 bg-white border-2 border-[#a50034] dark:border-[#f1ece1] dark:bg-black rounded-full px-5 py-2.5 w-full max-w-lg shadow-xs"
           >
             <input 
               ref={inputRef} // Pasang ref di sini
@@ -72,7 +90,7 @@ export default function Navbar({ user, openNotifications }) {
               placeholder="Cari topik" 
               value={search_term}
               onChange={(e) => setSearch_term(e.target.value)} 
-              className="w-full bg-transparent text-black placeholder-[#a50034]/60 text-center font-semibold focus:outline-none text-base"
+              className="w-full bg-transparent text-black placeholder-[#a50034]/60 dark:placeholder-[#f1ece1] dark:text-[#f1ece1] text-center font-semibold focus:outline-none text-base"
             />
             <button 
               type="submit" 
@@ -80,7 +98,7 @@ export default function Navbar({ user, openNotifications }) {
               className="focus:outline-none"
             >
               <svg 
-                className="w-5 h-5 fill-[#a50034] flex-shrink-0 cursor-pointer hover:scale-110 transition-transform" 
+                className="w-5 h-5 fill-[#a50034] dark:fill-[#f1ece1] flex-shrink-0 cursor-pointer hover:scale-110 transition-transform" 
                 xmlns="http://www.w3.org/2000/svg" 
                 viewBox="0 0 640 640"
               >
@@ -94,13 +112,13 @@ export default function Navbar({ user, openNotifications }) {
         <div className="col-span-3 justify-self-end">
           <div 
             onClick={() => navigate('/profile')}
-            className="flex items-center gap-3 bg-[#a50034] text-white px-5 py-2 rounded-full font-bold shadow-md cursor-pointer hover:bg-[#801427] transition active:scale-95 select-none"
+            className="flex items-center gap-3 bg-[#a50034] dark:bg-black dark:border-2 dark:border-[#f1ece1] text-white px-5 py-2 rounded-full font-bold shadow-md cursor-pointer hover:bg-[#801427] dark:hover:bg-[#f1ece1] dark:hover:text-black transition active:scale-95 select-none"
           >
             <span className="text-base capitalize">{user?.name || user?.username || "Kenji"}</span>
             <img 
               src={user?.avatar || user?.avatar_url || "/assets/Dummy_photo.png"} 
               alt="avatar" 
-              className="w-8 h-8 rounded-full bg-white object-cover border-2 border-white"
+              className="w-8 h-8 rounded-full bg-white object-cover border-2 border-white dark:border-black"
             />
           </div>
         </div>

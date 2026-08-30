@@ -86,7 +86,7 @@ export default function Home({ user, onLogout, onNavigate }) {
         </aside>
 
         {/* Main Feed */}
-        <main className="flex-1 max-w-3xl mx-auto flex flex-col">
+        <main className="flex-1 max-w-4xl mx-auto flex flex-col items-center">
           {posts.length === 0 ? (
             <div className="text-center text-gray-500 py-10">
               Belum ada postingan.
