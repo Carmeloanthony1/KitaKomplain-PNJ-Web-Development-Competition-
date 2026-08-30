@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom"; // 1. IMPORT CREATEPORTAL
 import Share_post from "./Share_post";
 import CommentSection from "./Comment";
 import { supabase } from "../supabaseClient";
@@ -32,7 +33,7 @@ export default function Post({
   onUserClick, 
   hideaction = false, 
   focused_comment = null,
-  onClose = null // Added onClose prop here
+  onClose = null
 }) {
   const navigate = useNavigate();
   const focused_comment_ref = useRef(null);
@@ -137,7 +138,7 @@ export default function Post({
   useEffect(() => {
     if (post?.id) {
       fetchLikes();
-      fetch_comment(); // Tetap di-fetch meskipun hideaction = true!
+      fetch_comment();
     }
   }, [post.id, currentUserId]);
 
@@ -149,7 +150,7 @@ export default function Post({
           behavior: "smooth",
           block: "start",
         });
-      }, 250); // Waktu timeout dikit biar DOM modal udah ke-render sempurna
+      }, 250);
       
       return () => clearTimeout(timer);
     }
@@ -375,7 +376,7 @@ export default function Post({
               />
             )}
 
-            {/* ACTION BUTTONS (Disembunyikan jika hideaction = true) */}
+            {/* ACTION BUTTONS */}
             {!hideaction && (
               <div className="flex justify-between gap-2 mt-2 items-center">
                 <div className="flex flex-row gap-3 items-center">
@@ -463,7 +464,7 @@ export default function Post({
               </div>
             )}
 
-            {/* HIGHLIGHT FOCUSED COMMENT DENGAN REF DIPASANG */}
+            {/* HIGHLIGHT FOCUSED COMMENT */}
             {focused_comment && (
               <div 
                 ref={focused_comment_ref} 
@@ -505,22 +506,28 @@ export default function Post({
         />
       )}
 
-      {/* MODAL LIST LIKE */}
-      {!hideaction && showLikers && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white p-5 rounded-lg max-w-sm w-full shadow-lg">
+      {/* MODAL LIST LIKE DENGAN CREATEPORTAL & Z-[9999] */}
+      {!hideaction && showLikers && createPortal(
+        <div 
+          onClick={() => setShowLikers(false)}
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[9999] p-4"
+        >
+          <div 
+            onClick={(e) => e.stopPropagation()}
+            className="bg-white p-5 rounded-2xl max-w-sm w-full shadow-2xl border-2 border-[#a50034]/30 animate-fadeIn"
+          >
             <div className="flex justify-between items-center mb-3">
               <h3 className="font-bold text-lg text-gray-800">
                 Menyukai postingan ini
               </h3>
               <button
                 onClick={() => setShowLikers(false)}
-                className="text-gray-500 hover:text-black font-bold cursor-pointer"
+                className="text-gray-400 hover:text-black font-bold text-xl cursor-pointer"
               >
                 ✕
               </button>
             </div>
-            <div className="max-h-60 overflow-y-auto flex flex-col gap-3">
+            <div className="max-h-60 overflow-y-auto flex flex-col gap-2">
               {likes.map((likeItem) => (
                 <div
                   key={likeItem.id}
@@ -528,12 +535,12 @@ export default function Post({
                     setShowLikers(false);
                     if (onUserClick) onUserClick(likeItem.user_id);
                   }}
-                  className="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-1.5 rounded-lg transition-colors"
+                  className="flex items-center gap-3 cursor-pointer hover:bg-rose-50/60 p-2 rounded-xl transition-colors"
                 >
                   <img
                     src={likeItem.users?.avatar_url || "/default-avatar.png"}
                     alt="avatar"
-                    className="w-8 h-8 rounded-full object-cover"
+                    className="w-9 h-9 rounded-full object-cover border border-[#a50034]"
                   />
                   <span className="font-semibold text-sm text-gray-800">
                     {likeItem.users?.username || "Pengguna"}
@@ -542,7 +549,8 @@ export default function Post({
               ))}
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

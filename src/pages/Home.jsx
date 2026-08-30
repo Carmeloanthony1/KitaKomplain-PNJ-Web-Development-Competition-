@@ -13,14 +13,11 @@ export default function Home({ user, onLogout, onNavigate }) {
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [selecteduser, setSelecteduser] = useState(null);
   const [is_otherprofile_open, setIs_otherprofile_open] = useState(false);
-  // Ambil ID user yang lagi login
-  const currentUserId = user?.id || localStorage.getItem("user_id");
 
   useEffect(() => {
     async function fetchAllPosts() {
       setLoading(true);
 
-      // Mengambil SEMUA post dari semua user (feed publik)
       const { data, error } = await supabase
         .from("posts")
         .select(`
@@ -49,23 +46,22 @@ export default function Home({ user, onLogout, onNavigate }) {
   }, []);
 
   const handleUserClick = (targetUserId) => {
-      const currentUserId = user?.id || localStorage.getItem("user_id");
+    const currentUserId = user?.id || localStorage.getItem("user_id");
 
-      if (targetUserId === currentUserId) {
-        if (onNavigate) onNavigate("profile");
-      } else {
-        setSelecteduser(targetUserId);
-        setIs_otherprofile_open(true);
-      }
+    if (targetUserId === currentUserId) {
+      if (onNavigate) onNavigate("profile");
+    } else {
+      setSelecteduser(targetUserId);
+      setIs_otherprofile_open(true);
+    }
   };
-
 
   if (loading) return <div className="p-10 text-center">Loading posts...</div>;
 
   return (
-    <div className="min-h-screen bg-[#f7f7f7] flex flex-col">
-      {/* 1. Header dibuat w-full p-0 tanpa px-8 biar Navbar narik mentok ujung ke ujung */}
-      <header className="fixed top-0 left-0 right-0 z-5 bg-white border-b border-gray-200">
+    <div className="min-h-screen bg-[#f7f7f7] flex flex-col relative">
+      {/* Navbar pakai z-10 saja */}
+      <header className="fixed top-0 left-0 right-0 z-10 bg-white border-b border-gray-200">
         <Navbar 
           user={user} 
           openProfile={() => onNavigate && onNavigate("/profile")} 
@@ -73,32 +69,40 @@ export default function Home({ user, onLogout, onNavigate }) {
         />
       </header>
 
-      {/* 2. Container body disesuaikan padding-nya */}
+      {/* Main Container */}
       <div className="flex flex-1 pt-24 px-6 md:px-10 gap-8 w-full justify-between items-start">
-        <aside className="min-w-xs flex-shrink-0 sticky top-24 z-5">
+        {/* Sidebar Kiri */}
+        <aside className="min-w-xs flex-shrink-0 sticky top-24 z-0">
           <Sidebar_Kiri 
             onNavigate={onNavigate}
             openNotifications={() => setIsNotificationOpen(true)}
           />
         </aside>
 
-        <main className="flex-1 max-w-3xl mx-auto z-10 flex flex-col">
+        {/* Main Feed */}
+        <main className="flex-1 max-w-3xl mx-auto flex flex-col">
           {posts.length === 0 ? (
             <div className="text-center text-gray-500 py-10">
               Belum ada postingan.
             </div>
           ) : (
-            posts.map((postData) => 
-            <Post key={postData.id} post={postData} 
-              onUserClick = {handleUserClick}/>)
+            posts.map((postData) => (
+              <Post 
+                key={postData.id} 
+                post={postData} 
+                onUserClick={handleUserClick}
+              />
+            ))
           )}
         </main>
 
+        {/* Sidebar Kanan (Most Polling) */}
         <aside className="w-[360px] flex-shrink-0 sticky top-24 z-0">
           <Most_Polling />
         </aside>
       </div>
 
+      {/* Global Modals */}
       <Notification
         isOpen={isNotificationOpen}
         setIsOpen={setIsNotificationOpen}

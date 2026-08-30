@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
+import { createPortal } from "react-dom"; // 1. Import createPortal
 import { supabase } from "../supabaseClient";
 
-export default function VoteModal({ post, onClose, onVoteSuccess }) { // 1. TANGKAP PROP DARI FOCUSPOST
+export default function VoteModal({ post, onClose, onVoteSuccess }) {
   const [upvotes, setUpvotes] = useState(0);
   const [downvotes, setDownvotes] = useState(0);
   const [userVote, setUserVote] = useState(null);
@@ -90,7 +91,7 @@ export default function VoteModal({ post, onClose, onVoteSuccess }) { // 1. TANG
     // Refresh data internal VoteModal
     await fetchVoteData(false);
 
-    // 2. TRIGGER REFRESH HALAMAN PROFILE.JSX LEWAT PROP INI!
+    // Trigger refresh halaman luar jika ada prop callback
     if (typeof onVoteSuccess === "function") {
       await onVoteSuccess();
     }
@@ -98,10 +99,11 @@ export default function VoteModal({ post, onClose, onVoteSuccess }) { // 1. TANG
 
   if (!post) return null;
 
-  return (
+  // 2. Bungkus JSX modal pakai createPortal langsung ke document.body
+  return createPortal(
     <div 
       onClick={onClose}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-fadeIn"
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-fadeIn"
     >
       <div 
         onClick={(e) => e.stopPropagation()}
@@ -186,6 +188,7 @@ export default function VoteModal({ post, onClose, onVoteSuccess }) { // 1. TANG
         )}
 
       </div>
-    </div>
+    </div>,
+    document.body // Ditempel langsung ke root body
   );
 }
