@@ -17,6 +17,7 @@ export default function Home({ user, onLogout, onNavigate }) {
 
   // 2. TAMBAHKAN STATE UNTUK MODAL NEW POST
   const [isPostModalOpen, setIsPostModalOpen] = useState(false);
+
   const [isdark, setIsdark] = useState(false);
 
   const toggle_darkmode = () => {
@@ -25,7 +26,7 @@ export default function Home({ user, onLogout, onNavigate }) {
     if(isdark){
       localStorage.setItem("theme", "dark");
     } else {
-      localStorage.setItem("theme", "dark");
+      localStorage.setItem("theme", "light");
     }
   };
 
@@ -81,7 +82,7 @@ export default function Home({ user, onLogout, onNavigate }) {
   if (loading) return <div className="p-10 text-center">Loading posts...</div>;
 
   return (
-    <div className="min-h-screen bg-[#f7f7f7] flex flex-col relative">
+    <div className="min-h-screen bg-[#f7f7f7] dark:bg-[#1e1e1e] flex flex-col relative">
       {/* Navbar pakai z-10 saja */}
       <header className="fixed top-0 left-0 right-0 z-10 bg-white border-b border-gray-200">
         <Navbar 

@@ -14,7 +14,7 @@ export default function Sidebar_kiri({ onNavigate, openNotifications, openPostMo
     if(isdark){
       localStorage.setItem("theme", "dark");
     } else {
-      localStorage.setItem("theme", "dark");
+      localStorage.setItem("theme", "light");
     }
   };
 

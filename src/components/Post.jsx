@@ -83,7 +83,7 @@ export default function Post({
     if(isdark){
       localStorage.setItem("theme", "dark");
     } else {
-      localStorage.setItem("theme", "dark");
+      localStorage.setItem("theme", "light");
     }
   };
 
@@ -258,7 +258,7 @@ export default function Post({
   };
 
   return (
-    <div className={`max-w-2xl w-full ${hideaction ? "bg-transparent p-0" : "bg-slate-50/70 p-4"} rounded-2xl flex flex-col gap-4`}>
+    <div className={`max-w-2xl w-full ${hideaction ? "bg-transparent p-0" : "bg-transparent p-4"} rounded-2xl flex flex-col gap-4`}>
       <div className="flex flex-col gap-3 p-4 border-4 border-[#a50034]/50 dark:border-[#f1ece1] rounded-lg bg-white dark:bg-[#1e1e1e] shadow-xs">
         <div className="flex items-start gap-3">
           {/* AVATAR */}
@@ -424,7 +424,11 @@ export default function Post({
                     {likes.length > 0 && (
                       <span
                         onClick={() => setShowLikers(true)}
-                        className="font-bold text-sm text-[#a50034] cursor-pointer hover:underline"
+                        className={`font-bold text-sm cursor-pointer hover:underline transition-colors ${
+                          isLiked 
+                            ? "text-[#a50034] dark:text-[#a50034]" 
+                            : "text-[#a50034] dark:text-[#f1ece1] active:text-[#a50034] dark:active:text-[#a50034]"
+                        }`}
                       >
                         {likes.length}
                       </span>
