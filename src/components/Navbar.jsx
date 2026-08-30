@@ -1,18 +1,20 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 export default function Navbar({ user, openNotifications }) {
   const [search_params] = useSearchParams();
   const navigate = useNavigate();
+  const inputRef = useRef(null); // Ref untuk elemen input
 
   const quert_tag = search_params.get("tag") || "";
   const [search_term, setSearch_term] = useState(quert_tag);
 
+  // Sync state lokal kalau URL berubah dari luar
   useEffect(() => {
     setSearch_term(quert_tag);
   }, [quert_tag]);
 
-  // Real-time Search dengan Debounce (100ms)
+  // LIVE SEARCH KENCENG (100ms)
   useEffect(() => {
     const timer = setTimeout(() => {
       const clean_keyword = search_term.replace("#", "").trim().toLowerCase(); 
@@ -25,11 +27,21 @@ export default function Navbar({ user, openNotifications }) {
           navigate(`/search`, { replace: true });
         }
       }
-    }, 100);
+    }, 100); // Tetap 100ms sesuai selera Mas Rusdi
+
     return () => clearTimeout(timer);
   }, [search_term, navigate, quert_tag]);
 
-  // Handler Submit Form Search
+  // KUNCI UTAMA: Paksakan kursor TETAP FOKUS di input setelah re-render / navigasi
+  useEffect(() => {
+    if (inputRef.current && document.activeElement !== inputRef.current) {
+      // Simpan posisi kursor terakhir biar gak lompat ke awal teks
+      const length = inputRef.current.value.length;
+      inputRef.current.focus();
+      inputRef.current.setSelectionRange(length, length);
+    }
+  }, [search_term, quert_tag]);
+
   const handleSearch = (e) => {
     if (e) e.preventDefault();
   };
@@ -38,7 +50,7 @@ export default function Navbar({ user, openNotifications }) {
     <div className="w-full bg-white border-b border-gray-200 shadow-xs">
       <nav className="w-full px-6 md:px-10 py-4 grid grid-cols-12 items-center">
         
-        {/* 1. Logo Kiri */}
+        {/* Logo Kiri */}
         <div 
           onClick={() => navigate('/home')}
           className="col-span-3 cursor-pointer transition hover:scale-105 active:scale-95 justify-self-start"
@@ -48,13 +60,14 @@ export default function Navbar({ user, openNotifications }) {
           </h1>
         </div>
         
-        {/* 2. Search Bar Tengah */}
+        {/* Search Bar Tengah */}
         <div className="col-span-6 flex justify-center w-full">
           <form 
             onSubmit={handleSearch}
             className="flex items-center gap-3 bg-white border-2 border-[#a50034] rounded-full px-5 py-2.5 w-full max-w-lg shadow-xs focus-within:ring-2 focus-within:ring-[#a50034]/50"
           >
             <input 
+              ref={inputRef} // Pasang ref di sini
               type="text" 
               placeholder="Cari topik" 
               value={search_term}
@@ -77,7 +90,7 @@ export default function Navbar({ user, openNotifications }) {
           </form>
         </div>
 
-        {/* 3. Profile Akun Kanan (Navigasi Langsung ke Profil Sendiri) */}
+        {/* Profile Akun Kanan */}
         <div className="col-span-3 justify-self-end">
           <div 
             onClick={() => navigate('/profile')}
