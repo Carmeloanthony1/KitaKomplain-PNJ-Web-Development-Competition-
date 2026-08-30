@@ -75,6 +75,25 @@ export default function Post({
       tag_list = tag_mentah.split(",");
     }
   }
+  const [isdark, setIsdark] = useState(false);
+
+  const toggle_darkmode = () => {
+    const isdark = document.documentElement.classList.toggle("dark");
+    setIsdark(isdark);
+    if(isdark){
+      localStorage.setItem("theme", "dark");
+    } else {
+      localStorage.setItem("theme", "dark");
+    }
+  };
+
+  useEffect(() => {
+    if(localStorage.getItem("theme") === "dark") {
+      document.documentElement.classList.add("dark");
+      setIsdark(isdark);
+    }
+
+  }, []);
 
   const fetchLikes = async () => {
     const { data, error } = await supabase
@@ -240,7 +259,7 @@ export default function Post({
 
   return (
     <div className={`max-w-2xl w-full ${hideaction ? "bg-transparent p-0" : "bg-slate-50/70 p-4"} rounded-2xl flex flex-col gap-4`}>
-      <div className="flex flex-col gap-3 p-4 border-4 border-[#a50034]/50 rounded-lg bg-white shadow-xs">
+      <div className="flex flex-col gap-3 p-4 border-4 border-[#a50034]/50 dark:border-[#f1ece1] rounded-lg bg-white dark:bg-[#1e1e1e] shadow-xs">
         <div className="flex items-start gap-3">
           {/* AVATAR */}
           {post.users?.avatar_url ? (
@@ -248,12 +267,12 @@ export default function Post({
               src={avatar}
               alt={username}
               onClick={() => onUserClick && onUserClick(post.user_id)}
-              className="w-10 h-10 mt-1 rounded-full object-cover flex-shrink-0 cursor-pointer border-2 border-[#a50034] hover:opacity-80 transition-opacity"
+              className="w-10 h-10 mt-1 rounded-full object-cover flex-shrink-0 cursor-pointer border-2 border-[#a50034] dark:border-[#f1ece1] hover:opacity-80 transition-opacity"
             />
           ) : ( 
             <div 
               onClick={() => onUserClick && onUserClick(post.user_id)} 
-              className="w-10 h-10 mt-1 rounded-full flex justify-center bg-white text-[#a50034] border-2 border-[#a50034] font-bold items-center object-cover flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity">
+              className="w-10 h-10 mt-1 rounded-full flex justify-center bg-white text-[#a50034] border-2 border-[#a50034] dark:border-[#f1ece1] font-bold items-center object-cover flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity">
               {(username || "U")[0].toLowerCase()}
             </div>
           )}
@@ -264,7 +283,7 @@ export default function Post({
               <div className="flex flex-col">
                 <span
                   onClick={() => onUserClick && onUserClick(post.user_id)}
-                  className="font-bold text-gray-800 cursor-pointer hover:underline hover:text-[#a50034] transition-colors w-fit"
+                  className="font-bold text-gray-800 dark:text-[#f1ece1] cursor-pointer hover:text-[#a50034] dark:hover:text-[#a50034]/60 transition-colors w-fit"
                 >
                   {username}
                 </span>
@@ -283,7 +302,7 @@ export default function Post({
                           onClick={() =>
                             navigate(`/search?tag=${encodeURIComponent(cleanTag)}`)
                           }
-                          className="text-[#a50034] bg-[#a50034]/10 hover:bg-[#a50034] hover:text-white px-2 py-0.5 rounded-md font-bold text-xs transition-colors cursor-pointer"
+                          className="text-[#a50034] dark:text-[#f1ece1] bg-[#a50034]/10 dark:bg-transparent dark:border-1 dark:border-[#f1ece1] hover:bg-[#a50034] dark:hover:bg-transparent hover:text-white px-2 py-0.5 rounded-md font-bold text-xs transition-colors cursor-pointer"
                         >
                           #{cleanTag}
                         </span>
@@ -308,7 +327,7 @@ export default function Post({
                 <div className="relative">
                   <button
                     onClick={() => setIsmenu_open((prev) => !prev)}
-                    className="text-xl font-bold px-2 py-1 text-gray-500 hover:text-black hover:bg-gray-100 rounded-full transition-colors cursor-pointer"
+                    className="text-xl font-bold px-2 py-1 text-gray-500 dark:text-[#f1ece1] dark:hover:bg-transparent dark:hover:text-white dark:hover:scale-105 hover:text-black hover:bg-gray-100 rounded-full transition-colors cursor-pointer"
                   >
                     •••
                   </button>
@@ -363,7 +382,7 @@ export default function Post({
             </div>
 
             {/* DESKRIPSI POST */}
-            <p className="text-gray-900 text-sm leading-relaxed break-words">
+            <p className="text-gray-900 dark:text-white text-sm leading-relaxed break-words">
               {post.description}
             </p>
 
@@ -390,8 +409,8 @@ export default function Post({
                         }}
                         className={`w-9 h-9 ${
                           isLiked
-                            ? "fill-[#a50034] stroke-[#a50034]"
-                            : "fill-none stroke-[#a50034]"
+                            ? "fill-[#a50034] stroke-[#a50034] dark:fill-[#a50034] dark:stroke-[#a50034]"
+                            : "fill-none stroke-[#a50034] dark:stroke-white"
                         }`}
                         viewBox="0 0 24 24"
                         strokeWidth="2"
@@ -418,7 +437,7 @@ export default function Post({
                       className="focus:outline-none cursor-pointer"
                     >
                       <svg
-                        className="w-9 h-9 fill-[#a50034] hover:scale-110 transition-transform cursor-pointer"
+                        className="w-9 h-9 fill-[#a50034] dark:fill-white hover:scale-110 transition-transform cursor-pointer"
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 640 640"
                       >
@@ -427,7 +446,7 @@ export default function Post({
                     </button>
 
                     {commentCount > 0 && (
-                      <span className="font-bold text-sm text-[#a50034]">
+                      <span className="font-bold text-sm text-[#a50034] dark:text-white">
                         {commentCount}
                       </span>
                     )}
@@ -436,7 +455,7 @@ export default function Post({
                   <div className="flex items-center">
                     <button onClick={handle_share} className="focus:outline-none cursor-pointer">
                       <svg
-                        className="w-9 h-9 stroke-[#a50034] fill-none hover:scale-110 transition-transform cursor-pointer"
+                        className="w-9 h-9 stroke-[#a50034] dark:stroke-white fill-none hover:scale-110 transition-transform cursor-pointer"
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 24 24"
                       >
@@ -453,7 +472,7 @@ export default function Post({
 
                 <button 
                   onClick={() => setIsVote_open(true)}
-                  className="bg-red-50 p-2 leading-relaxed rounded-lg text-black border-2 border-[#a50034] font-semibold cursor-pointer">
+                  className="bg-red-50 p-2 leading-relaxed rounded-lg text-black border-2 border-[#a50034] dark:border-[#f1ece1] font-semibold cursor-pointer">
                   Vote
                 </button>
                 {isVote_open && (

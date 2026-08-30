@@ -17,7 +17,25 @@ export default function Home({ user, onLogout, onNavigate }) {
 
   // 2. TAMBAHKAN STATE UNTUK MODAL NEW POST
   const [isPostModalOpen, setIsPostModalOpen] = useState(false);
+  const [isdark, setIsdark] = useState(false);
 
+  const toggle_darkmode = () => {
+    const isdark = document.documentElement.classList.toggle("dark");
+    setIsdark(isdark);
+    if(isdark){
+      localStorage.setItem("theme", "dark");
+    } else {
+      localStorage.setItem("theme", "dark");
+    }
+  };
+
+  useEffect(() => {
+    if(localStorage.getItem("theme") === "dark") {
+      document.documentElement.classList.add("dark");
+      setIsdark(isdark);
+    }
+
+  }, []);
   useEffect(() => {
     async function fetchAllPosts() {
       setLoading(true);
