@@ -73,7 +73,7 @@ export default function Navbar({ user, openNotifications }) {
           onClick={() => navigate('/home')}
           className="col-span-3 cursor-pointer transition hover:scale-105 active:scale-95 justify-self-start"
         >
-          <h1 className="text-3xl font-black text-[#a50034] dark: text-[#f1ece1] tracking-tight select-none">
+          <h1 className="text-3xl font-black text-[#a50034] dark:text-[#f1ece1] tracking-tight select-none">
             KitaKomplain
           </h1>
         </div>
