@@ -6,6 +6,7 @@ import Post from "../components/Post";
 import Most_Polling from "../components/Most_Polling";
 import Notification from "../components/Notification";
 import UserProfileModal from "../components/Other_profile";
+import { NewPost } from "../components/newpost"; // 1. IMPORT COMPONENT NEWPOST DI SINI
 
 export default function Home({ user, onLogout, onNavigate }) {
   const [posts, setPosts] = useState([]);
@@ -13,6 +14,9 @@ export default function Home({ user, onLogout, onNavigate }) {
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [selecteduser, setSelecteduser] = useState(null);
   const [is_otherprofile_open, setIs_otherprofile_open] = useState(false);
+
+  // 2. TAMBAHKAN STATE UNTUK MODAL NEW POST
+  const [isPostModalOpen, setIsPostModalOpen] = useState(false);
 
   useEffect(() => {
     async function fetchAllPosts() {
@@ -73,9 +77,11 @@ export default function Home({ user, onLogout, onNavigate }) {
       <div className="flex flex-1 pt-24 px-6 md:px-10 gap-8 w-full justify-between items-start">
         {/* Sidebar Kiri */}
         <aside className="min-w-xs flex-shrink-0 sticky top-24 z-0">
+          {/* 3. OPER PROP openPostModal KE SIDEBAR KIRI */}
           <Sidebar_Kiri 
             onNavigate={onNavigate}
             openNotifications={() => setIsNotificationOpen(true)}
+            openPostModal={() => setIsPostModalOpen(true)}
           />
         </aside>
 
@@ -103,6 +109,13 @@ export default function Home({ user, onLogout, onNavigate }) {
       </div>
 
       {/* Global Modals */}
+      {/* 4. RENDER MODAL NEWPOST SELEVEL DENGAN NOTIFICATION DI SINI */}
+      <NewPost 
+        isOpen={isPostModalOpen}
+        onClose={() => setIsPostModalOpen(false)}
+        onPostCreated={() => window.location.reload()}
+      />
+
       <Notification
         isOpen={isNotificationOpen}
         setIsOpen={setIsNotificationOpen}

@@ -27,7 +27,8 @@ export default function Most_Polling() {
               #{index + 1}
             </span>
 
-            <div className="group relative bg-gray-50 hover:bg-red-50/50 border border-gray-200 hover:border-[#a50034]/40 p-3 rounded-xl transition duration-200 flex flex-col gap-2 cursor-pointer flex-1 w-full">
+            {/* HAPUS 'relative' DI SINI agar tidak memicu Stacking Context baru */}
+            <div className="group bg-gray-50 hover:bg-red-50/50 border border-gray-200 hover:border-[#a50034]/40 p-3 rounded-xl transition duration-200 flex flex-col gap-2 cursor-pointer flex-1 w-full">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2.5 min-w-0">
                   <img src={item.avatar} alt="avatar" className="w-6 h-6 rounded-full object-cover border border-gray-300 flex-shrink-0"/>

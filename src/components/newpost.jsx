@@ -1,135 +1,176 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { createPortal } from "react-dom";
 import { supabase } from "../supabaseClient";
 
-// Helper Sanitasi Tag
-    export const filter_tag = (raw_input) => {
-    if (typeof raw_input === "string") {
-        // Hapus semua spasi dan karakter non-alphanumeric
-        const clean = raw_input.replace(/[^a-zA-Z0-9]/g, "").toLowerCase().trim();
-        return clean;
+export const filter_tag = (raw_input) => {
+  if (typeof raw_input === "string") {
+    return raw_input.replace(/[^a-zA-Z0-9]/g, "").toLowerCase().trim();
+  }
+  return "";
+};
+
+export function NewPost({ isOpen, onClose, onPostCreated }) {
+  const [description, setDescription] = useState("");
+  const [tag, setTag] = useState("");
+  const [image, setImage] = useState(null);
+  const [preview, setPreview] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const userId = localStorage.getItem("user_id");
+
+  // Jika modal sedang ditutup, stop render!
+  if (!isOpen) return null;
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImage(file);
+      setPreview(URL.createObjectURL(file));
     }
-    return "";
-    };
+  };
 
-    // Komponen Utama (Named Export & Default Export disatukan)
-    export function NewPost() {
-    const navigate = useNavigate();
+  const handleRemoveImage = () => {
+    setImage(null);
+    setPreview(null);
+  };
 
-    const [description, setDescription] = useState("");
-    const [tag, setTag] = useState("");
-    const [image, setImage] = useState(null);
-    const [preview, setPreview] = useState(null);
-    const [loading, setLoading] = useState(false);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-    const userId = localStorage.getItem("user_id");
+    if (!description.trim() || !tag.trim()) {
+      alert("Tag dan deskripsi wajib diisi!");
+      return;
+    }
 
-    const handleImageChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-        setImage(file);
-        setPreview(URL.createObjectURL(file));
-        }
-    };
+    if (!userId) {
+      alert("Silakan login terlebih dahulu!");
+      return;
+    }
 
-    const handleRemoveImage = () => {
-        setImage(null);
-        setPreview(null);
-    };
+    setLoading(true);
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    try {
+      let imageURL = null;
 
-        if (!description.trim() || !tag.trim()) {
-            alert("tag dan deskripsi wajib diisi!");
-            return;
-        }
+      if (image) {
+        const fileEXT = image.name.split(".").pop();
+        const filename = `${userId}_${Date.now()}.${fileEXT}`;
+        const filepath = `posts/${filename}`;
 
-        if (!userId) {
-            alert("Silakan login terlebih dahulu!");
-            return;
-        }
+        const { error: uploadError } = await supabase.storage
+          .from("posts")
+          .upload(filepath, image);
 
-        setLoading(true);
+        if (uploadError) throw uploadError;
 
-        try {
-            // 1. DEKLARASIKAN VARIABEL imageURL DI SINI BIAR BISA DIAKSES OLEH SUPABASE INSERT
-            let imageURL = null; 
+        const { data: url_data } = supabase.storage
+          .from("posts")
+          .getPublicUrl(filepath);
 
-            if (image) {
-            const fileEXT = image.name.split(".").pop();
-            const filename = `${userId}_${Date.now()}.${fileEXT}`;
-            const filepath = `posts/${filename}`;
+        imageURL = url_data.publicUrl;
+      }
 
-            const { error: uploadError } = await supabase.storage
-                .from("posts")
-                .upload(filepath, image);
+      const cleanedTag = filter_tag(tag);
 
-            if (uploadError) throw uploadError;
+      const { error: insert_error } = await supabase.from("posts").insert([
+        {
+          user_id: userId,
+          description: description,
+          tag: cleanedTag,
+          image_url: imageURL,
+        },
+      ]);
 
-            const { data: url_data } = supabase.storage
-                .from("posts")
-                .getPublicUrl(filepath);
+      if (insert_error) throw insert_error;
+      alert("Postingan berhasil dibuat!");
 
-            // Isi nilainya jika upload gambar berhasil
-            imageURL = url_data.publicUrl; 
-            }
+      setDescription("");
+      setTag("");
+      setImage(null);
+      setPreview(null);
 
-            const cleanedTag = filter_tag(tag);
+      if (onPostCreated) onPostCreated();
+      if (onClose) onClose();
+    } catch (error) {
+      console.error("Gagal membuat post:", error.message);
+      alert("Gagal mengirim postingan: " + error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-            // 2. MASUKKAN VARIABEL imageURL KE PERINTAH INSERT
-            const { error: insert_error } = await supabase.from("posts").insert([
-            {
-                user_id: userId,
-                description: description,
-                tag: cleanedTag,
-                image_url: imageURL, // Jangan sampai typo jadi image_url: image_url
-            },
-            ]);
+  return createPortal(
+    <div 
+      onClick={onClose}
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        zIndex: 999999,
+        backgroundColor: 'rgba(0, 0, 0, 0.65)',
+        backdropFilter: 'blur(4px)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '1rem'
+      }}
+    >
+      {/* KOTAK FORM MODAL */}
+      <div 
+        onClick={(e) => e.stopPropagation()} 
+        style={{
+          position: 'relative',
+          zIndex: 1000000,
+          width: '100%',
+          maxWidth: '32rem', // max-w-lg
+          backgroundColor: '#ffffff',
+          borderRadius: '1rem',
+          padding: '1.5rem',
+          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+          border: '1px solid #f3f4f6'
+        }}
+      >
+        {/* Tombol Silang Close */}
+        <button
+          type="button"
+          onClick={onClose}
+          style={{
+            position: 'absolute',
+            top: '1rem',
+            right: '1.25rem',
+            background: 'transparent',
+            border: 'none',
+            fontSize: '1.25rem',
+            fontWeight: 'bold',
+            color: '#9ca3af',
+            cursor: 'pointer'
+          }}
+        >
+          ✕
+        </button>
 
-            if (insert_error) throw insert_error;
-            alert("Postingan berhasil dibuat!");
+        <form onSubmit={handleSubmit} className="flex flex-col">
+          <h2 className="text-xl font-bold mb-4 text-gray-800">Tuliskan pengalaman anda</h2>
 
-            // Reset Form & Navigate
-            setDescription("");
-            setTag("");
-            setImage(null);
-            setPreview(null);
-
-            navigate("/home");
-        } catch (error) {
-            console.error("Gagal membuat post:", error.message);
-            alert("Gagal mengirim postingan: " + error.message);
-        } finally {
-            setLoading(false);
-        }
-    };
-  return (
-    <div className="flex">
-      <div className="flex flex-col flex-1">
-        <form onSubmit={handleSubmit} className="mt-4 w-full bg-white rounded-lg shadow p-6">
-          <h2 className="text-xl font-bold mb-4">Tuliskan pengalaman anda</h2>
-
-          {/* Input Tag */}
           <input
             type="text"
             value={tag}
             onChange={(e) => setTag(e.target.value)}
             placeholder="Tambahkan tag/topik"
-            className="w-full mt-3 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#a50034] text-black bg-white"
           />
 
-          {/* Input Description */}
           <textarea
             placeholder="Apa yang ingin kamu bagikan?"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="w-full mt-3 h-32 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full mt-3 h-32 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#a50034] resize-none text-black bg-white"
           />
 
-          {/* Input Gambar */}
           <div className="mt-3">
-            <label className="flex items-center gap-2 cursor-pointer text-blue-500 hover:text-blue-600 w-fit">
+            <label className="flex items-center gap-2 cursor-pointer text-[#a50034] hover:text-red-700 font-medium w-fit">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
               </svg>
@@ -143,36 +184,37 @@ import { supabase } from "../supabaseClient";
             </label>
           </div>
 
-          {/* Preview Gambar */}
           {preview && (
             <div className="relative mt-3 w-fit">
               <img
                 src={preview}
                 alt="preview"
-                className="max-h-64 rounded-lg object-cover"
+                className="max-h-48 rounded-lg object-cover border border-gray-200"
               />
               <button
                 type="button"
                 onClick={handleRemoveImage}
-                className="absolute top-1 right-1 bg-black/60 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-black/80"
+                className="absolute top-1 right-1 bg-black/60 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-black/80 text-xs"
               >
-                ×
+                ✕
               </button>
             </div>
           )}
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="mt-4 bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-800 transition-colors duration-150 cursor-pointer"
-          >
-            {loading ? "Mengirim..." : "Posting"}
-          </button>
+          <div className="flex justify-end mt-5">
+            <button
+              type="submit"
+              disabled={loading}
+              className="bg-[#a50034] text-white py-2.5 px-6 rounded-xl hover:bg-[#800028] transition-colors font-bold cursor-pointer disabled:opacity-50"
+            >
+              {loading ? "Mengirim..." : "Posting"}
+            </button>
+          </div>
         </form>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 
-// Menambahkan default export sebagai cadangan
 export default NewPost;
