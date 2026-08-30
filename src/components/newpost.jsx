@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { createPortal } from "react-dom";
 import { supabase } from "../supabaseClient";
+import { useStatus } from "./StatusContext"; // 1. IMPORT USESTATUS (sesuaikan path kalo beda folder)
 
 export const filter_tag = (raw_input) => {
   if (typeof raw_input === "string") {
@@ -15,10 +16,10 @@ export function NewPost({ isOpen, onClose, onPostCreated }) {
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
+  const { showStatus } = useStatus(); // 2. PANGGIL HOOK
 
   const userId = localStorage.getItem("user_id");
 
-  // Jika modal sedang ditutup, stop render
   if (!isOpen) return null;
 
   const handleImageChange = (e) => {
@@ -38,12 +39,12 @@ export function NewPost({ isOpen, onClose, onPostCreated }) {
     e.preventDefault();
 
     if (!description.trim() || !tag.trim()) {
-      alert("Tag dan deskripsi wajib diisi!");
+      showStatus("Tag dan deskripsi wajib diisi!", "error"); // 3. GANTI
       return;
     }
 
     if (!userId) {
-      alert("Silakan login terlebih dahulu!");
+      showStatus("Silakan login terlebih dahulu!", "error"); // 4. GANTI
       return;
     }
 
@@ -82,7 +83,7 @@ export function NewPost({ isOpen, onClose, onPostCreated }) {
       ]);
 
       if (insert_error) throw insert_error;
-      alert("Postingan berhasil dibuat!");
+      showStatus("Postingan berhasil dibuat!", "success"); // 5. GANTI
 
       setDescription("");
       setTag("");
@@ -93,7 +94,7 @@ export function NewPost({ isOpen, onClose, onPostCreated }) {
       if (onClose) onClose();
     } catch (error) {
       console.error("Gagal membuat post:", error.message);
-      alert("Gagal mengirim postingan: " + error.message);
+      showStatus("Gagal mengirim postingan: " + error.message, "error"); // 6. GANTI
     } finally {
       setLoading(false);
     }
@@ -104,12 +105,10 @@ export function NewPost({ isOpen, onClose, onPostCreated }) {
       onClick={onClose}
       className="fixed inset-0 z-[999999] bg-black/65 backdrop-blur-xs flex items-center justify-center p-4 animate-fadeIn"
     >
-      {/* KOTAK FORM MODAL */}
       <div 
         onClick={(e) => e.stopPropagation()} 
         className="relative z-[1000000] w-full max-w-lg bg-white dark:bg-[#1e1e1e] rounded-2xl p-6 shadow-2xl border border-gray-100 dark:border-2 dark:border-[#f1ece1] transition-colors"
       >
-        {/* Tombol Silang Close */}
         <button
           type="button"
           onClick={onClose}
