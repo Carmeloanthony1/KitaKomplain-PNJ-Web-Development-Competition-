@@ -299,7 +299,6 @@ export default function Profile() {
               </div>
 
               <p
-                onClick={() => navigate("/report")}
                 className="text-xs text-blue-600 dark:text-[#a50034] font-medium cursor-pointer hover:underline"
               >
                 Verify your account?
