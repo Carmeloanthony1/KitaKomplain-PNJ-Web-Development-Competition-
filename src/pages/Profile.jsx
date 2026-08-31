@@ -368,8 +368,8 @@ export default function Profile() {
 
                   {/* BADGE INDIKATOR MODES ANONIM */}
                   {isAnonimMode && (
-                    <span className="ml-2 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-gray-900 text-white dark:bg-amber-400 dark:text-gray-900 flex items-center gap-1">
-                      🕵️ Mode Anonim
+                    <span className="ml-2 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-gray-900 text-white dark:bg-[#f1ece1] dark:text-gray-900 flex items-center justify-center gap-1">
+                      Mode Anonim
                     </span>
                   )}
                 </div>
@@ -388,7 +388,7 @@ export default function Profile() {
                   type="button"
                   onClick={handleToggleAnonim}
                   className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                    isAnonimMode ? "bg-[#a50034] dark:bg-amber-400" : "bg-gray-300 dark:bg-gray-600"
+                    isAnonimMode ? "bg-[#a50034] dark:bg-[#a50034]" : "bg-gray-300 dark:bg-gray-600"
                   }`}
                 >
                   <span
