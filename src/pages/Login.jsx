@@ -1,10 +1,13 @@
 import { useState } from "react";
 import "./Login.css";
 import { useNavigate } from "react-router-dom";
+import { useStatus } from "../components/StatusContext";
+
 export default function Login({ switchToSignup, onLoginSuccess }) {
     const [identifier, setIdentifier] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
+    const { showStatus } = useStatus();
     const navigate = useNavigate();
 
     const handleSubmit = async (event) => {
@@ -40,7 +43,7 @@ export default function Login({ switchToSignup, onLoginSuccess }) {
             }
 
         } catch (error) {   
-            alert(error.message);
+            showStatus(error.message || "Login gagal. Periksa kembali akunmu.", "error");
         } finally {
             setLoading(false);
         }

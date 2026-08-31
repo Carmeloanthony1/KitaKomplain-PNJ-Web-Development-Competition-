@@ -1,8 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { supabase } from "../supabaseClient";
+import { useStatus } from "./StatusContext";
 
 export default function VoteModal({ post, onClose, onVoteSuccess }) {
+  const { showStatus } = useStatus();
   const [upvotes, setUpvotes] = useState(0);
   const [downvotes, setDownvotes] = useState(0);
   const [userVote, setUserVote] = useState(null);
@@ -51,7 +53,7 @@ export default function VoteModal({ post, onClose, onVoteSuccess }) {
 
     if (!activeUserId)
     {
-      alert("Silakan login terlebih dahulu!");
+      showStatus("Silakan login terlebih dahulu!", "error");
       return;
     }
 
@@ -67,7 +69,7 @@ export default function VoteModal({ post, onClose, onVoteSuccess }) {
       if (error)
       {
         console.error("Gagal menghapus vote:", error.message);
-        alert("Gagal menghapus vote: " + error.message);
+        showStatus("Gagal menghapus vote: " + error.message, "error");
         return;
       }
 
@@ -89,7 +91,7 @@ export default function VoteModal({ post, onClose, onVoteSuccess }) {
       if (error)
       {
         console.error("Gagal menyimpan vote:", error.message);
-        alert("Gagal menyimpan vote: " + error.message);
+        showStatus("Gagal menyimpan vote: " + error.message, "error");
         return;
       }
 

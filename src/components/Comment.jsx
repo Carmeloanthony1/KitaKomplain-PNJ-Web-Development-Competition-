@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient";
 import Comment_detail from "./Comment_detail";
+import { useStatus } from "./StatusContext";
 
 export default function CommentSection({ comments = [], onCommentAdded, postId, postOwnerId }) {
+  const { showStatus } = useStatus();
   const [commentList, setCommentList] = useState(comments);
   const [inputText, setInputText] = useState("");
   const [visibleCount, setVisibleCount] = useState(3);
@@ -20,7 +22,7 @@ export default function CommentSection({ comments = [], onCommentAdded, postId, 
     const currentUserId = localStorage.getItem("user_id");
 
     if (!currentUserId) {
-      alert("Silakan login untuk memberikan komentar!");
+      showStatus("Silakan login untuk memberikan komentar!", "error");
       return;
     }
 

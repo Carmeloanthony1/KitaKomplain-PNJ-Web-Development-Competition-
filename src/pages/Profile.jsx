@@ -2,9 +2,11 @@ import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import Focuspost from "../components/FocusPost";
+import { useStatus } from "../components/StatusContext";
 
 export default function Profile() {
   const navigate = useNavigate();
+  const { showStatus } = useStatus();
   const userId = localStorage.getItem("user_id");
 
   const [username, setUsername] = useState("");
@@ -143,7 +145,7 @@ export default function Profile() {
 
     if (error) {
       console.error("Gagal update mode anonim:", error.message);
-      alert("Gagal mengubah status Mode Anonim!");
+      showStatus("Gagal mengubah status Mode Anonim!", "error");
       setIsAnonimMode(!nextStatus); // Revert jika gagal
     }
   };
@@ -157,9 +159,10 @@ export default function Profile() {
       .eq("id", userId);
 
     if (error) {
-      alert("Gagal update username!");
+      showStatus("Gagal update username!", "error");
     } else {
       setUsername(tempUsername);
+      showStatus("Username berhasil diperbarui!", "success");
     }
     setIsEditingName(false);
   };
@@ -171,9 +174,10 @@ export default function Profile() {
       .eq("id", userId);
 
     if (error) {
-      alert("Gagal update bio!");
+      showStatus("Gagal update bio!", "error");
     } else {
       setBio(tempBio);
+      showStatus("Bio berhasil diperbarui!", "success");
     }
     setIsEditingBio(false);
   };
@@ -207,9 +211,9 @@ export default function Profile() {
       if (updateError) throw updateError;
 
       setAvatarUrl(newAvatar);
-      alert("Foto profil berhasil diubah!");
+      showStatus("Foto profil berhasil diubah!", "success");
     } catch (error) {
-      alert("Gagal upload foto profile");
+      showStatus("Gagal upload foto profile", "error");
       console.error(error.message);
     } finally { 
       setUploading(false);
