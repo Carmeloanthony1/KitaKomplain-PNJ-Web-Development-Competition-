@@ -6,11 +6,11 @@ export default function Most_Polling() {
   const [isdark, setIsdark] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  const fetch_mypolling = async () => {
+  // Parameter isSilent = true biar gak nampilin indikator loading pas background refetch
+  const fetch_mypolling = async (isSilent = false) => {
     try {
-      setLoading(true);
+      if (!isSilent) setLoading(true);
 
-      // Tarik relasi votes tanpa menentukan nama kolom spesifik di select
       const { data, error } = await supabase
         .from('posts')
         .select(`
@@ -18,7 +18,7 @@ export default function Most_Polling() {
           tag, 
           description, 
           users (username, avatar_url), 
-          votes (*)
+          votes (id, vote_type)
         `);
       
       if (error) throw error;
@@ -26,14 +26,12 @@ export default function Most_Polling() {
       if (data) {
         const formattedData = data
           .map((post) => {
-            // Cek isi relasi votes
             const votesArr = post.votes || [];
 
-            // Jika ada kolom 'type', atau kolom 'vote' yang bernilai 'up', sesuaikan di sini:
-            const upVotesCount = votesArr.filter((v) => {
-              const val = v.type || v.vote || v.vote_type;
-              return val === "up" || val === "setuju" || val === true;
-            }).length;
+            // Hitung vote_type === 'up' atau 'setuju'
+            const upVotesCount = votesArr.filter(
+              (v) => v.vote_type === "up" || v.vote_type === "setuju"
+            ).length;
 
             return {
               ...post,
@@ -48,14 +46,48 @@ export default function Most_Polling() {
     } catch (err) {
       console.error("Gagal mengambil data Most Polling:", err.message);
     } finally {
-      setLoading(false);
+      if (!isSilent) setLoading(false);
     }
   };
 
+  // Setup Initial Fetch & Realtime WebSocket
   useEffect(() => {
     fetch_mypolling();
+
+    // Gunakan 1 channel bersih untuk mendengarkan tabel votes & posts
+    const channel = supabase
+      .channel('most-polling-db-changes')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'votes' },
+        (payload) => {
+          console.log('⚡ Realtime Vote Change:', payload);
+          fetch_mypolling(true);
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'posts' },
+        (payload) => {
+          console.log('⚡ Realtime Post Change:', payload);
+          fetch_mypolling(true);
+        }
+      )
+      .subscribe((status, err) => {
+        if (status === 'SUBSCRIBED') {
+          console.log('🟢 WebSocket Supabase Realtime Active!');
+        }
+        if (status === 'CHANNEL_ERROR') {
+          console.error('🔴 Gagal Connect Realtime WebSocket:', err);
+        }
+      });
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
-  
+
+  // Theme observer
   useEffect(() => {
     const checkTheme = () => {
       setIsdark(document.documentElement.classList.contains("dark"));
