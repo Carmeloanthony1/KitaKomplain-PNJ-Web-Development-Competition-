@@ -46,13 +46,11 @@ export default function Notification({ isOpen, setIsOpen }) {
                     // Determine the message text based on the notification type
                     let messageText = "interacted with your post.";
                     if (n.type === 'like')
-                    {
                         messageText = "liked your post.";
-                    }
                     else if (n.type === 'comment')
-                    {
                         messageText = "commented on your post.";
-                    }
+                    else if (n.type === 'rank_top_5')
+                        messageText = "is trending! Your post made it to the Most Polling! 🏆";
                     else if (n.type.startsWith('milestone'))
                     {
                         const voteCount = n.type.split('_')[1];

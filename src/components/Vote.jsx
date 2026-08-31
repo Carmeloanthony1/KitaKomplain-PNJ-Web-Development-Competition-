@@ -94,7 +94,8 @@ export default function VoteModal({ post, onClose, onVoteSuccess }) {
       }
 
       // Milestone Notification Logic
-      if (type === "up") {
+      if (type === "up")
+      {
         const newUpvotes = upvotes + 1; // Calculate what the new score is
         
         if (newUpvotes % 3 === 0 && newUpvotes > 0)
@@ -116,6 +117,49 @@ export default function VoteModal({ post, onClose, onVoteSuccess }) {
                 actor_id: activeUserId,    // The 3rd voter
                 post_id: post.id,
                 type: `milestone_${newUpvotes}`,
+                is_read: false
+              }
+            ]);
+          }
+        }
+      }
+      
+      // Top Most Polling Logic
+
+      // Fetch all posts and votes to calculate current ranks
+      const { data: allPosts } = await supabase
+        .from('posts')
+        .select('id, user_id, votes(vote_type)');
+
+      if (allPosts)
+      {
+        // Calculate upvotes + sort highest to lowest
+        const rankedPosts = allPosts.map(p => {
+          const upCount = p.votes ? p.votes.filter(v => v.vote_type === 'up' || v.vote_type === 'setuju').length : 0;
+          return { id: p.id, user_id: p.user_id, upCount };
+        }).sort((a, b) => b.upCount - a.upCount);
+
+        const top5Posts = rankedPosts.slice(0, 5);
+        const isTop5 = top5Posts.some(p => p.id === post.id);
+
+        if (isTop5 && post.user_id !== activeUserId)
+        {
+          // Check if we already notified them about entering the top 5 to avoid spam
+          const { data: existingRankNotif } = await supabase
+            .from("notifications")
+            .select("id")
+            .eq("post_id", post.id)
+            .eq("type", "rank_top_5")
+            .maybeSingle();
+
+          if (!existingRankNotif)
+          {
+            await supabase.from("notifications").insert([
+              {
+                user_id: post.user_id,
+                actor_id: activeUserId,
+                post_id: post.id,
+                type: "rank_top_5",
                 is_read: false
               }
             ]);
