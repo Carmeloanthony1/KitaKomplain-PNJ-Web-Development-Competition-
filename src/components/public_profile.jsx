@@ -256,9 +256,9 @@ export default function PublicProfile() {
 
         {/* NOTIFIKASI ANONIM (MAX-W-2XL & MX-AUTO UNTUK CENTER) */}
         {isAnonim && (
-          <div className="mt-10 p-4 bg-amber-500/10 border border-amber-500/30 rounded-2xl w-full max-w-xl mx-auto text-center shadow-sm">
+          <div className="mt-10 p-4 bg-amber-500/10 border border-amber-500/30 rounded-2xl w-full max-w-md mx-auto text-center shadow-sm">
             <span className="text-sm font-medium text-amber-600 dark:text-amber-400">
-              Pengguna ini mengaktifkan mode anonim untuk post comment dan vote
+              Pengguna ini mengaktifkan mode anonim
             </span>
           </div>
         )}
