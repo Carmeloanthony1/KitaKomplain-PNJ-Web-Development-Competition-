@@ -37,7 +37,9 @@ export default function Post({
   onUserClick,
   hideaction = false,
   focused_comment = null,
-  onClose = null
+  onClose = null,
+  onDelete = null,
+  onUpdate = null,
 }) {
   const navigate = useNavigate();
   const focused_comment_ref = useRef(null);
@@ -254,7 +256,7 @@ export default function Post({
       showStatus("Gagal menghapus postingan: " + error.message, "error");
     } else {
       showStatus("Postingan berhasil dihapus!", "success");
-      setTimeout(() => window.location.reload(), 100); 
+      if (onDelete) onDelete(post.id);
     }
   };
 
@@ -516,7 +518,9 @@ export default function Post({
         <Edit_post
           post={post}
           onclose={() => setIsedit_open(false)}
-          onpost_update={() => window.location.reload()}
+          onpost_update={(updatedPost) => {
+            if (onUpdate) onUpdate(updatedPost);
+          }}
         />
       )}
 

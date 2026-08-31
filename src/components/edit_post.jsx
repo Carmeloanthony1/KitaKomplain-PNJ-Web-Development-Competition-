@@ -71,13 +71,17 @@ export default function Edit_post({ post, onclose, onpost_update }) {
 
       if (error) {
         showStatus("Gagal memperbarui postingan: " + error.message, "error");
-        setTimeout(() => window.location.reload(), 2000); 
-
       } else {
         showStatus("Postingan berhasil diperbarui!", "success");
-        setTimeout(() => window.location.reload(), 2000); 
 
-        if (onpost_update) onpost_update();
+        if (onpost_update) {
+          onpost_update({
+            ...post,
+            tag: edit_tag,
+            description: edit_description,
+            image_url: final_image_url,
+          });
+        }
         if (onclose) onclose();
       }
     } catch (err) {
