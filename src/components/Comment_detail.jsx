@@ -69,7 +69,7 @@ function ReplyItem({ reply, onReplyClick }) {
   };
 
   return (
-    <div className="flex gap-2.5 text-sm p-1.5 rounded-lg hover:bg-slate-50/60 transition-colors">
+    <div className="flex gap-2.5 text-sm p-1.5 rounded-lg">
       {replyAvatar ? (
         <img
           src={replyAvatar}
@@ -110,7 +110,13 @@ function ReplyItem({ reply, onReplyClick }) {
               <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
             </svg>
             {likeCount > 0 && (
-              <span className="text-[10px] text-gray-500 dark:text-gray-400 font-semibold">
+              <span
+                className={`text-[11px] font-bold transition-colors ${
+                  isLiked
+                    ? "text-[#a50034] dark:text-[#a50034]"
+                    : "text-gray-500 dark:text-gray-400"
+                }`}
+              >
                 {likeCount}
               </span>
             )}
@@ -265,7 +271,6 @@ export default function Comment_detail({ comment, postId }) {
   };
 
   return (
-    /* Mengubah background container komentar jadi slate-100 di mode terang & zinc-800 di mode gelap */
     <div className="flex flex-col gap-1 p-3 rounded-xl bg-slate-100 dark:bg-zinc-800 shadow-sm transition-colors">
       {/* 1. KOMENTAR UTAMA */}
       <div className="flex gap-3 text-sm p-2 rounded-xl">
@@ -307,7 +312,13 @@ export default function Comment_detail({ comment, postId }) {
                 <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
               </svg>
               {commentLikeCount > 0 && (
-                <span className="text-[11px] text-gray-500 dark:text-gray-400 font-semibold">
+                <span
+                  className={`text-[11px] font-bold transition-colors ${
+                    isCommentLiked
+                      ? "text-[#a50034] dark:text-[#a50034]"
+                      : "text-gray-500 dark:text-gray-400"
+                  }`}
+                >
                   {commentLikeCount}
                 </span>
               )}
