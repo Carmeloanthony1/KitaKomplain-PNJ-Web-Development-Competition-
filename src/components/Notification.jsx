@@ -39,16 +39,31 @@ export default function Notification({ isOpen, setIsOpen }) {
                 // Format the Supabase data to match your UI structure
                 const formattedNotifications = data.map((n) =>
                 {
-                    
-                    // Simple time formatting (e.g., "12 Aug")
+                    // Simple time formatting (ex: "12 Aug")
                     const date = new Date(n.created_at);
                     const timeString = `${date.getDate()} ${date.toLocaleString('default', { month: 'short' })}`;
+
+                    // Determine the message text based on the notification type
+                    let messageText = "interacted with your post.";
+                    if (n.type === 'like')
+                    {
+                        messageText = "liked your post.";
+                    }
+                    else if (n.type === 'comment')
+                    {
+                        messageText = "commented on your post.";
+                    }
+                    else if (n.type.startsWith('milestone'))
+                    {
+                        const voteCount = n.type.split('_')[1];
+                        messageText = `helped your post reach ${voteCount} polls! 🎉`;
+                    }
 
                     return{
                         id: n.id,
                         username: n.actor?.username || "Someone",
                         avatar: n.actor?.avatar_url || "👤",
-                        message: n.type === 'like' ? "liked your post." : "commented on your post.",
+                        message: messageText,
                         time: timeString,
                         read: n.is_read
                     };

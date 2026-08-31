@@ -65,6 +65,38 @@ export default function VoteModal({ post, onClose, onVoteSuccess }) {
         alert("Gagal menghapus vote: " + error.message);
         return;
       }
+
+      // Milestone Notification Logic
+      if (type === "up")
+      {
+        const newUpvotes = upvotes + 1; // Calculate what the new score is
+        
+        if (newUpvotes % 3 === 0 && newUpvotes > 0)
+        {
+          
+          // Check if we already sent this specific milestone to prevent spam
+          const { data: existingMilestone } = await supabase
+            .from("notifications")
+            .select("id")
+            .eq("post_id", post.id)
+            .eq("type", `milestone_${newUpvotes}`)
+            .maybeSingle();
+
+          // If it doesn't exist, create it!
+          if (!existingMilestone)
+          {
+            await supabase.from("notifications").insert([
+              {
+                user_id: post.user_id,     // Post owner receives it
+                actor_id: activeUserId,    // The 25th voter
+                post_id: post.id,
+                type: `milestone_${newUpvotes}`,
+                is_read: false
+              }
+            ]);
+          }
+        }
+      }
     } else {
       const { error } = await supabase.from("votes").upsert(
         [
