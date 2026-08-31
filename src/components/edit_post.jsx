@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { createPortal } from "react-dom";
 import { supabase } from "../supabaseClient";
+import { useStatus } from "./StatusContext"; // sesuaikan path kalo beda folder
 
 export default function Edit_post({ post, onclose, onpost_update }) {
   const [edit_tag, setEdit_tag] = useState(post?.tag || "");
@@ -8,6 +9,7 @@ export default function Edit_post({ post, onclose, onpost_update }) {
   const [edit_photo, setEdit_photo] = useState(post?.image_url || "");
   const [newphoto_url, setNewphoto_url] = useState(null);
   const [is_update, setIs_update] = useState(false);
+  const { showStatus } = useStatus();
 
   const handlenew_image = (e) => {
     const file = e.target.files[0];
@@ -26,7 +28,7 @@ export default function Edit_post({ post, onclose, onpost_update }) {
     e.preventDefault();
 
     if (!edit_description.trim() || !edit_tag.trim()) {
-      alert("tag dan deskripsi wajib diisi");
+      showStatus("Tag dan deskripsi wajib diisi", "error");
       return;
     }
 
@@ -45,7 +47,7 @@ export default function Edit_post({ post, onclose, onpost_update }) {
           .upload(filepath, newphoto_url);
 
         if (uploadError) {
-          alert("Gagal mengunggah foto baru: " + uploadError.message);
+          showStatus("Gagal mengunggah foto baru: " + uploadError.message, "error");
           setIs_update(false);
           return;
         }
@@ -68,25 +70,31 @@ export default function Edit_post({ post, onclose, onpost_update }) {
         .eq("id", post.id);
 
       if (error) {
-        alert("Gagal memperbarui postingan: " + error.message);
+        showStatus("Gagal memperbarui postingan: " + error.message, "error");
       } else {
-        alert("Postingan berhasil diperbarui!");
-        if (onpost_update) onpost_update();
+        showStatus("Postingan berhasil diperbarui!", "success");
+
+        if (onpost_update) {
+          onpost_update({
+            ...post,
+            tag: edit_tag,
+            description: edit_description,
+            image_url: final_image_url,
+          });
+        }
         if (onclose) onclose();
       }
     } catch (err) {
-      alert("Terjadi kesalahan: " + err.message);
+      showStatus("Terjadi kesalahan: " + err.message, "error");
     } finally {
       setIs_update(false);
     }
   };
 
-  // Komponen Modal yang akan ditarik keluar DOM
   const modalContent = (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-[99999] p-4">
       <div className="bg-white rounded-2xl max-w-xl w-full shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
         
-        {/* Header Modal */}
         <div className="flex justify-between items-center px-6 pt-5 pb-2">
           <h2 className="text-xl font-bold text-black">Edit postingan</h2>
           <button
@@ -98,7 +106,6 @@ export default function Edit_post({ post, onclose, onpost_update }) {
           </button>
         </div>
 
-        {/* Form Body */}
         <form onSubmit={handleSave_edit} className="px-6 pb-6 pt-2 flex flex-col gap-3 overflow-y-auto">
           <input
             type="text"
@@ -160,6 +167,5 @@ export default function Edit_post({ post, onclose, onpost_update }) {
     </div>
   );
 
-  // Render modal langsung ke document.body
   return createPortal(modalContent, document.body);
 }
