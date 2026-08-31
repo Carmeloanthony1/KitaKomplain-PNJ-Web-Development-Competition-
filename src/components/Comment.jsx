@@ -93,7 +93,7 @@ export default function CommentSection({ comments = [], onCommentAdded, postId, 
       </form>
 
       <div className="flex justify-between items-center px-1">
-        <span className="text-xs font-bold text-gray-700">Komentar</span>
+        <span className="text-xs font-bold text-gray-700 dark:text-white">Komentar</span>
       </div>
 
       {/* List Komentar */}
@@ -110,7 +110,7 @@ export default function CommentSection({ comments = [], onCommentAdded, postId, 
               />
             ))
         ) : (
-          <p className="text-xs text-gray-400 text-center py-2">
+          <p className="text-xs text-gray-400 text-center py-2 dark:text-white">
             Belum ada komentar.
           </p>
         )}

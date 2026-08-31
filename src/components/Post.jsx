@@ -259,7 +259,7 @@ export default function Post({
   };
 
   return (
-    <div className={`max-w-2xl w-full ${hideaction ? "bg-transparent p-0" : "bg-transparent p-4"} rounded-2xl flex flex-col gap-4`}>
+    <div className={`max-w-3xl w-full ${hideaction ? "bg-transparent p-0" : "bg-transparent p-4"} rounded-2xl flex flex-col gap-4`}>
       <div className="flex flex-col gap-3 p-4 border-4 border-[#a50034]/50 dark:border-[#f1ece1] rounded-lg bg-white dark:bg-[#1e1e1e] shadow-xs">
         <div className="flex items-start gap-3">
           {post.users?.avatar_url ? (

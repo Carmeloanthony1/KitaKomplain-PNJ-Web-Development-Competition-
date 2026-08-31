@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
 
-export default function Most_Polling({ onUserClick }) {
+export default function Most_Polling({ onUserClick, onPostClick }) {
   const [votelist, setVotelist] = useState([]);
   const [isdark, setIsdark] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // Parameter isSilent = true biar gak nampilin indikator loading pas background refetch
   const fetch_mypolling = async (isSilent = false) => {
     try {
       if (!isSilent) setLoading(true);
@@ -18,6 +17,8 @@ export default function Most_Polling({ onUserClick }) {
           user_id,
           tag, 
           description, 
+          image_url,
+          created_at,
           users (username, avatar_url), 
           votes (id, vote_type)
         `);
@@ -29,7 +30,6 @@ export default function Most_Polling({ onUserClick }) {
           .map((post) => {
             const votesArr = post.votes || [];
 
-            // Hitung vote_type === 'up' atau 'setuju'
             const upVotesCount = votesArr.filter(
               (v) => v.vote_type === "up" || v.vote_type === "setuju"
             ).length;
@@ -51,7 +51,6 @@ export default function Most_Polling({ onUserClick }) {
     }
   };
 
-  // Setup Initial Fetch & Realtime Broadcast / DB Listener
   useEffect(() => {
     fetch_mypolling();
 
@@ -77,7 +76,6 @@ export default function Most_Polling({ onUserClick }) {
     };
   }, []);
 
-  // Theme observer
   useEffect(() => {
     const checkTheme = () => {
       setIsdark(document.documentElement.classList.contains("dark"));
@@ -139,29 +137,43 @@ export default function Most_Polling({ onUserClick }) {
                   #{index + 1}
                 </span>
 
-                {/* Card Polling Item */}
-                <div className="group bg-gray-50 dark:bg-[#1e1e1e] hover:bg-red-50/50 border border-gray-200 hover:border-[#a50034]/40 dark:hover:border-[#f1ece1] p-3 rounded-xl transition duration-200 flex flex-col gap-2 cursor-pointer flex-1 w-full min-w-0">
+                {/* Card Polling Item (Dipasang onClick di sini) */}
+                <div 
+                  onClick={() => onPostClick && onPostClick(item)}
+                  className="group bg-gray-50 dark:bg-[#1e1e1e] hover:bg-red-50/50 border border-gray-200 hover:border-[#a50034]/40 dark:hover:border-[#f1ece1] p-3 rounded-xl transition duration-200 flex flex-col gap-2 cursor-pointer flex-1 w-full min-w-0"
+                >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2.5 min-w-0">
                       
-                      {/* Logic Avatar disesuaikan dengan PostCard */}
                       {avatarUrl ? (
                         <img
                           src={avatarUrl}
                           alt={username}
-                          onClick={() => onUserClick && onUserClick(item.user_id)}
+                          onClick={(e) => {
+                            e.stopPropagation(); // Biar gak ke-trigger modal post saat klik avatar
+                            if (onUserClick) onUserClick(item.user_id);
+                          }}
                           className="w-6 h-6 rounded-full object-cover flex-shrink-0 cursor-pointer border border-[#a50034] dark:border-[#f1ece1] hover:opacity-80 transition-opacity"
                         />
                       ) : (
                         <div
-                          onClick={() => onUserClick && onUserClick(item.user_id)}
+                          onClick={(e) => {
+                            e.stopPropagation(); // Biar gak ke-trigger modal post
+                            if (onUserClick) onUserClick(item.user_id);
+                          }}
                           className="w-6 h-6 rounded-full flex justify-center bg-white text-[#a50034] border border-[#a50034] dark:border-[#f1ece1] text-xs font-bold items-center flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity"
                         >
                           {(username || "U")[0].toLowerCase()}
                         </div>
                       )}
 
-                      <span className="font-semibold text-sm text-gray-800 dark:text-white truncate">
+                      <span 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (onUserClick) onUserClick(item.user_id);
+                        }}
+                        className="font-semibold text-sm text-gray-800 dark:text-white truncate hover:underline"
+                      >
                         @{username}
                       </span>
                     </div>
