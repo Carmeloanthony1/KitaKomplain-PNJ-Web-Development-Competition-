@@ -45,35 +45,60 @@ export default function VoteModal({ post, onClose, onVoteSuccess }) {
     fetchVoteData(true);
   }, [fetchVoteData]);
 
-  const handleVote = async (type) => {
+  const handleVote = async (type) =>
+  {
     const activeUserId = await getActiveUserId();
 
-    if (!activeUserId) {
+    if (!activeUserId)
+    {
       alert("Silakan login terlebih dahulu!");
       return;
     }
 
-    if (userVote === type) {
+    if (userVote === type)
+    {
+      // THIS BLOCK RUNS WHEN REMOVING A VOTE
       const { error } = await supabase
         .from("votes")
         .delete()
         .eq("post_id", post.id)
         .eq("user_id", activeUserId);
 
-      if (error) {
+      if (error)
+      {
         console.error("Gagal menghapus vote:", error.message);
         alert("Gagal menghapus vote: " + error.message);
         return;
       }
 
-      // Milestone Notification Logic
-      if (type === "up")
+    }
+    else
+    {
+      // THIS BLOCK RUNS WHEN ADDING/CHANGING A VOTE
+      const { error } = await supabase.from("votes").upsert(
+        [
+          {
+            post_id: post.id,
+            user_id: activeUserId,
+            vote_type: type,
+          },
+        ],
+        { onConflict: "post_id, user_id" }
+      );
+
+      if (error)
       {
+        console.error("Gagal menyimpan vote:", error.message);
+        alert("Gagal menyimpan vote: " + error.message);
+        return;
+      }
+
+      // Milestone Notification Logic
+      if (type === "up") {
         const newUpvotes = upvotes + 1; // Calculate what the new score is
         
         if (newUpvotes % 3 === 0 && newUpvotes > 0)
         {
-          
           // Check if we already sent this specific milestone to prevent spam
           const { data: existingMilestone } = await supabase
             .from("notifications")
@@ -88,7 +113,7 @@ export default function VoteModal({ post, onClose, onVoteSuccess }) {
             await supabase.from("notifications").insert([
               {
                 user_id: post.user_id,     // Post owner receives it
-                actor_id: activeUserId,    // The 25th voter
+                actor_id: activeUserId,    // The 3rd voter
                 post_id: post.id,
                 type: `milestone_${newUpvotes}`,
                 is_read: false
@@ -97,35 +122,21 @@ export default function VoteModal({ post, onClose, onVoteSuccess }) {
           }
         }
       }
-    } else {
-      const { error } = await supabase.from("votes").upsert(
-        [
-          {
-            post_id: post.id,
-            user_id: activeUserId,
-            vote_type: type,
-          },
-        ],
-        { onConflict: "post_id, user_id" }
-      );
-
-      if (error) {
-        console.error("Gagal menyimpan vote:", error.message);
-        alert("Gagal menyimpan vote: " + error.message);
-        return;
-      }
     }
 
     await fetchVoteData(false);
 
-    if (typeof onVoteSuccess === "function") {
+    if (typeof onVoteSuccess === "function")
+    {
       await onVoteSuccess();
     }
 
     // NUTUP MODAL LANGSUNG ABIS VOTE, GAK PEDULI UP ATAU DOWN
-    if (typeof onClose === "function") {
+    if (typeof onClose === "function")
+    {
       onClose();
     }
+
   };
 
   if (!post) return null;
