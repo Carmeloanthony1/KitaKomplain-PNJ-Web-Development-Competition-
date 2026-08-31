@@ -12,6 +12,7 @@ export default function Profile() {
   const [avatarUrl, setAvatarUrl] = useState("");
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
+  const [isanonim_mode, setIsanonim_mode] = useState(false);
 
   // State Data
   const [posts, setPosts] = useState([]);
@@ -40,7 +41,7 @@ export default function Profile() {
     }
   }, []);
 
-  // Fungsi untuk refresh khusus data vote/polling tanpa perlu reload seluruh halaman
+  // Refresh khusus data vote/polling
   const refreshpage = useCallback(async () => {
     if (!userId) return;
 
@@ -76,7 +77,7 @@ export default function Profile() {
       // 1. Fetch Profile User
       const { data, error: userError } = await supabase
         .from("users")
-        .select("username, bio, avatar_url, created_at")
+        .select("username, bio, avatar_url, created_at, is_anonim_mode")
         .eq("id", userId)
         .single();
 
@@ -88,13 +89,15 @@ export default function Profile() {
         setAvatarUrl(data.avatar_url || "");
         setTempUsername(data.username || "");
         setTempBio(data.bio || "");
+        setIsanonim_mode(data.is_anonim_mode || false); // <-- Diset langsung di sini
       }
 
       // 2. Fetch Post User
       const { data: userPosts, error: postError } = await supabase
         .from("posts")
-        .select(`id, description, image_url, tag, created_at, user_id, users (username, avatar_url)`)
-        .eq("user_id", userId);
+        .select(`id, description, image_url, tag, is_anonim_mode, created_at, user_id, users (username, avatar_url)`)
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false });
 
       if (postError) {
         console.error("Gagal mengambil post: ", postError.message);
@@ -118,7 +121,7 @@ export default function Profile() {
         setUser_comment(commentsData);
       }
 
-      // 4. Fetch Polling User (memanggil refreshpage)
+      // 4. Fetch Polling User
       await refreshpage();
 
       setLoading(false);
@@ -194,7 +197,6 @@ export default function Profile() {
     }
   };
 
-  // Handler saat Post diklik dari Tab Posts
   const handlePost_click = (item) => {
     const fullpost_data = {
       ...item,
@@ -209,7 +211,6 @@ export default function Profile() {
     setIsfocusopen(true);
   };
 
-  // Handler saat Komentar diklik dari Tab Comments
   const handleComment_click = (item) => {
     if (!item.posts) return;
 
@@ -227,7 +228,6 @@ export default function Profile() {
     setIsfocusopen(true);
   };
 
-  // Handler saat Item Polling diklik dari Tab Polling
   const handle_voteclick = async (voteItem) => {
     if (!voteItem) return;
 
@@ -319,6 +319,13 @@ export default function Profile() {
                   className="hidden"
                 />
               </label>
+
+              {/* BADGE MODE ANONIM AKUN */}
+              {isanonim_mode && (
+                <span className="absolute bottom-0 right-0 bg-gray-900 text-white text-[10px] font-bold px-2 py-0.5 rounded-full border border-gray-700 shadow flex items-center gap-1" title="Mode Anonim Aktif">
+                  🕵️ Anonim
+                </span>
+              )}
             </div>
 
             <div className="flex flex-col gap-1">
@@ -447,14 +454,21 @@ export default function Profile() {
                   <div
                     key={item.id}
                     onClick={() => handlePost_click(item)}
-                    className="bg-white dark:bg-[#f1ece1] rounded-xl shadow-sm border border-gray-100 p-2 flex flex-col gap-3 cursor-pointer hover:shadow-md transition-shadow"
+                    className="bg-white dark:bg-[#f1ece1] rounded-xl shadow-sm border border-gray-100 p-2 flex flex-col gap-3 cursor-pointer hover:shadow-md transition-shadow relative overflow-hidden group"
                   >
+                    {/* BADGE JIKA POSTINGAN DIPUBLIKASIKAN ANONIM */}
+                    {item.is_anonim_mode && (
+                      <div className="absolute top-3 left-3 z-10 bg-black/75 backdrop-blur-md text-white text-[10px] font-bold px-2 py-1 rounded-md flex items-center gap-1 shadow">
+                        🕵️ Anonim
+                      </div>
+                    )}
+
                     <div className="h-48 w-full overflow-hidden rounded-lg flex justify-center items-center bg-[#f1ece1]">
                       {item.image_url ? (
                         <img
                           src={item.image_url}
                           alt="Post media"
-                          className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                         />
                       ) : ( 
                         <p className="text-[#a50034] font-semibold text-center text-xl line-clamp-4">
@@ -548,7 +562,7 @@ export default function Profile() {
         focused_vote={selectedvote}
         isOpen={isfocusopen} 
         onClose={() => setIsfocusopen(false)}
-        onVoteSuccess={refreshpage} // <-- PASANG PROP REFRESH DI SINI
+        onVoteSuccess={refreshpage}
       />
     </div>
   );
