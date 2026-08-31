@@ -6,12 +6,7 @@ import "./Notification.css";
 export default function Notification({ isOpen, setIsOpen }) {
     const navigate = useNavigate();
 
-    //izin hardcode sementara
-    const [notifications, setNotifications] = useState([
-        { id: 1, username: "John", message: "liked your post.", time: "1d", read: false },
-        { id: 2, username: "Sarah", message: "commented on your post", time: "2d", read: false },
-        { id: 3, message: "(PostName) has reached 100 polls!", time: "3d", read: true }
-    ]);
+    const [notifications, setNotifications] = useState([]);
     const currentUserId = localStorage.getItem("user_id");
 
     useEffect(() =>
@@ -29,7 +24,7 @@ export default function Notification({ isOpen, setIsOpen }) {
                     is_read,
                     created_at,
                     post_id,
-                    actor:actor_id (username, avatar_url)
+                    users!actor_id (username, avatar_url)
                 `)
                 .eq("user_id", currentUserId)
                 .order("created_at", { ascending: false });
@@ -45,22 +40,33 @@ export default function Notification({ isOpen, setIsOpen }) {
 
                     // Determine the message text based on the notification type
                     let messageText = "interacted with your post.";
+                    let showUsername = true; 
+                    let systemAvatar = null;
+
                     if (n.type === 'like')
                         messageText = "liked your post.";
                     else if (n.type === 'comment')
                         messageText = "commented on your post.";
                     else if (n.type === 'rank_top_5')
-                        messageText = "is trending! Your post made it to the Most Polling! 🏆";
+                    {
+                        messageText = "Your post is trending! It made it to the Most Polling Top 5!";
+                        showUsername = false;
+                        systemAvatar = "🏆";
+                    }
                     else if (n.type.startsWith('milestone'))
                     {
                         const voteCount = n.type.split('_')[1];
-                        messageText = `helped your post reach ${voteCount} polls! 🎉`;
+                        messageText = `Your post reached ${voteCount} polls!`;
+                        showUsername = false;
+                        systemAvatar = "🎉";
                     }
 
-                    return{
+                    return {
                         id: n.id,
-                        username: n.actor?.username || "Someone",
-                        avatar: n.actor?.avatar_url || "👤",
+                        username: n.users?.username || "Someone",
+                        avatar: systemAvatar || n.users?.avatar_url || "👤",
+                        isSystemAvatar: !!systemAvatar,
+                        showUsername: showUsername,
                         message: messageText,
                         time: timeString,
                         read: n.is_read
@@ -88,7 +94,6 @@ export default function Notification({ isOpen, setIsOpen }) {
 
     return (
         <>
-            {/* Overlay only shows when open */}
             {isOpen &&
                 (
                     <div
@@ -98,7 +103,6 @@ export default function Notification({ isOpen, setIsOpen }) {
                 )
             }
 
-            {/* Dynamically add the '-open' class based on state */}
             <div className={`notification-panel ${isOpen ? "notification-panel-open" : ""}`}>
                 <div className="notification-header">
                     <h1>Notifications</h1>
@@ -108,31 +112,42 @@ export default function Notification({ isOpen, setIsOpen }) {
                 </div>
 
                 <div className="notification-list">
-                    {notifications.map((notification) => (
-                        <div
-                            key={notification.id}
-                            className={`notification-item ${!notification.read ? "notification-unread" : ""}`}
-                            onClick={() => handleNotificationClick(notification)}
-                        >
-                            <div className="notification-avatar">
-                                    {notification.avatar !== "👤" ?
-                                        (
-                                            <img src={notification.avatar} alt="avatar" className="w-full h-full rounded-full object-cover" />
-                                        ) :
-                                        (
-                                            "👤"
-                                        )
-                                    }
-                            </div>
+                    {notifications.length === 0 ? (
+                        <p className="no-notifications">Belum ada notifikasi.</p>
+                    ) : (
+                        notifications.map((notification) => (
+                            <div
+                                key={notification.id}
+                                className={`notification-item ${!notification.read ? "notification-unread" : ""}`}
+                                onClick={() => handleNotificationClick(notification)}
+                            >
+                                <div 
+                                    className="notification-avatar"
+                                    style={{ backgroundColor: notification.isSystemAvatar ? "transparent" : "" }}
+                                >
+                                    {/* Properly checking for system emojis so it doesn't break the image tag */}
+                                    {notification.isSystemAvatar ? (
+                                        notification.avatar
+                                    ) : notification.avatar !== "👤" ? (
+                                        <img src={notification.avatar} alt="avatar" className="w-full h-full rounded-full object-cover" />
+                                    ) : (
+                                        "👤"
+                                    )}
+                                </div>
 
-                            <div className="notification-content">
-                                <p>
-                                    <strong>{notification.username}</strong> {notification.message}
-                                </p>
-                                <span>{notification.time}</span>
+                                <div className="notification-content">
+                                    <p>
+                                        {/* Conditionally render the username */}
+                                        {notification.showUsername && (
+                                            <><strong>{notification.username}</strong>{" "}</>
+                                        )}
+                                        {notification.message}
+                                    </p>
+                                    <span>{notification.time}</span>
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        ))
+                    )}
                 </div>
             </div>
         </>
