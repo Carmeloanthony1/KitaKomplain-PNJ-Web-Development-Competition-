@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import Focuspost from "../components/FocusPost";
@@ -28,6 +28,7 @@ export default function Profile() {
 
   const [selectedpost, setSelectedpost] = useState(null);
   const [selectedcomment, setSelectedcomment] = useState(null);
+  const [selectedvote, setSelectedvote] = useState(null);
   const [isfocusopen, setIsfocusopen] = useState(false);
 
   useEffect(() => {
@@ -38,6 +39,30 @@ export default function Profile() {
       document.documentElement.classList.remove("dark");
     }
   }, []);
+
+  // Fungsi untuk refresh khusus data vote/polling tanpa perlu reload seluruh halaman
+  const refreshpage = useCallback(async () => {
+    if (!userId) return;
+
+    const { data: vote_data, error: vote_error, count } = await supabase
+      .from("votes")
+      .select(
+        `
+        id, vote_type, created_at, post_id, 
+        posts ( id, tag, description, image_url, created_at, user_id, users (username, avatar_url) )
+      `,
+        { count: "exact" }
+      )
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false });
+
+    if (vote_error) {
+      console.error("Gagal memperbarui vote: ", vote_error.message);
+    } else if (vote_data) {
+      setUser_vote(vote_data);
+      setPollsCount(count ?? vote_data.length);
+    }
+  }, [userId]);
 
   useEffect(() => {
     if (!userId) {
@@ -77,7 +102,7 @@ export default function Profile() {
         setPosts(userPosts);
       }
 
-      // 3. Fetch Comments User (PERBAIKAN: Lengkapi kolom select posts)
+      // 3. Fetch Comments User
       const { data: commentsData, error: commentError } = await supabase
         .from("comments")
         .select(`
@@ -93,24 +118,13 @@ export default function Profile() {
         setUser_comment(commentsData);
       }
 
-      // 4. Fetch Polling User
-      const { data: vote_data, error: vote_error, count } = await supabase
-        .from("votes")
-        .select(`id, vote_type, created_at, post_id, posts ( id, tag, description )`, { count: "exact" })
-        .eq("user_id", userId)
-        .order("created_at", { ascending: false });
-
-      if (vote_error) {
-        console.error("Gagal mengambil Vote: ", vote_error.message);
-      } else if (vote_data) {
-        setUser_vote(vote_data);
-        setPollsCount(count ?? vote_data.length);
-      }
+      // 4. Fetch Polling User (memanggil refreshpage)
+      await refreshpage();
 
       setLoading(false);
     }
     fetchUserData();
-  }, [userId]);
+  }, [userId, refreshpage]);
 
   const handleSaveName = async () => {
     if (!tempUsername.trim()) return;
@@ -191,6 +205,7 @@ export default function Profile() {
     };
     setSelectedpost(fullpost_data);
     setSelectedcomment(null);
+    setSelectedvote(null);
     setIsfocusopen(true);
   };
 
@@ -207,8 +222,44 @@ export default function Profile() {
     };
 
     setSelectedpost(fullpost_data);
-    setSelectedcomment(item); // Menyimpan komentar yang sedang di-focus
+    setSelectedcomment(item);
+    setSelectedvote(null);
     setIsfocusopen(true);
+  };
+
+  // Handler saat Item Polling diklik dari Tab Polling
+  const handle_voteclick = async (voteItem) => {
+    if (!voteItem) return;
+
+    if (voteItem.posts) {
+      const fullpost_data = {
+        ...voteItem.posts,
+        users: voteItem.posts.users || {
+          username: username,
+          avatar_url: avatarUrl,
+        },
+      };
+      setSelectedpost(fullpost_data);
+      setSelectedcomment(null);
+      setSelectedvote(voteItem);
+      setIsfocusopen(true);
+      return;
+    }
+
+    if (voteItem.post_id) {
+      const { data, error } = await supabase
+        .from("posts")
+        .select(`*, users (id, username, avatar_url)`)
+        .eq("id", voteItem.post_id)
+        .single();
+
+      if (!error && data) {
+        setSelectedpost(data);
+        setSelectedcomment(null);
+        setSelectedvote(voteItem);
+        setIsfocusopen(true);
+      }
+    }
   };
 
   if (loading)
@@ -416,7 +467,7 @@ export default function Profile() {
               </div>
             ))}
 
-          {/* TAB COMMENTS: Sekarang bisa diklik & membuka Focuspost */}
+          {/* TAB COMMENTS */}
           {activeTab === "comments" &&
             (user_comment.length === 0 ? (
               <p className="text-gray-400 dark:text-[#f1ece1] text-sm font-medium">
@@ -445,6 +496,7 @@ export default function Profile() {
               </div>
             ))}
 
+          {/* TAB POLLING */}
           {activeTab === "polling" &&
             (user_vote.length === 0 ? (
               <p className="text-gray-400 dark:text-[#f1ece1] text-sm font-medium">
@@ -455,11 +507,12 @@ export default function Profile() {
                 {user_vote.map((item) => (
                   <div
                     key={item.id}
-                    className="bg-gray-50 dark:bg-[#292828] border border-gray-200 dark:border-gray-700 rounded-xl p-4 flex flex-col gap-2 text-left"
+                    onClick={() => handle_voteclick(item)}
+                    className="bg-gray-50 dark:bg-[#292828] border border-gray-200 dark:border-gray-700 rounded-xl p-4 flex flex-col gap-2 text-left cursor-pointer hover:border-[#a50034] dark:hover:border-[#f1ece1] transition-all group"
                   > 
                     <div className="flex justify-between items-center text-xs text-gray-400 dark:text-gray-400">
                       <span>
-                        tag: <strong className="text-[#a50034] dark:text-[#f1ece1]">#{item.posts?.tag || "isu"}</strong>
+                        tag: <strong className="text-[#a50034] dark:text-[#f1ece1] group-hover:underline">#{item.posts?.tag || "isu"}</strong>
                       </span>
                       <span>{new Date(item.created_at).toLocaleDateString("id-ID")}</span>
                     </div>
@@ -491,9 +544,11 @@ export default function Profile() {
       {/* MODAL FOCUS POST */}
       <Focuspost 
         post={selectedpost}
-        focusedComment={selectedcomment} // Opsional: Bawa prop ini jika komponen Focuspost mau menghighlight komentar tertentu
+        focused_comment={selectedcomment}
+        focused_vote={selectedvote}
         isOpen={isfocusopen} 
         onClose={() => setIsfocusopen(false)}
+        onVoteSuccess={refreshpage} // <-- PASANG PROP REFRESH DI SINI
       />
     </div>
   );

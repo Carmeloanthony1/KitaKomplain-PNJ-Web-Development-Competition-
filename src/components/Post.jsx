@@ -1,10 +1,13 @@
 import { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import Share_post from "./Share_post";
 import CommentSection from "./Comment";
 import { supabase } from "../supabaseClient";
 import Edit_post from "./edit_post";
 import { useNavigate } from "react-router-dom";
 import VoteModal from "./Vote";
+import { useConfirm } from "./ConfirmContext";
+import { useStatus } from "./StatusContext";
 
 const buildCommentTree = (comments = []) => {
   const commentMap = {};
@@ -27,22 +30,24 @@ const buildCommentTree = (comments = []) => {
   return tree;
 };
 
-export default function Post({ 
-  post, 
-  onUserClick, 
-  hideaction = false, 
+
+
+export default function Post({
+  post,
+  onUserClick,
+  hideaction = false,
   focused_comment = null,
-  onClose = null // Added onClose prop here
+  onClose = null
 }) {
   const navigate = useNavigate();
   const focused_comment_ref = useRef(null);
+  const { showStatus } = useStatus(); 
 
   const [likes, setLikes] = useState([]);
   const [isLiked, setIsLiked] = useState(false);
   const [isPop, setIsPop] = useState(false);
   const [showLikers, setShowLikers] = useState(false);
 
-  // Jika hideaction true (misal dari modal Focuspost), otomatis buka komentar
   const [isCommentOpen, setIsCommentOpen] = useState(hideaction);
   const [commentCount, setCommentCount] = useState(0);
   const [commentsList, setCommentsList] = useState([]);
@@ -52,7 +57,7 @@ export default function Post({
   const [isedit_open, setIsedit_open] = useState(false);
 
   const [isVote_open, setIsVote_open] = useState(false);
-
+  const { showConfirm } = useConfirm()
   const currentUserId = localStorage.getItem("user_id");
 
   if (!post) return null;
@@ -74,6 +79,25 @@ export default function Post({
       tag_list = tag_mentah.split(",");
     }
   }
+  const [isdark, setIsdark] = useState(false);
+
+  const toggle_darkmode = () => {
+    const isdark = document.documentElement.classList.toggle("dark");
+    setIsdark(isdark);
+    if (isdark) {
+      localStorage.setItem("theme", "dark");
+    } else {
+      localStorage.setItem("theme", "light");
+    }
+  };
+
+  useEffect(() => {
+    if (localStorage.getItem("theme") === "dark") {
+      document.documentElement.classList.add("dark");
+      setIsdark(isdark);
+    }
+
+  }, []);
 
   const fetchLikes = async () => {
     const { data, error } = await supabase
@@ -137,11 +161,10 @@ export default function Post({
   useEffect(() => {
     if (post?.id) {
       fetchLikes();
-      fetch_comment(); // Tetap di-fetch meskipun hideaction = true!
+      fetch_comment();
     }
   }, [post.id, currentUserId]);
 
-  // AUTO SCROLL KE KOMENTAR PILIHAN
   useEffect(() => {
     if (focused_comment && focused_comment_ref.current) {
       const timer = setTimeout(() => {
@@ -149,12 +172,12 @@ export default function Post({
           behavior: "smooth",
           block: "start",
         });
-      }, 250); // Waktu timeout dikit biar DOM modal udah ke-render sempurna
-      
+      }, 250);
+
       return () => clearTimeout(timer);
     }
   }, [focused_comment]);
-  
+
   const triggerPop = () => {
     setIsPop(true);
     setTimeout(() => {
@@ -164,7 +187,7 @@ export default function Post({
 
   const toggleLike = async () => {
     if (!currentUserId) {
-      alert("Silakan login untuk memberikan like!");
+      showStatus("Silakan login untuk memberikan like!", "error"); // 3. GANTI DI SINI
       return;
     }
 
@@ -222,48 +245,44 @@ export default function Post({
   const handle_share = () => setIsshare_open(true);
 
   const handle_delete = async () => {
-    const confirm_delete = window.confirm(
-      "Apakah anda yakin ingin menghapus postingan ini?"
-    );
-    if (!confirm_delete) return;
+    const confirmed = await showConfirm("Apakah anda yakin ingin menghapus postingan ini?");
+    if (!confirmed) return;
 
     const { error } = await supabase.from("posts").delete().eq("id", post.id);
 
     if (error) {
-      alert("Gagal menghapus postingan: " + error.message);
+      showStatus("Gagal menghapus postingan: " + error.message, "error");
     } else {
-      alert("Postingan berhasil dihapus!");
-      window.location.reload();
+      showStatus("Postingan berhasil dihapus!", "success");
+      setTimeout(() => window.location.reload(), 100); 
     }
   };
 
   return (
-    <div className={`max-w-2xl w-full ${hideaction ? "bg-transparent p-0" : "bg-slate-50/70 p-4"} rounded-2xl flex flex-col gap-4`}>
-      <div className="flex flex-col gap-3 p-4 border-4 border-[#a50034]/50 rounded-lg bg-white shadow-xs">
+    <div className={`max-w-3xl w-full ${hideaction ? "bg-transparent p-0" : "bg-transparent p-4"} rounded-2xl flex flex-col gap-4`}>
+      <div className="flex flex-col gap-3 p-4 border-4 border-[#a50034]/50 dark:border-[#f1ece1] rounded-lg bg-white dark:bg-[#1e1e1e] shadow-xs">
         <div className="flex items-start gap-3">
-          {/* AVATAR */}
           {post.users?.avatar_url ? (
             <img
               src={avatar}
               alt={username}
               onClick={() => onUserClick && onUserClick(post.user_id)}
-              className="w-10 h-10 mt-1 rounded-full object-cover flex-shrink-0 cursor-pointer border-2 border-[#a50034] hover:opacity-80 transition-opacity"
+              className="w-10 h-10 mt-1 rounded-full object-cover flex-shrink-0 cursor-pointer border-2 border-[#a50034] dark:border-[#f1ece1] hover:opacity-80 transition-opacity"
             />
-          ) : ( 
-            <div 
-              onClick={() => onUserClick && onUserClick(post.user_id)} 
-              className="w-10 h-10 mt-1 rounded-full flex justify-center bg-white text-[#a50034] border-2 border-[#a50034] font-bold items-center object-cover flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity">
+          ) : (
+            <div
+              onClick={() => onUserClick && onUserClick(post.user_id)}
+              className="w-10 h-10 mt-1 rounded-full flex justify-center bg-white text-[#a50034] border-2 border-[#a50034] dark:border-[#f1ece1] font-bold items-center object-cover flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity">
               {(username || "U")[0].toLowerCase()}
             </div>
           )}
 
           <div className="flex flex-col gap-1 flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap justify-between">
-              {/* HEADER NAMA USER + LIST TAGS */}
               <div className="flex flex-col">
                 <span
                   onClick={() => onUserClick && onUserClick(post.user_id)}
-                  className="font-bold text-gray-800 cursor-pointer hover:underline hover:text-[#a50034] transition-colors w-fit"
+                  className="font-bold text-gray-800 dark:text-[#f1ece1] cursor-pointer hover:text-[#a50034] dark:hover:text-[#a50034]/60 transition-colors w-fit"
                 >
                   {username}
                 </span>
@@ -282,7 +301,7 @@ export default function Post({
                           onClick={() =>
                             navigate(`/search?tag=${encodeURIComponent(cleanTag)}`)
                           }
-                          className="text-[#a50034] bg-[#a50034]/10 hover:bg-[#a50034] hover:text-white px-2 py-0.5 rounded-md font-bold text-xs transition-colors cursor-pointer"
+                          className="text-[#a50034] dark:text-[#f1ece1] bg-[#a50034]/10 dark:bg-transparent dark:border-1 dark:border-[#f1ece1] hover:bg-[#a50034] dark:hover:bg-transparent hover:text-white px-2 py-0.5 rounded-md font-bold text-xs transition-colors cursor-pointer"
                         >
                           #{cleanTag}
                         </span>
@@ -292,7 +311,6 @@ export default function Post({
                 )}
               </div>
 
-              {/* ACTION: TOMBOL CLOSE (JIKA HIDEACTION) / DROPDOWN MENU (JIKA REGULER) */}
               {hideaction ? (
                 onClose && (
                   <button
@@ -307,7 +325,7 @@ export default function Post({
                 <div className="relative">
                   <button
                     onClick={() => setIsmenu_open((prev) => !prev)}
-                    className="text-xl font-bold px-2 py-1 text-gray-500 hover:text-black hover:bg-gray-100 rounded-full transition-colors cursor-pointer"
+                    className="text-xl font-bold px-2 py-1 text-gray-500 dark:text-[#f1ece1] dark:hover:bg-transparent dark:hover:text-white dark:hover:scale-105 hover:text-black hover:bg-gray-100 rounded-full transition-colors cursor-pointer"
                   >
                     •••
                   </button>
@@ -341,7 +359,7 @@ export default function Post({
                             onClick={() => {
                               setIsmenu_open(false);
                               navigator.clipboard.writeText(window.location.href);
-                              alert("Tautan berhasil disalin!");
+                              showStatus("Tautan berhasil disalin!", "success"); // 6. GANTI DI SINI JUGA (bonus, sekalian)
                             }}
                             className="w-full text-left font-bold px-4 py-2 hover:bg-gray-50 text-gray-700 flex items-center gap-2 cursor-pointer"
                           >
@@ -361,12 +379,10 @@ export default function Post({
               )}
             </div>
 
-            {/* DESKRIPSI POST */}
-            <p className="text-gray-900 text-sm leading-relaxed break-words">
+            <p className="text-gray-900 dark:text-white text-sm leading-relaxed break-words">
               {post.description}
             </p>
 
-            {/* GAMBAR POST */}
             {post.image_url && (
               <img
                 src={post.image_url}
@@ -375,7 +391,6 @@ export default function Post({
               />
             )}
 
-            {/* ACTION BUTTONS (Disembunyikan jika hideaction = true) */}
             {!hideaction && (
               <div className="flex justify-between gap-2 mt-2 items-center">
                 <div className="flex flex-row gap-3 items-center">
@@ -387,11 +402,10 @@ export default function Post({
                           transition:
                             "transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
                         }}
-                        className={`w-9 h-9 ${
-                          isLiked
-                            ? "fill-[#a50034] stroke-[#a50034]"
-                            : "fill-none stroke-[#a50034]"
-                        }`}
+                        className={`w-9 h-9 ${isLiked
+                            ? "fill-[#a50034] stroke-[#a50034] dark:fill-[#a50034] dark:stroke-[#a50034]"
+                            : "fill-none stroke-[#a50034] dark:stroke-white"
+                          }`}
                         viewBox="0 0 24 24"
                         strokeWidth="2"
                         strokeLinecap="round"
@@ -404,7 +418,10 @@ export default function Post({
                     {likes.length > 0 && (
                       <span
                         onClick={() => setShowLikers(true)}
-                        className="font-bold text-sm text-[#a50034] cursor-pointer hover:underline"
+                        className={`font-bold text-sm cursor-pointer hover:underline transition-colors ${isLiked
+                            ? "text-[#a50034] dark:text-[#a50034]"
+                            : "text-[#a50034] dark:text-[#f1ece1] active:text-[#a50034] dark:active:text-[#a50034]"
+                          }`}
                       >
                         {likes.length}
                       </span>
@@ -417,7 +434,7 @@ export default function Post({
                       className="focus:outline-none cursor-pointer"
                     >
                       <svg
-                        className="w-9 h-9 fill-[#a50034] hover:scale-110 transition-transform cursor-pointer"
+                        className="w-9 h-9 fill-[#a50034] dark:fill-white hover:scale-110 transition-transform cursor-pointer"
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 640 640"
                       >
@@ -426,7 +443,7 @@ export default function Post({
                     </button>
 
                     {commentCount > 0 && (
-                      <span className="font-bold text-sm text-[#a50034]">
+                      <span className="font-bold text-sm text-[#a50034] dark:text-white">
                         {commentCount}
                       </span>
                     )}
@@ -435,7 +452,7 @@ export default function Post({
                   <div className="flex items-center">
                     <button onClick={handle_share} className="focus:outline-none cursor-pointer">
                       <svg
-                        className="w-9 h-9 stroke-[#a50034] fill-none hover:scale-110 transition-transform cursor-pointer"
+                        className="w-9 h-9 stroke-[#a50034] dark:stroke-white fill-none hover:scale-110 transition-transform cursor-pointer"
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 24 24"
                       >
@@ -450,23 +467,22 @@ export default function Post({
                   </div>
                 </div>
 
-                <button 
+                <button
                   onClick={() => setIsVote_open(true)}
-                  className="bg-red-50 p-2 leading-relaxed rounded-lg text-black border-2 border-[#a50034] font-semibold cursor-pointer">
+                  className="bg-red-50 p-2 leading-relaxed rounded-lg text-black border-2 border-[#a50034] dark:border-[#f1ece1] font-semibold cursor-pointer">
                   Vote
                 </button>
                 {isVote_open && (
-                  <VoteModal        
-                    post={post} 
+                  <VoteModal
+                    post={post}
                     onClose={() => setIsVote_open(false)} />
                 )}
               </div>
             )}
 
-            {/* HIGHLIGHT FOCUSED COMMENT DENGAN REF DIPASANG */}
             {focused_comment && (
-              <div 
-                ref={focused_comment_ref} 
+              <div
+                ref={focused_comment_ref}
                 className="mt-3 bg-rose-50 border-2 border-[#a50034] rounded-xl p-3 shadow-xs scroll-mt-10"
               >
                 <span className="text-[10px] font-bold text-[#a50034] uppercase tracking-wider block mb-1">
@@ -478,7 +494,6 @@ export default function Post({
               </div>
             )}
 
-            {/* COMMENT SECTION */}
             {(hideaction || isCommentOpen) && (
               <div className="mt-2">
                 <CommentSection
@@ -505,22 +520,27 @@ export default function Post({
         />
       )}
 
-      {/* MODAL LIST LIKE */}
-      {!hideaction && showLikers && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white p-5 rounded-lg max-w-sm w-full shadow-lg">
+      {!hideaction && showLikers && createPortal(
+        <div
+          onClick={() => setShowLikers(false)}
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[9999] p-4"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="bg-white p-5 rounded-2xl max-w-sm w-full shadow-2xl border-2 border-[#a50034]/30 animate-fadeIn"
+          >
             <div className="flex justify-between items-center mb-3">
               <h3 className="font-bold text-lg text-gray-800">
                 Menyukai postingan ini
               </h3>
               <button
                 onClick={() => setShowLikers(false)}
-                className="text-gray-500 hover:text-black font-bold cursor-pointer"
+                className="text-gray-400 hover:text-black font-bold text-xl cursor-pointer"
               >
                 ✕
               </button>
             </div>
-            <div className="max-h-60 overflow-y-auto flex flex-col gap-3">
+            <div className="max-h-60 overflow-y-auto flex flex-col gap-2">
               {likes.map((likeItem) => (
                 <div
                   key={likeItem.id}
@@ -528,12 +548,12 @@ export default function Post({
                     setShowLikers(false);
                     if (onUserClick) onUserClick(likeItem.user_id);
                   }}
-                  className="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-1.5 rounded-lg transition-colors"
+                  className="flex items-center gap-3 cursor-pointer hover:bg-rose-50/60 p-2 rounded-xl transition-colors"
                 >
                   <img
                     src={likeItem.users?.avatar_url || "/default-avatar.png"}
                     alt="avatar"
-                    className="w-8 h-8 rounded-full object-cover"
+                    className="w-9 h-9 rounded-full object-cover border border-[#a50034]"
                   />
                   <span className="font-semibold text-sm text-gray-800">
                     {likeItem.users?.username || "Pengguna"}
@@ -542,7 +562,8 @@ export default function Post({
               ))}
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

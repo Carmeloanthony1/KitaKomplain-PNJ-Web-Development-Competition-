@@ -9,6 +9,8 @@ import Status from "./components/Status";
 import Notification from "./components/Notification";
 import Search_page from "./pages/Search_page";
 import VotePage from "./components/Vote";
+import { StatusProvider } from "./components/StatusContext";
+import { ConfirmProvider } from "./components/ConfirmContext";
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from "react";
 
@@ -52,63 +54,67 @@ export default function App() {
       document.documentElement.classList.remove("dark");
     }
   }, []);
-  
+
   return (
-    <Routes>
-      <Route
-        path="/login"
-        element={<Login onLoginSuccess={handleLoginSuccess} />}
-      />
-      
-      {/* FIX 1: Oper prop `user` dan `onNavigate` ke Search_page */}
-      <Route 
-        path="/search"
-        element={user ? <Search_page user={user} onNavigate={handleNavigate} /> : <Navigate to="/login" />}
-      />
-      
-      {/* FIX 2: Oper prop `onNavigate` ke Home */}
-      <Route
-        path="/home"
-        element={user ? <Home user={user} onLogout={handleLogout} onNavigate={handleNavigate} /> : <Navigate to="/login" />}
-      />
+    <StatusProvider>
+      <ConfirmProvider>
 
-      <Route
-        path="/profile"
-        element={user ? <Profile user={user} onNavigate={handleNavigate} /> : <Navigate to="/login" />}
-      />
-      
-      <Route
-        path="/settings"
-        element={user ? <Settings user={user} onNavigate={handleNavigate} /> : <Navigate to="/login" />}
-      />
+          <Routes>
+            <Route
+              path="/login"
+              element={<Login onLoginSuccess={handleLoginSuccess} />}
+            />
+            <Route
+              path="/search"
+              element={user ? <Search_page user={user} onNavigate={handleNavigate} /> : <Navigate to="/login" />}
+            />
 
-      <Route
-        path="/SignUp"
-        element={<SignUp />}
-      /> 
+            <Route
+              path="/home"
+              element={user ? <Home user={user} onLogout={handleLogout} onNavigate={handleNavigate} /> : <Navigate to="/login" />}
+            />
 
-      <Route
-        path="/settings"
-        element={user ? <Settings user={user} /> : <Navigate to="/login" />}
-      />
+            <Route
+              path="/profile"
+              element={user ? <Profile user={user} onNavigate={handleNavigate} /> : <Navigate to="/login" />}
+            />
 
-      <Route 
-        path="/vote/:postId" 
-        element={<VotePage/>}/>
-      <Route
-        path="/History"
-        element={user ? <History user={user} onNavigate={handleNavigate} /> : <Navigate to="/login" />}
-      />
+            <Route
+              path="/settings"
+              element={user ? <Settings user={user} onNavigate={handleNavigate} /> : <Navigate to="/login" />}
+            />
 
-      <Route
-        path="/report"
-        element={user ? <ReportProblem user={user} onNavigate={handleNavigate} /> : <Navigate to="/login" />}
-      />
+            <Route
+              path="/SignUp"
+              element={<SignUp />}
+            />
 
-      <Route
-        path="/"
-        element={<Navigate to={user ? "/home" : "/login"} />}
-      />
-    </Routes>
-  );
+            <Route
+              path="/settings"
+              element={user ? <Settings user={user} /> : <Navigate to="/login" />}
+            />
+
+            <Route
+              path="/vote/:postId"
+              element={<VotePage />} />
+            <Route
+              path="/History"
+              element={user ? <History user={user} onNavigate={handleNavigate} /> : <Navigate to="/login" />}
+            />
+
+            <Route
+              path="/report"
+              element={user ? <ReportProblem user={user} onNavigate={handleNavigate} /> : <Navigate to="/login" />}
+            />
+
+            <Route
+              path="/"
+              element={<Navigate to={user ? "/home" : "/login"} />}
+            />
+          </Routes>
+        </ConfirmProvider>
+
+    </StatusProvider>
+
+        );
 }

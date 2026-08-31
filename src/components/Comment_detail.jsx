@@ -69,7 +69,7 @@ function ReplyItem({ reply, onReplyClick }) {
   };
 
   return (
-    <div className="flex gap-2.5 text-sm p-1.5 rounded-lg hover:bg-slate-50 transition-colors">
+    <div className="flex gap-2.5 text-sm p-1.5 rounded-lg">
       {replyAvatar ? (
         <img
           src={replyAvatar}
@@ -83,12 +83,12 @@ function ReplyItem({ reply, onReplyClick }) {
       )}
 
       <div className="flex flex-col flex-1 gap-0.5">
-        <span className="font-bold text-xs text-gray-800 hover:underline cursor-pointer">
+        <span className="font-bold text-xs text-gray-800 dark:text-gray-200 hover:underline cursor-pointer">
           {replyUser}
         </span>
 
         {/* Isi balasan */}
-        <p className="text-xs text-gray-700 leading-relaxed break-words">
+        <p className="text-xs text-gray-700 dark:text-gray-300 leading-relaxed break-words">
           {reply.content}
         </p>
 
@@ -110,7 +110,13 @@ function ReplyItem({ reply, onReplyClick }) {
               <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
             </svg>
             {likeCount > 0 && (
-              <span className="text-[10px] text-gray-500 font-semibold">
+              <span
+                className={`text-[11px] font-bold transition-colors ${
+                  isLiked
+                    ? "text-[#a50034] dark:text-[#a50034]"
+                    : "text-gray-500 dark:text-gray-400"
+                }`}
+              >
                 {likeCount}
               </span>
             )}
@@ -265,26 +271,26 @@ export default function Comment_detail({ comment, postId }) {
   };
 
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col gap-1 p-3 rounded-xl bg-slate-100 dark:bg-zinc-800 shadow-sm transition-colors">
       {/* 1. KOMENTAR UTAMA */}
-      <div className="flex gap-3 text-sm p-2 rounded-xl hover:bg-slate-50 transition-colors">
+      <div className="flex gap-3 text-sm p-2 rounded-xl">
         {avatar ? (
           <img
             src={avatar}
             alt={username}
-            className="w-8 h-8 rounded-full object-cover flex-shrink-0 mt-0.5 border border-gray-200"
+            className="w-8 h-8 rounded-full object-cover flex-shrink-0 mt-0.5 border border-gray-200 dark:border-zinc-700"
           />
         ) : (
-          <div className="w-8 h-8 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center font-bold text-xs flex-shrink-0">
+          <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-zinc-700 text-gray-600 dark:text-gray-200 flex items-center justify-center font-bold text-xs flex-shrink-0">
             {username[0]?.toUpperCase()}
           </div>
         )}
 
         <div className="flex flex-col flex-1 gap-1">
-          <span className="font-bold text-xs text-gray-800 cursor-pointer hover:underline">
+          <span className="font-bold text-xs text-gray-800 dark:text-gray-100 cursor-pointer hover:underline">
             {username}
           </span>
-          <p className="text-xs text-gray-700 leading-relaxed break-words">
+          <p className="text-xs text-gray-700 dark:text-gray-200 leading-relaxed break-words">
             {content}
           </p>
 
@@ -306,7 +312,13 @@ export default function Comment_detail({ comment, postId }) {
                 <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
               </svg>
               {commentLikeCount > 0 && (
-                <span className="text-[11px] text-gray-500 font-semibold">
+                <span
+                  className={`text-[11px] font-bold transition-colors ${
+                    isCommentLiked
+                      ? "text-[#a50034] dark:text-[#a50034]"
+                      : "text-gray-500 dark:text-gray-400"
+                  }`}
+                >
                   {commentLikeCount}
                 </span>
               )}
@@ -349,7 +361,7 @@ export default function Comment_detail({ comment, postId }) {
                 onChange={(e) => setReply_text(e.target.value)}
                 placeholder="Tulis balasan..."
                 autoFocus
-                className="flex-1 bg-gray-100 text-xs text-gray-800 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-[#a50034]"
+                className="flex-1 bg-white dark:bg-zinc-700 text-xs text-gray-800 dark:text-gray-100 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-[#a50034]"
               />
               <button
                 type="submit"
@@ -365,7 +377,7 @@ export default function Comment_detail({ comment, postId }) {
 
       {/* 2. DAFTAR BALASAN (SUB-COMMENTS) */}
       {show_reply && repliesList.length > 0 && (
-        <div className="ml-8 pl-3 border-l-2 border-gray-200 flex flex-col">
+        <div className="ml-8 pl-3 border-l-2 border-slate-300 dark:border-zinc-700 flex flex-col">
           {repliesList.map((reply) => (
             <ReplyItem
               key={reply.id}
