@@ -42,11 +42,7 @@ export default function Profile() {
     }
   }, []);
 
-<<<<<<< HEAD
-  // Refresh khusus data vote/polling
-=======
   // Fungsi untuk refresh khusus data vote/polling
->>>>>>> melo
   const refreshpage = useCallback(async () => {
     if (!userId) return;
 
@@ -82,11 +78,7 @@ export default function Profile() {
       // 1. Fetch Profile User (Termasuk is_anonim_mode)
       const { data, error: userError } = await supabase
         .from("users")
-<<<<<<< HEAD
-        .select("username, bio, avatar_url, created_at, is_anonim_mode")
-=======
         .select("username, bio, avatar_url, is_anonim_mode, created_at")
->>>>>>> melo
         .eq("id", userId)
         .single();
 
@@ -219,7 +211,7 @@ export default function Profile() {
     } catch (error) {
       alert("Gagal upload foto profile");
       console.error(error.message);
-    } finally {
+    } finally { 
       setUploading(false);
     }
   };
