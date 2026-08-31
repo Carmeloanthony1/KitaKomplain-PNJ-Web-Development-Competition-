@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
 
-export default function Most_Polling() {
+export default function Most_Polling({ onUserClick }) {
   const [votelist, setVotelist] = useState([]);
   const [isdark, setIsdark] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -15,6 +15,7 @@ export default function Most_Polling() {
         .from('posts')
         .select(`
           id, 
+          user_id,
           tag, 
           description, 
           users (username, avatar_url), 
@@ -50,37 +51,26 @@ export default function Most_Polling() {
     }
   };
 
-  // Setup Initial Fetch & Realtime WebSocket
+  // Setup Initial Fetch & Realtime Broadcast / DB Listener
   useEffect(() => {
     fetch_mypolling();
 
-    // Gunakan 1 channel bersih untuk mendengarkan tabel votes & posts
     const channel = supabase
-      .channel('most-polling-db-changes')
+      .channel('most-polling-tracker')
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'votes' },
-        (payload) => {
-          console.log('⚡ Realtime Vote Change:', payload);
-          fetch_mypolling(true);
-        }
+        () => fetch_mypolling(true)
       )
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'posts' },
-        (payload) => {
-          console.log('⚡ Realtime Post Change:', payload);
-          fetch_mypolling(true);
-        }
+        () => fetch_mypolling(true)
       )
-      .subscribe((status, err) => {
-        if (status === 'SUBSCRIBED') {
-          console.log('🟢 WebSocket Supabase Realtime Active!');
-        }
-        if (status === 'CHANNEL_ERROR') {
-          console.error('🔴 Gagal Connect Realtime WebSocket:', err);
-        }
-      });
+      .on('broadcast', { event: 'vote-updated' }, () => {
+        fetch_mypolling(true);
+      })
+      .subscribe();
 
     return () => {
       supabase.removeChannel(channel);
@@ -127,7 +117,7 @@ export default function Most_Polling() {
         ) : (
           votelist.map((item, index) => {
             const username = item.users?.username || "Unknown";
-            const avatar = item.users?.avatar_url || "/default-avatar.png";
+            const avatarUrl = item.users?.avatar_url;
             const topic = item.tag ? `#${item.tag}` : item.description || "Tanpa Topik";
             const totalUpVotes = item.up_votes_count;
 
@@ -153,16 +143,30 @@ export default function Most_Polling() {
                 <div className="group bg-gray-50 dark:bg-[#1e1e1e] hover:bg-red-50/50 border border-gray-200 hover:border-[#a50034]/40 dark:hover:border-[#f1ece1] p-3 rounded-xl transition duration-200 flex flex-col gap-2 cursor-pointer flex-1 w-full min-w-0">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2.5 min-w-0">
-                      <img 
-                        src={avatar} 
-                        alt="avatar" 
-                        className="w-6 h-6 rounded-full object-cover border border-gray-300 dark:border-[#f1ece1] flex-shrink-0"
-                      />
+                      
+                      {/* Logic Avatar disesuaikan dengan PostCard */}
+                      {avatarUrl ? (
+                        <img
+                          src={avatarUrl}
+                          alt={username}
+                          onClick={() => onUserClick && onUserClick(item.user_id)}
+                          className="w-6 h-6 rounded-full object-cover flex-shrink-0 cursor-pointer border border-[#a50034] dark:border-[#f1ece1] hover:opacity-80 transition-opacity"
+                        />
+                      ) : (
+                        <div
+                          onClick={() => onUserClick && onUserClick(item.user_id)}
+                          className="w-6 h-6 rounded-full flex justify-center bg-white text-[#a50034] border border-[#a50034] dark:border-[#f1ece1] text-xs font-bold items-center flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity"
+                        >
+                          {(username || "U")[0].toLowerCase()}
+                        </div>
+                      )}
+
                       <span className="font-semibold text-sm text-gray-800 dark:text-white truncate">
                         @{username}
                       </span>
                     </div>
                   </div>
+                  
                   <p className="text-[#a50034] dark:text-white font-bold text-sm leading-snug break-words pl-1 truncate">
                     {topic}
                   </p>
