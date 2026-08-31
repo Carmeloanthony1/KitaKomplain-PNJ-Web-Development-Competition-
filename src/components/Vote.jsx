@@ -142,7 +142,7 @@ export default function VoteModal({ post, onClose, onVoteSuccess }) {
         const top5Posts = rankedPosts.slice(0, 5);
         const isTop5 = top5Posts.some(p => p.id === post.id);
 
-        if (isTop5 && post.user_id !== activeUserId)
+        if (isTop5)
         {
           // Check if we already notified them about entering the top 5 to avoid spam
           const { data: existingRankNotif } = await supabase
