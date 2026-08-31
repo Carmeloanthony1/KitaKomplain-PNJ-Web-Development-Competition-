@@ -474,7 +474,7 @@ export default function Profile() {
           {[
             { id: "posts", label: "Posts" },
             { id: "comments", label: "Comments" },
-            { id: "polling", label: "Polling" },
+            { id: "polling", label: "Vote" },
           ].map((tab) => (
             <button
               key={tab.id}

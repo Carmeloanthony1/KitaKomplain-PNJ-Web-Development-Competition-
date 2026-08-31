@@ -9,7 +9,7 @@ export default function Settings({ user, onNavigate }) {
   });
 
   useEffect(() => {
-    if(isDarkMode){
+    if (isDarkMode) {
       document.documentElement.classList.add("dark");
       localStorage.setItem("theme", "dark");
     } else {
@@ -25,7 +25,7 @@ export default function Settings({ user, onNavigate }) {
   const navigate = useNavigate();
   const current_user_id = localStorage.getItem("user_id");
 
-  // State Permission
+  // State Permission (Default off)
   const [permission, setPermission] = useState({
     Camera: false,
     Notification: false
@@ -34,7 +34,9 @@ export default function Settings({ user, onNavigate }) {
   // State Privacy
   const [privacy, setPrivacy] = useState({
     anonymousMode: false,
-    hideHistory: false
+    hideHistory: false,
+    hideComment: false,
+    hideVote: false
   });
 
   // State UI Mockup Notification
@@ -43,96 +45,78 @@ export default function Settings({ user, onNavigate }) {
     activityAlerts: true
   });
 
-  // Ngefetch status mode anonim dari Supabase
+  // Fetch status Privacy dari Supabase dengan penanganan error yang aman
   useEffect(() => {
     const fetch_privacy_settings = async () => {
-      if(!current_user_id) return;
+      if (!current_user_id) return;
 
-      const { data, error } = await supabase
-        .from("users")
-        .select("is_anonim_mode")
-        .eq("id", current_user_id)
-        .single();
+      try {
+        const { data, error } = await supabase
+          .from("users")
+          .select("is_anonim_mode, hide_history, hide_comment, hide_vote")
+          .eq("id", current_user_id)
+          .maybeSingle();
 
-      if (!error && data){
-        setPrivacy((prev) => ({
-          ...prev,
-          anonymousMode: data.is_anonim_mode || false,
-        }));
+        if (error) {
+          console.warn("Gagal fetch privacy (pastikan kolom hide_history/comment/vote sudah dibuat di Supabase):", error.message);
+          return;
+        }
+
+        if (data) {
+          setPrivacy({
+            anonymousMode: data.is_anonim_mode ?? false,
+            hideHistory: data.hide_history ?? false,
+            hideComment: data.hide_comment ?? false,
+            hideVote: data.hide_vote ?? false
+          });
+        }
+      } catch (err) {
+        console.error("Unexpected error fetching privacy:", err);
       }
     };
 
     fetch_privacy_settings();
   }, [current_user_id]);
 
-  // Toggle mode anonim + Supabase Integration
-  const handle_toggle_anonim = async () => {
-    if(!current_user_id){
-      alert("Silahkan login terlebih dahulu!");
+  // Handler Umum Toggle Privacy + Integrasi Supabase
+  const handleTogglePrivacy = async (key, dbColumn) => {
+    if (!current_user_id) {
+      alert("Silakan login terlebih dahulu!");
       return;
     }
 
-    const new_status = !privacy.anonymousMode;
+    const newStatus = !privacy[key];
 
     // Optimistic Update UI
-    setPrivacy((prev) => ({ ...prev, anonymousMode: new_status }));
+    setPrivacy((prev) => ({ ...prev, [key]: newStatus }));
 
-    const { error } = await supabase
-      .from("users")
-      .update({ is_anonim_mode: new_status })
-      .eq("id", current_user_id);
-
-    if(error){
-      alert("Gagal memperbarui mode anonim: " + error.message);
-      // Revert state kalau gagal
-      setPrivacy((prev) => ({ ...prev, anonymousMode: !new_status }));
-    }
-  };
-  
-  // Fetch & Sinkronisasi Permission dengan Browser & Backend
-  useEffect(() => {
-    const syncPermissions = async () => {
-      let initialPerms = { Camera: false, Notification: false };
-
-      try {
-        if ("Notification" in window) {
-          initialPerms.Notification = Notification.permission === "granted";
-        }
-      } catch (err) {
-        console.warn("Permissions API check failed:", err);
-      }
-
-      try {
-        const res = await fetch("http://localhost:5000/api/users/permissions");
-        if (res.ok) {
-          const data = await res.json();
-          setPermission({
-            Camera: data.Camera ?? initialPerms.Camera,
-            Notification: data.Notification ?? initialPerms.Notification
-          });
-          return;
-        }
-      } catch (error) {
-        console.error("Gagal mengambil permission dari server", error);
-      }
-
-      setPermission(initialPerms);
-    };
-
-    syncPermissions();
-  }, []);
-
-  const updatebackend_permission = async (type, status) => {
     try {
-      await fetch("http://localhost:5000/api/users/permissions", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ permissionType: type, isAllowed: status })
-      });
-    } catch (error) {
-      console.error("Gagal update ke backend", error);
+      const { error } = await supabase
+        .from("users")
+        .update({ [dbColumn]: newStatus })
+        .eq("id", current_user_id);
+
+      if (error) {
+        console.error(`Gagal update ${dbColumn}:`, error.message);
+        alert(`Gagal memperbarui pengaturan! Pastikan kolom ${dbColumn} ada di database.`);
+        // Revert state kalau gagal
+        setPrivacy((prev) => ({ ...prev, [key]: !newStatus }));
+      }
+    } catch (err) {
+      console.error("Error updating privacy:", err);
+      setPrivacy((prev) => ({ ...prev, [key]: !newStatus }));
     }
   };
+
+  // Check Browser Notification Permission Saja (Aman tanpa hit backend 404)
+  useEffect(() => {
+    if ("Notification" in window) {
+      setPermission((prev) => ({
+        ...prev,
+        Notification: Notification.permission === "granted"
+      }));
+    }
+  }, []);
 
   const scrollToSection = (id) => {
     const element = document.getElementById(id);
@@ -140,13 +124,12 @@ export default function Settings({ user, onNavigate }) {
       element.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   };
-  
+
   /* Handler Kamera */
   const handleCamera = async (e) => {
     const isChecked = e.target.checked;
     if (!isChecked) {
       setPermission((prev) => ({ ...prev, Camera: false }));
-      await updatebackend_permission("Camera", false);
       return;
     }
 
@@ -154,10 +137,8 @@ export default function Settings({ user, onNavigate }) {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
       stream.getTracks().forEach(track => track.stop());
       setPermission((prev) => ({ ...prev, Camera: true }));
-      await updatebackend_permission("Camera", true);
     } catch (error) {
       setPermission((prev) => ({ ...prev, Camera: false }));
-      await updatebackend_permission("Camera", false);
       alert("Akses kamera ditolak! Izinkan kamera pada pengaturan browser.");
     }
   };
@@ -167,7 +148,6 @@ export default function Settings({ user, onNavigate }) {
     const isChecked = e.target.checked;
     if (!isChecked) {
       setPermission((prev) => ({ ...prev, Notification: false }));
-      await updatebackend_permission("Notification", false);
       return;
     }
 
@@ -180,17 +160,14 @@ export default function Settings({ user, onNavigate }) {
       if (Notification.permission === "denied") {
         alert("Akses notifikasi telah diblokir. Buka ikon setelan situs di Address Bar lalu ubah Notifikasi menjadi 'Allow'.");
         setPermission((prev) => ({ ...prev, Notification: false }));
-        await updatebackend_permission("Notification", false);
         return;
       }
 
       const resPermission = await Notification.requestPermission();
       if (resPermission === "granted") {
         setPermission((prev) => ({ ...prev, Notification: true }));
-        await updatebackend_permission("Notification", true);
       } else {
         setPermission((prev) => ({ ...prev, Notification: false }));
-        await updatebackend_permission("Notification", false);
         alert("Akses notifikasi ditolak!");
       }
     } catch (err) {
@@ -200,16 +177,16 @@ export default function Settings({ user, onNavigate }) {
   };
 
   return (
-    <div className={`min-h-screen flex flex-col transition-colors duration-300 ${isDarkMode ? "bg-[#292828] text-white" : "bg-[#f7f7f7] text-gray-800"}`}>    
+    <div className={`min-h-screen flex flex-col transition-colors duration-300 ${isDarkMode ? "bg-[#292828] text-white" : "bg-[#f7f7f7] text-gray-800"}`}>
       <div className="flex flex-row flex-1 pt-6">
         {/* Sidebar Navigation Shortcut (Sticky) */}
         <aside className="sticky top-6 h-[calc(100vh-1.5rem)] flex flex-col px-8 gap-3 w-fit border-r-4 border-[#a50034]">
-          <div 
+          <div
             onClick={() => navigate('/home')}
             className="flex flex-row items-center gap-3 cursor-pointer hover:opacity-80 transition w-fit mb-4"
           >
             <svg className={`w-10 h-10 transition-colors duration-300 ${isDarkMode ? "fill-[#f1ece1]" : "fill-[#a50034]"}`} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
-              <path d="M41.4 342.6C28.9 330.1 28.9 309.8 41.4 297.3L169.4 169.3C178.6 160.1 192.3 157.4 204.3 162.4C216.3 167.4 224 179.1 224 192L224 256L560 256C586.5 256 608 277.5 608 304L608 336C608 362.5 586.5 384 560 384L224 384L224 448C224 460.9 216.2 472.6 204.2 477.6C192.2 482.6 178.5 479.8 169.3 470.7L41.3 342.7z"/>
+              <path d="M41.4 342.6C28.9 330.1 28.9 309.8 41.4 297.3L169.4 169.3C178.6 160.1 192.3 157.4 204.3 162.4C216.3 167.4 224 179.1 224 192L224 256L560 256C586.5 256 608 277.5 608 304L608 336C608 362.5 586.5 384 560 384L224 384L224 448C224 460.9 216.2 472.6 204.2 477.6C192.2 482.6 178.5 479.8 169.3 470.7L41.3 342.7z" />
             </svg>
             <h2 className={`text-2xl font-bold transition-colors duration-300 ${isDarkMode ? "text-[#f1ece1]" : "text-[#a50034]"}`}>Back</h2>
           </div>
@@ -217,7 +194,7 @@ export default function Settings({ user, onNavigate }) {
           {/* Menu Shortcut */}
           <div className="flex flex-col gap-6">
             {["permission", "appearance", "privacy", "notification"].map((item) => (
-              <span 
+              <span
                 key={item}
                 onClick={() => scrollToSection(`${item}-section`)}
                 className={`text-2xl font-bold capitalize cursor-pointer transition ${isDarkMode ? "text-[#f1ece1] hover:text-[#a50034]" : "text-gray-500 hover:text-[#a50034]"}`}
@@ -230,11 +207,11 @@ export default function Settings({ user, onNavigate }) {
 
         {/* Konten Utama */}
         <main className="flex-1 pl-8 flex flex-col gap-16 pb-28">
-          
+
           {/* SECTION 1: PERMISSION */}
           <section id="permission-section" className="scroll-mt-28 max-w-3xl flex flex-col gap-6">
             <div>
-              <h1 className={`text-3xl font-bold mb-2 ${isDarkMode ? "text-[#f1ece1]" : "text-[#a50034]"}`}>Permission Settings</h1>                
+              <h1 className={`text-3xl font-bold mb-2 ${isDarkMode ? "text-[#f1ece1]" : "text-[#a50034]"}`}>Permission Settings</h1>
               <p className={isDarkMode ? "text-[#f1ece1]" : "text-gray-600"}>Mengelola akses fitur dan perangkat untuk kelancaran pembuatan laporan</p>
             </div>
             <div className={`flex flex-col gap-4 p-6 rounded-2xl shadow-sm transition-colors ${isDarkMode ? "bg-[#1e1e1e] border-2 border-[#f1ece1]" : "bg-white border-2 border-[#a50034]"}`}>
@@ -274,13 +251,13 @@ export default function Settings({ user, onNavigate }) {
                 <span className={`text-xl font-bold transition-colors ${!isDarkMode ? "text-[#a50034]" : "text-[#f1ece1]"}`}>
                   Light Mode
                 </span>
-                
+
                 <label className="relative inline-flex items-center cursor-pointer shrink-0">
-                  <input 
-                    type="checkbox" 
-                    checked={isDarkMode} 
-                    onChange={toggle_dark_mode} 
-                    className="sr-only peer" 
+                  <input
+                    type="checkbox"
+                    checked={isDarkMode}
+                    onChange={toggle_dark_mode}
+                    className="sr-only peer"
                   />
                   <div className="w-[52px] h-[28px] bg-gray-300 rounded-full peer peer-checked:bg-[#a50034] transition-colors relative after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-[24px] after:w-[24px] after:transition-all peer-checked:after:translate-x-[24px]"></div>
                 </label>
@@ -299,34 +276,70 @@ export default function Settings({ user, onNavigate }) {
               <p className={isDarkMode ? "text-[#f1ece1]" : "text-gray-600"}>Kelola kerahasiaan identitas, visibilitas riwayat, dan data kontak kamu.</p>
             </div>
             <div className={`flex flex-col gap-4 p-6 rounded-2xl shadow-sm transition-colors ${isDarkMode ? "bg-[#1e1e1e] border-2 border-[#f1ece1]" : "bg-white border-2 border-[#a50034]"}`}>
-              
+
+              {/* Mode Anonim */}
               <div className={`flex flex-row items-center justify-between pb-4 border-b ${isDarkMode ? "border-gray-700" : "border-gray-100"}`}>
                 <div className="flex flex-col pr-4">
                   <h3 className={`text-xl font-bold ${isDarkMode ? "text-[#f1ece1]" : "text-[#a50034]"}`}>Mode Anonim (Default)</h3>
                   <p className={`text-sm ${isDarkMode ? "text-gray-300" : "text-gray-500"}`}>Sembunyikan nama dan foto profil kamu secara otomatis saat membuat laporan baru.</p>
                 </div>
                 <label className="relative inline-flex items-center cursor-pointer shrink-0">
-                  <input 
-                    type="checkbox" 
-                    checked={privacy.anonymousMode} 
-                    onChange={handle_toggle_anonim} 
-                    className="sr-only peer" 
+                  <input
+                    type="checkbox"
+                    checked={privacy.anonymousMode}
+                    onChange={() => handleTogglePrivacy("anonymousMode", "is_anonim_mode")}
+                    className="sr-only peer"
                   />
                   <div className="w-[52px] h-[28px] bg-gray-300 rounded-full peer peer-checked:bg-[#a50034] transition-colors relative after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-[24px] after:w-[24px] after:transition-all peer-checked:after:translate-x-[24px]"></div>
                 </label>
               </div>
 
-              <div className="flex flex-row items-center justify-between pb-4">
+              {/* Hide History Post */}
+              <div className={`flex flex-row items-center justify-between pb-4 border-b ${isDarkMode ? "border-gray-700" : "border-gray-100"}`}>
                 <div className="flex flex-col pr-4">
                   <h3 className={`text-xl font-bold ${isDarkMode ? "text-[#f1ece1]" : "text-[#a50034]"}`}>Sembunyikan Riwayat Laporan</h3>
                   <p className={`text-sm ${isDarkMode ? "text-gray-300" : "text-gray-500"}`}>Jangan tampilkan laporan yang pernah kamu buat di feed publik atau profil kamu.</p>
                 </div>
                 <label className="relative inline-flex items-center cursor-pointer shrink-0">
-                  <input 
-                    type="checkbox" 
-                    checked={privacy.hideHistory} 
-                    onChange={() => setPrivacy(prev => ({ ...prev, hideHistory: !prev.hideHistory }))} 
-                    className="sr-only peer" 
+                  <input
+                    type="checkbox"
+                    checked={privacy.hideHistory}
+                    onChange={() => handleTogglePrivacy("hideHistory", "hide_history")}
+                    className="sr-only peer"
+                  />
+                  <div className="w-[52px] h-[28px] bg-gray-300 rounded-full peer peer-checked:bg-[#a50034] transition-colors relative after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-[24px] after:w-[24px] after:transition-all peer-checked:after:translate-x-[24px]"></div>
+                </label>
+              </div>
+
+              {/* Hide History Comment */}
+              <div className={`flex flex-row items-center justify-between pb-4 border-b ${isDarkMode ? "border-gray-700" : "border-gray-100"}`}>
+                <div className="flex flex-col pr-4">
+                  <h3 className={`text-xl font-bold ${isDarkMode ? "text-[#f1ece1]" : "text-[#a50034]"}`}>Sembunyikan Riwayat Comment</h3>
+                  <p className={`text-sm ${isDarkMode ? "text-gray-300" : "text-gray-500"}`}>Jangan tampilkan komentar yang pernah kamu buat di feed publik atau profil kamu.</p>
+                </div>
+                <label className="relative inline-flex items-center cursor-pointer shrink-0">
+                  <input
+                    type="checkbox"
+                    checked={privacy.hideComment}
+                    onChange={() => handleTogglePrivacy("hideComment", "hide_comment")}
+                    className="sr-only peer"
+                  />
+                  <div className="w-[52px] h-[28px] bg-gray-300 rounded-full peer peer-checked:bg-[#a50034] transition-colors relative after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-[24px] after:w-[24px] after:transition-all peer-checked:after:translate-x-[24px]"></div>
+                </label>
+              </div>
+
+              {/* Hide History Vote */}
+              <div className="flex flex-row items-center justify-between pb-4">
+                <div className="flex flex-col pr-4">
+                  <h3 className={`text-xl font-bold ${isDarkMode ? "text-[#f1ece1]" : "text-[#a50034]"}`}>Sembunyikan Riwayat Vote</h3>
+                  <p className={`text-sm ${isDarkMode ? "text-gray-300" : "text-gray-500"}`}>Jangan tampilkan pendapat yang pernah kamu kontribusikan.</p>
+                </div>
+                <label className="relative inline-flex items-center cursor-pointer shrink-0">
+                  <input
+                    type="checkbox"
+                    checked={privacy.hideVote}
+                    onChange={() => handleTogglePrivacy("hideVote", "hide_vote")}
+                    className="sr-only peer"
                   />
                   <div className="w-[52px] h-[28px] bg-gray-300 rounded-full peer peer-checked:bg-[#a50034] transition-colors relative after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-[24px] after:w-[24px] after:transition-all peer-checked:after:translate-x-[24px]"></div>
                 </label>
@@ -342,18 +355,18 @@ export default function Settings({ user, onNavigate }) {
               <p className={isDarkMode ? "text-[#f1ece1]" : "text-gray-600"}>Atur notifikasi push dan email yang ingin kamu terima.</p>
             </div>
             <div className={`flex flex-col gap-4 p-6 rounded-2xl shadow-sm transition-colors ${isDarkMode ? "bg-[#1e1e1e] border-2 border-[#f1ece1]" : "bg-white border-2 border-[#a50034]"}`}>
-              
+
               <div className={`flex flex-row items-center justify-between pb-4 border-b ${isDarkMode ? "border-gray-700" : "border-gray-100"}`}>
                 <div className="flex flex-col pr-4">
                   <h3 className={`text-xl font-bold ${isDarkMode ? "text-[#f1ece1]" : "text-[#a50034]"}`}>Notifikasi Email</h3>
                   <p className={`text-sm ${isDarkMode ? "text-gray-300" : "text-gray-500"}`}>Kirim pembaruan status laporan langsung ke email akun kamu.</p>
                 </div>
                 <label className="relative inline-flex items-center cursor-pointer shrink-0">
-                  <input 
-                    type="checkbox" 
-                    checked={notifSettings.emailNotif} 
-                    onChange={() => setNotifSettings(prev => ({ ...prev, emailNotif: !prev.emailNotif }))} 
-                    className="sr-only peer" 
+                  <input
+                    type="checkbox"
+                    checked={notifSettings.emailNotif}
+                    onChange={() => setNotifSettings(prev => ({ ...prev, emailNotif: !prev.emailNotif }))}
+                    className="sr-only peer"
                   />
                   <div className="w-[52px] h-[28px] bg-gray-300 rounded-full peer peer-checked:bg-[#a50034] transition-colors relative after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-[24px] after:w-[24px] after:transition-all peer-checked:after:translate-x-[24px]"></div>
                 </label>
@@ -365,11 +378,11 @@ export default function Settings({ user, onNavigate }) {
                   <p className={`text-sm ${isDarkMode ? "text-gray-300" : "text-gray-500"}`}>Dapatkan pemberitahuan saat ada komentar atau tanggapan baru dari petugas.</p>
                 </div>
                 <label className="relative inline-flex items-center cursor-pointer shrink-0">
-                  <input 
-                    type="checkbox" 
-                    checked={notifSettings.activityAlerts} 
-                    onChange={() => setNotifSettings(prev => ({ ...prev, activityAlerts: !prev.activityAlerts }))} 
-                    className="sr-only peer" 
+                  <input
+                    type="checkbox"
+                    checked={notifSettings.activityAlerts}
+                    onChange={() => setNotifSettings(prev => ({ ...prev, activityAlerts: !prev.activityAlerts }))}
+                    className="sr-only peer"
                   />
                   <div className="w-[52px] h-[28px] bg-gray-300 rounded-full peer peer-checked:bg-[#a50034] transition-colors relative after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-[24px] after:w-[24px] after:transition-all peer-checked:after:translate-x-[24px]"></div>
                 </label>
