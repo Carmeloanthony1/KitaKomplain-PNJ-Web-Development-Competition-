@@ -10,6 +10,7 @@ export default function Profile() {
   const [username, setUsername] = useState("");
   const [bio, setBio] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
+  const [isAnonimMode, setIsAnonimMode] = useState(false); // STATE MODE ANONIM
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
 
@@ -40,7 +41,7 @@ export default function Profile() {
     }
   }, []);
 
-  // Fungsi untuk refresh khusus data vote/polling tanpa perlu reload seluruh halaman
+  // Fungsi untuk refresh khusus data vote/polling
   const refreshpage = useCallback(async () => {
     if (!userId) return;
 
@@ -73,10 +74,10 @@ export default function Profile() {
     async function fetchUserData() {
       setLoading(true);
 
-      // 1. Fetch Profile User
+      // 1. Fetch Profile User (Termasuk is_anonim_mode)
       const { data, error: userError } = await supabase
         .from("users")
-        .select("username, bio, avatar_url, created_at")
+        .select("username, bio, avatar_url, is_anonim_mode, created_at")
         .eq("id", userId)
         .single();
 
@@ -86,6 +87,7 @@ export default function Profile() {
         setUsername(data.username || "");
         setBio(data.bio || "Belum ada deskripsi");
         setAvatarUrl(data.avatar_url || "");
+        setIsAnonimMode(data.is_anonim_mode || false); // Set Status Mode Anonim
         setTempUsername(data.username || "");
         setTempBio(data.bio || "");
       }
@@ -118,13 +120,30 @@ export default function Profile() {
         setUser_comment(commentsData);
       }
 
-      // 4. Fetch Polling User (memanggil refreshpage)
+      // 4. Fetch Polling User
       await refreshpage();
 
       setLoading(false);
     }
     fetchUserData();
   }, [userId, refreshpage]);
+
+  // Handler Switch Mode Anonim
+  const handleToggleAnonim = async () => {
+    const nextStatus = !isAnonimMode;
+    setIsAnonimMode(nextStatus);
+
+    const { error } = await supabase
+      .from("users")
+      .update({ is_anonim_mode: nextStatus })
+      .eq("id", userId);
+
+    if (error) {
+      console.error("Gagal update mode anonim:", error.message);
+      alert("Gagal mengubah status Mode Anonim!");
+      setIsAnonimMode(!nextStatus); // Revert jika gagal
+    }
+  };
 
   const handleSaveName = async () => {
     if (!tempUsername.trim()) return;
@@ -194,7 +213,6 @@ export default function Profile() {
     }
   };
 
-  // Handler saat Post diklik dari Tab Posts
   const handlePost_click = (item) => {
     const fullpost_data = {
       ...item,
@@ -209,7 +227,6 @@ export default function Profile() {
     setIsfocusopen(true);
   };
 
-  // Handler saat Komentar diklik dari Tab Comments
   const handleComment_click = (item) => {
     if (!item.posts) return;
 
@@ -227,7 +244,6 @@ export default function Profile() {
     setIsfocusopen(true);
   };
 
-  // Handler saat Item Polling diklik dari Tab Polling
   const handle_voteclick = async (voteItem) => {
     if (!voteItem) return;
 
@@ -321,39 +337,67 @@ export default function Profile() {
               </label>
             </div>
 
-            <div className="flex flex-col gap-1">
-              <div className="flex items-center gap-2">
-                {isEditingName ? (
-                  <input
-                    type="text"
-                    value={tempUsername}
-                    onChange={(e) => setTempUsername(e.target.value)}
-                    onBlur={handleSaveName}
-                    onKeyDown={(e) => e.key === "Enter" && handleSaveName()}
-                    autoFocus
-                    className="text-2xl font-bold border-b-2 border-[#a50034] dark:border-[#f1ece1] outline-none bg-transparent text-gray-900 dark:text-[#f1ece1]"
-                  />
-                ) : (
-                  <h2 className="text-2xl font-bold text-gray-900 dark:text-[#f1ece1]">
-                    {username || "User"}
-                  </h2>
-                )}
+            {/* Info Nama & Switch Mode Anonim */}
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div className="flex flex-col gap-1">
+                <div className="flex items-center gap-2">
+                  {isEditingName ? (
+                    <input
+                      type="text"
+                      value={tempUsername}
+                      onChange={(e) => setTempUsername(e.target.value)}
+                      onBlur={handleSaveName}
+                      onKeyDown={(e) => e.key === "Enter" && handleSaveName()}
+                      autoFocus
+                      className="text-2xl font-bold border-b-2 border-[#a50034] dark:border-[#f1ece1] outline-none bg-transparent text-gray-900 dark:text-[#f1ece1]"
+                    />
+                  ) : (
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-[#f1ece1]">
+                      {username || "User"}
+                    </h2>
+                  )}
 
-                <button
-                  onClick={() => setIsEditingName((prev) => !prev)}
-                  className="text-gray-500 hover:text-gray-700 dark:text-[#f1ece1] transition cursor-pointer"
-                >
-                  <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
-                    <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
-                  </svg>
-                </button>
+                  <button
+                    onClick={() => setIsEditingName((prev) => !prev)}
+                    className="text-gray-500 hover:text-gray-700 dark:text-[#f1ece1] transition cursor-pointer"
+                  >
+                    <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                      <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+                    </svg>
+                  </button>
+
+                  {/* BADGE INDIKATOR MODES ANONIM */}
+                  {isAnonimMode && (
+                    <span className="ml-2 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-gray-900 text-white dark:bg-amber-400 dark:text-gray-900 flex items-center gap-1">
+                      🕵️ Mode Anonim
+                    </span>
+                  )}
+                </div>
+
+                <p className="text-xs text-blue-600 dark:text-[#a50034] font-medium cursor-pointer hover:underline">
+                  Verify your account?
+                </p>
               </div>
 
-              <p
-                className="text-xs text-blue-600 dark:text-[#a50034] font-medium cursor-pointer hover:underline"
-              >
-                Verify your account?
-              </p>
+              {/* TOGGLE SWITCH MODE ANONIM */}
+              <div className="flex items-center gap-3 bg-gray-100 dark:bg-[#292828] p-2.5 rounded-2xl border border-gray-200 dark:border-gray-700">
+                <span className="text-xs font-bold text-gray-700 dark:text-[#f1ece1]">
+                  Mode Anonim
+                </span>
+                <button
+                  type="button"
+                  onClick={handleToggleAnonim}
+                  className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                    isAnonimMode ? "bg-[#a50034] dark:bg-amber-400" : "bg-gray-300 dark:bg-gray-600"
+                  }`}
+                >
+                  <span
+                    className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                      isAnonimMode ? "translate-x-5 dark:bg-gray-900" : "translate-x-0"
+                    }`}
+                  />
+                </button>
+              </div>
             </div>
 
             <div className="my-5 inline-flex items-center gap-6 bg-gray-50/80 dark:bg-[#f1ece1] px-6 py-2.5 rounded-xl border border-gray-100 text-sm">
@@ -548,7 +592,7 @@ export default function Profile() {
         focused_vote={selectedvote}
         isOpen={isfocusopen} 
         onClose={() => setIsfocusopen(false)}
-        onVoteSuccess={refreshpage} // <-- PASANG PROP REFRESH DI SINI
+        onVoteSuccess={refreshpage}
       />
     </div>
   );
