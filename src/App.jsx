@@ -2,6 +2,7 @@ import SignUp from "./pages/SignUp";
 import Login from "./pages/Login";
 import Home from "./pages/Home";
 import Profile from "./pages/Profile";
+import PublicProfile from "./components/public_profile";
 import Settings from "./pages/Settings";
 import ReportProblem from "./pages/ReportProblem";
 import History from "./pages/History";
@@ -14,8 +15,6 @@ import { ConfirmProvider } from "./components/ConfirmContext";
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from "react";
 
-
-
 export default function App() {
   const [user, setUser] = useState(() => {
     const savedUser = localStorage.getItem("user");
@@ -24,7 +23,6 @@ export default function App() {
 
   const navigate = useNavigate();
 
-  // Helper fungsi untuk navigasi yang bisa dipanggil dari mana saja
   const handleNavigate = (page) => {
     if (page === "profile") navigate("/profile");
     else if (page === "home") navigate("/home");
@@ -58,63 +56,53 @@ export default function App() {
   return (
     <StatusProvider>
       <ConfirmProvider>
-
-          <Routes>
-            <Route
-              path="/login"
-              element={<Login onLoginSuccess={handleLoginSuccess} />}
-            />
-            <Route
-              path="/search"
-              element={user ? <Search_page user={user} onNavigate={handleNavigate} /> : <Navigate to="/login" />}
-            />
-
-            <Route
-              path="/home"
-              element={user ? <Home user={user} onLogout={handleLogout} onNavigate={handleNavigate} /> : <Navigate to="/login" />}
-            />
-
-            <Route
-              path="/profile"
-              element={user ? <Profile user={user} onNavigate={handleNavigate} /> : <Navigate to="/login" />}
-            />
-
-            <Route
-              path="/settings"
-              element={user ? <Settings user={user} onNavigate={handleNavigate} /> : <Navigate to="/login" />}
-            />
-
-            <Route
-              path="/SignUp"
-              element={<SignUp />}
-            />
-
-            <Route
-              path="/settings"
-              element={user ? <Settings user={user} /> : <Navigate to="/login" />}
-            />
-
-            <Route
-              path="/vote/:postId"
-              element={<VotePage />} />
-            <Route
-              path="/History"
-              element={user ? <History user={user} onNavigate={handleNavigate} /> : <Navigate to="/login" />}
-            />
-
-            <Route
-              path="/report"
-              element={user ? <ReportProblem user={user} onNavigate={handleNavigate} /> : <Navigate to="/login" />}
-            />
-
-            <Route
-              path="/"
-              element={<Navigate to={user ? "/home" : "/login"} />}
-            />
-          </Routes>
-        </ConfirmProvider>
-
+        <Routes>
+          <Route
+            path="/login"
+            element={<Login onLoginSuccess={handleLoginSuccess} />}
+          />
+          <Route
+            path="/search"
+            element={user ? <Search_page user={user} onNavigate={handleNavigate} /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/home"
+            element={user ? <Home user={user} onLogout={handleLogout} onNavigate={handleNavigate} /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/profile"
+            element={user ? <Profile user={user} onNavigate={handleNavigate} /> : <Navigate to="/login" />}
+          />
+          <Route 
+            path="/user/:id"
+            element={<PublicProfile />}
+          />
+          <Route
+            path="/settings"
+            element={user ? <Settings user={user} onNavigate={handleNavigate} /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/SignUp"
+            element={<SignUp />}
+          />
+          <Route
+            path="/vote/:postId"
+            element={<VotePage />} 
+          />
+          <Route
+            path="/History"
+            element={user ? <History user={user} onNavigate={handleNavigate} /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/report"
+            element={user ? <ReportProblem user={user} onNavigate={handleNavigate} /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/"
+            element={<Navigate to={user ? "/home" : "/login"} />}
+          />
+        </Routes>
+      </ConfirmProvider>
     </StatusProvider>
-
-        );
+  );
 }

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "../supabaseClient";
 import Navbar from '../components/Navbar';
 
 export default function Settings({ user, onNavigate }) {
@@ -22,6 +23,7 @@ export default function Settings({ user, onNavigate }) {
   };
 
   const navigate = useNavigate();
+  const current_user_id = localStorage.getItem("user_id");
 
   // State Permission
   const [permission, setPermission] = useState({
@@ -29,10 +31,9 @@ export default function Settings({ user, onNavigate }) {
     Notification: false
   });
 
-  // State UI Mockup Privacy
+  // State Privacy
   const [privacy, setPrivacy] = useState({
     anonymousMode: false,
-    hideContactInfo: false,
     hideHistory: false
   });
 
@@ -42,6 +43,52 @@ export default function Settings({ user, onNavigate }) {
     activityAlerts: true
   });
 
+  // Ngefetch status mode anonim dari Supabase
+  useEffect(() => {
+    const fetch_privacy_settings = async () => {
+      if(!current_user_id) return;
+
+      const { data, error } = await supabase
+        .from("users")
+        .select("is_anonim_mode")
+        .eq("id", current_user_id)
+        .single();
+
+      if (!error && data){
+        setPrivacy((prev) => ({
+          ...prev,
+          anonymousMode: data.is_anonim_mode || false,
+        }));
+      }
+    };
+
+    fetch_privacy_settings();
+  }, [current_user_id]);
+
+  // Toggle mode anonim + Supabase Integration
+  const handle_toggle_anonim = async () => {
+    if(!current_user_id){
+      alert("Silahkan login terlebih dahulu!");
+      return;
+    }
+
+    const new_status = !privacy.anonymousMode;
+
+    // Optimistic Update UI
+    setPrivacy((prev) => ({ ...prev, anonymousMode: new_status }));
+
+    const { error } = await supabase
+      .from("users")
+      .update({ is_anonim_mode: new_status })
+      .eq("id", current_user_id);
+
+    if(error){
+      alert("Gagal memperbarui mode anonim: " + error.message);
+      // Revert state kalau gagal
+      setPrivacy((prev) => ({ ...prev, anonymousMode: !new_status }));
+    }
+  };
+  
   // Fetch & Sinkronisasi Permission dengan Browser & Backend
   useEffect(() => {
     const syncPermissions = async () => {
@@ -245,7 +292,7 @@ export default function Settings({ user, onNavigate }) {
             </div>
           </section>
 
-          {/* SECTION 3: PRIVACY (UI MOCKUP) */}
+          {/* SECTION 3: PRIVACY */}
           <section id="privacy-section" className="scroll-mt-28 max-w-3xl flex flex-col gap-6">
             <div>
               <h1 className={`text-3xl font-bold mb-2 ${isDarkMode ? "text-[#f1ece1]" : "text-[#a50034]"}`}>Privacy Settings</h1>
@@ -262,23 +309,7 @@ export default function Settings({ user, onNavigate }) {
                   <input 
                     type="checkbox" 
                     checked={privacy.anonymousMode} 
-                    onChange={() => setPrivacy(prev => ({ ...prev, anonymousMode: !prev.anonymousMode }))} 
-                    className="sr-only peer" 
-                  />
-                  <div className="w-[52px] h-[28px] bg-gray-300 rounded-full peer peer-checked:bg-[#a50034] transition-colors relative after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-[24px] after:w-[24px] after:transition-all peer-checked:after:translate-x-[24px]"></div>
-                </label>
-              </div>
-
-              <div className={`flex flex-row items-center justify-between pb-4 border-b ${isDarkMode ? "border-gray-700" : "border-gray-100"}`}>
-                <div className="flex flex-col pr-4">
-                  <h3 className={`text-xl font-bold ${isDarkMode ? "text-[#f1ece1]" : "text-[#a50034]"}`}>Privasi Kontak</h3>
-                  <p className={`text-sm ${isDarkMode ? "text-gray-300" : "text-gray-500"}`}>Sembunyikan nomor HP dan email pribadi dari petugas penangan komplain.</p>
-                </div>
-                <label className="relative inline-flex items-center cursor-pointer shrink-0">
-                  <input 
-                    type="checkbox" 
-                    checked={privacy.hideContactInfo} 
-                    onChange={() => setPrivacy(prev => ({ ...prev, hideContactInfo: !prev.hideContactInfo }))} 
+                    onChange={handle_toggle_anonim} 
                     className="sr-only peer" 
                   />
                   <div className="w-[52px] h-[28px] bg-gray-300 rounded-full peer peer-checked:bg-[#a50034] transition-colors relative after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-[24px] after:w-[24px] after:transition-all peer-checked:after:translate-x-[24px]"></div>
@@ -304,7 +335,7 @@ export default function Settings({ user, onNavigate }) {
             </div>
           </section>
 
-          {/* SECTION 4: NOTIFICATION (UI MOCKUP) */}
+          {/* SECTION 4: NOTIFICATION */}
           <section id="notification-section" className="scroll-mt-28 max-w-3xl flex flex-col gap-6">
             <div>
               <h1 className={`text-3xl font-bold mb-2 ${isDarkMode ? "text-[#f1ece1]" : "text-[#a50034]"}`}>Notification Settings</h1>
@@ -348,12 +379,12 @@ export default function Settings({ user, onNavigate }) {
           </section>
         </main>
 
-          <p
-            onClick={() => navigate("/report")}
-            className="fixed bottom-8 right-15 z-50 text-s text-blue-600 dark:text-[#a50034] font-medium cursor-pointer hover:underline"
-          >
-            Report a problem?
-          </p>
+        <p
+          onClick={() => navigate("/report")}
+          className="fixed bottom-8 right-15 z-50 text-s text-blue-600 dark:text-[#a50034] font-medium cursor-pointer hover:underline"
+        >
+          Report a problem?
+        </p>
 
       </div>
     </div>
