@@ -169,6 +169,7 @@ export function NewPost({ isOpen, onClose, onPostCreated }) {
             </div>
           )}
 
+{/* TEST PUSH */}
           <div className="flex justify-end mt-5">
             <button
               type="submit"
