@@ -57,9 +57,6 @@
 ## 👥 Tim Developer
 
 | Nama  | Peran     | GitHub  |
-|Marvel | Fullstack | marvelvg|
-|Anthony| Fullstack | retry30 |
-|Kentdji| Fullstack | Gordnum |
 
 | **[Carmelo Anthony]** | Project Lead & Full Stack Developer | [GitHub](https://github.com/[retry30]) |
 
