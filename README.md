@@ -199,14 +199,10 @@ Monitoring   : [Sentry / LogRocket / dll]
 ### Alasan Pemilihan Teknologi
 
 | Teknologi | Alasan Pemilihan |
-
 |-----------|------------------|
-
-| **[ React ]** | [Jelaskan mengapa memilih teknologi ini, keunggulannya untuk proyek ini] |
-
-| **[ Tailwind CSS ]** | [Jelaskan mengapa memilih teknologi ini, keunggulannya untuk proyek ini] |
-
-| **[ Express + Supabase]** | [Jelaskan mengapa memilih teknologi ini, keunggulannya untuk proyek ini] |
+| **React** | React dipilih karena struktur komponennya yang reusable dan mudah di gunakan. Hal ini memudahkan pengembangan fitur seperti pemanggilan modal yang berulang, penggunaan useState, API dan struktur yang kompleks | 
+| **Tailwind CSS** | Tailwind CSS di pilih karena mempercepat proses development UI baik pengembangan maupun update UI baru |
+| **Express + Supabase** | Express digunakan sebagai backend API yang ringan dan flexible untuk menangani autentikasi, data komplain, serta integrasi fitur aplikasi. Supabase dipilih karena menyediakan database PostgreSQL, autentikasi, dan API realtime yang memudahkan pengelolaan data yang cepat dan aman. |
 
 ### Dependencies Utama 
 
@@ -407,9 +403,9 @@ npm run lint
 
 1. **[Registrasi/Login]**: [ Sebelum memulai website setiap user wajib login akun terlebih dahulu, untuk berkomunikasi baik sebagai anonim/bukan anonim ]
 
-2. **[Fitur 1]**: [Jelaskan cara menggunakan fitur ini]
+2. **[Membuat Komplain]**:  [ Pengguna dapat menulis postingan terkait masalah infrastruktur, fasilitas umum, atau lingkungan yang ingin dilaporkan dengan menambahkan detail, lokasi, dan deskripsi yang jelas. ]
 
-3. **[Fitur 2]**: [Jelaskan cara menggunakan fitur ini]
+3. **[Memberi Dukungan / Vote]**: [ Pengguna dapat memberikan dukungan pada komplain yang dianggap penting agar isu tersebut lebih terlihat dan berpotensi mendapatkan perhatian lebih luas dari masyarakat maupun pihak terkait. ] 
 
 #### Untuk Admin
 
