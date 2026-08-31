@@ -71,7 +71,7 @@ export default function CommentSection({ comments = [], onCommentAdded, postId, 
       {/* Form Input Komentar */}
       <form
         onSubmit={handleSubmit}
-        className="flex items-center gap-2 bg-gray-100 rounded-lg px-4 py-2 border border-transparent focus-within:border-gray-300 transition-all"
+        className="flex items-center gap-2 bg-gray-100 rounded-lg px-4 py-2 border border-transparent dark:border-white focus-within:border-gray-300 transition-all"
       >
         <input
           type="text"

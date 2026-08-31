@@ -90,7 +90,7 @@ export default function VoteModal({ post, onClose, onVoteSuccess }) {
       await onVoteSuccess();
     }
 
-    // TUTUP MODAL OTOMATIS, SAMA KAYAK KLIK X
+    // NUTUP MODAL LANGSUNG ABIS VOTE, GAK PEDULI UP ATAU DOWN
     if (typeof onClose === "function") {
       onClose();
     }
