@@ -342,7 +342,7 @@ export default function Profile() {
               {/* BADGE MODE ANONIM AKUN */}
               {isanonim_mode && (
                 <span className="absolute bottom-0 right-0 bg-gray-900 text-white text-[10px] font-bold px-2 py-0.5 rounded-full border border-gray-700 shadow flex items-center gap-1" title="Mode Anonim Aktif">
-                  🕵️ Anonim
+                  Anonim
                 </span>
               )}
             </div>
