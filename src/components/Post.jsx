@@ -518,6 +518,7 @@ export default function Post({
                   postId={post.id}
                   postOwnerId={post.user_id}
                   onCommentAdded={fetch_comment}
+                  hideaction={hideaction}
                 />
               </div>
             )}
