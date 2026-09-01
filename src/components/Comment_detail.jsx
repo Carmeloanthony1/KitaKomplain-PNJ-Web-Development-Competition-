@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient";
+import { useStatus } from "./StatusContext";
 
 // --- KOMPONEN UNTUK ITEM BALASAN (SUB-COMMENT) ---
 function ReplyItem({ reply, onReplyClick }) {
@@ -32,7 +33,7 @@ function ReplyItem({ reply, onReplyClick }) {
 
   const toggleReplyLike = async () => {
     if (!currentUserId) {
-      alert("Silakan login untuk menyukai balasan!");
+      showStatus("Silakan login untuk menyukai balasan!", "error");
       return;
     }
 
@@ -144,6 +145,7 @@ function ReplyItem({ reply, onReplyClick }) {
 
 // --- KOMPONEN UTAMA COMMENT DETAIL ---
 export default function Comment_detail({ comment, postId }) {
+  const { showStatus } = useStatus();
   const [isCommentLiked, setIsCommentLiked] = useState(false);
   const [commentLikeCount, setCommentLikeCount] = useState(0);
   const [isComment_getcomment, setIsComment_getcomment] = useState(false);
@@ -185,7 +187,7 @@ export default function Comment_detail({ comment, postId }) {
 
   const toggleMainCommentLike = async () => {
     if (!currentUserId) {
-      alert("Silakan login terlebih dahulu!");
+      showStatus("Silakan login terlebih dahulu!", "error");
       return;
     }
 
@@ -231,7 +233,7 @@ export default function Comment_detail({ comment, postId }) {
     if (!reply_text.trim()) return;
 
     if (!currentUserId) {
-      alert("Silahkan login terlebih dahulu!");
+      showStatus("Silakan login terlebih dahulu!", "error");
       return;
     }
 
@@ -259,7 +261,7 @@ export default function Comment_detail({ comment, postId }) {
       .single();
 
     if (error) {
-      alert("Gagal membalas komentar: " + error.message);
+      showStatus("Gagal membalas komentar: " + error.message, "error");
     } else if (data) {
       setRepliesList((prev) => [...prev, data]);
       setReply_text("");

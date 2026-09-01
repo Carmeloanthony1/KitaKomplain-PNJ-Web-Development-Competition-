@@ -1,8 +1,10 @@
 import { useState } from "react";
 import "./ReportProblem.css"
+import { useStatus } from "../components/StatusContext";
 
 export default function ReportProblem()
 {
+    const { showStatus } = useStatus();
     //const[email, setEmail] = useState('');
     const[category, setCategory] = useState('');
     const[details, setDetails] = useState('');
@@ -45,13 +47,13 @@ export default function ReportProblem()
 
             if (!response.ok)
             {
-                alert(data.message);
+                showStatus(data.message || "Gagal mengirim report.", "error");
                 return;
             }
 
             setLasttoken(data.ticket);
 
-            alert(`Report berhasil dikirim!\nTicket: ${data.ticket}`);
+            showStatus(`Report berhasil dikirim! Ticket: ${data.ticket}`, "success");
 
             setCategory('');
             setDetails('');
@@ -59,7 +61,7 @@ export default function ReportProblem()
         catch (error)
         {
             console.error("Error:", error);
-            alert("Tidak dapat terhubung ke server.");
+            showStatus("Tidak dapat terhubung ke server.", "error");
         }
         finally
         {

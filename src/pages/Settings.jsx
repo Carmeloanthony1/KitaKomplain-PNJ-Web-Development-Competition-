@@ -2,8 +2,10 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import Navbar from '../components/Navbar';
+import { useStatus } from "../components/StatusContext";
 
 export default function Settings({ user, onNavigate }) {
+  const { showStatus } = useStatus();
   const [isDarkMode, setIsDarkMode] = useState(() => {
     return localStorage.getItem("theme") === "dark";
   });
@@ -81,7 +83,7 @@ export default function Settings({ user, onNavigate }) {
   // Handler Umum Toggle Privacy + Integrasi Supabase
   const handleTogglePrivacy = async (key, dbColumn) => {
     if (!current_user_id) {
-      alert("Silakan login terlebih dahulu!");
+      showStatus("Silakan login terlebih dahulu!", "error");
       return;
     }
 
@@ -98,7 +100,7 @@ export default function Settings({ user, onNavigate }) {
 
       if (error) {
         console.error(`Gagal update ${dbColumn}:`, error.message);
-        alert(`Gagal memperbarui pengaturan! Pastikan kolom ${dbColumn} ada di database.`);
+        showStatus(`Gagal memperbarui pengaturan! Pastikan kolom ${dbColumn} ada di database.`, "error");
         // Revert state kalau gagal
         setPrivacy((prev) => ({ ...prev, [key]: !newStatus }));
       }
@@ -139,7 +141,7 @@ export default function Settings({ user, onNavigate }) {
       setPermission((prev) => ({ ...prev, Camera: true }));
     } catch (error) {
       setPermission((prev) => ({ ...prev, Camera: false }));
-      alert("Akses kamera ditolak! Izinkan kamera pada pengaturan browser.");
+      showStatus("Akses kamera ditolak! Izinkan kamera pada pengaturan browser.", "error");
     }
   };
 
@@ -152,13 +154,13 @@ export default function Settings({ user, onNavigate }) {
     }
 
     if (!("Notification" in window)) {
-      alert("Browser ini tidak mendukung notifikasi desktop.");
+      showStatus("Browser ini tidak mendukung notifikasi desktop.", "error");
       return;
     }
 
     try {
       if (Notification.permission === "denied") {
-        alert("Akses notifikasi telah diblokir. Buka ikon setelan situs di Address Bar lalu ubah Notifikasi menjadi 'Allow'.");
+        showStatus("Akses notifikasi telah diblokir. Buka ikon setelan situs di Address Bar lalu ubah Notifikasi menjadi 'Allow'.", "error");
         setPermission((prev) => ({ ...prev, Notification: false }));
         return;
       }
@@ -166,9 +168,10 @@ export default function Settings({ user, onNavigate }) {
       const resPermission = await Notification.requestPermission();
       if (resPermission === "granted") {
         setPermission((prev) => ({ ...prev, Notification: true }));
+        showStatus("Notifikasi diaktifkan.", "success");
       } else {
         setPermission((prev) => ({ ...prev, Notification: false }));
-        alert("Akses notifikasi ditolak!");
+        showStatus("Akses notifikasi ditolak!", "error");
       }
     } catch (err) {
       console.error("Error requesting notification permission:", err);

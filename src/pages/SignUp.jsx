@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import "./SignUp.css"
 import { useNavigate } from 'react-router-dom'
+import { useStatus } from "../components/StatusContext";
 
 function SignUp({ switchToLogin })
 {
@@ -9,6 +10,7 @@ function SignUp({ switchToLogin })
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [loading, setLoading] = useState(false); //awalnya ga loading karena memang belum loading
+  const { showStatus } = useStatus();
   //Arrow operators: const func = (parameter) => {return value} 
 
   const navigate = useNavigate() 
@@ -20,7 +22,7 @@ function SignUp({ switchToLogin })
 
     if (password !== confirmPassword) //12345 != "12345"
     {
-      alert('Passwords do not match!')
+      showStatus('Passwords do not match!', 'error')
       return
     }
 
@@ -40,12 +42,12 @@ function SignUp({ switchToLogin })
         throw new Error(data.message || 'Gagal melakukan sign up')
       }
 
-      alert('Sign up berhasil! Silahkan login.')
+      showStatus('Sign up berhasil! Silahkan login.', 'success')
       if(switchToLogin){
         switchToLogin()
       }
     } catch (error){
-      alert(error.message)
+      showStatus(error.message || 'Gagal melakukan sign up', 'error')
     } finally {
       setLoading(false)
     }
