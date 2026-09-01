@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
-import Post from "./Post";
 
 export default function UserProfileModal({ userId, isOpen, onClose }) {
   const [targetUser, setTargetUser] = useState(null);
@@ -22,7 +21,7 @@ export default function UserProfileModal({ userId, isOpen, onClose }) {
 
       setTargetUser(userData);
 
-      // 2. Fetch postingan milik user target ini
+      // 2. Fetch postingan milik user target
       const { data: postsData } = await supabase
         .from("posts")
         .select(`
@@ -31,11 +30,7 @@ export default function UserProfileModal({ userId, isOpen, onClose }) {
           image_url,
           tag,
           created_at,
-          user_id,
-          users (
-            username,
-            avatar_url
-          )
+          user_id
         `)
         .eq("user_id", userId)
         .order("created_at", { ascending: false });
@@ -67,7 +62,7 @@ export default function UserProfileModal({ userId, isOpen, onClose }) {
           </button>
         </div>
 
-        {/* Isi Content Modal (Scrollable - Dihapus justify-center nya) */}
+        {/* Isi Content Modal */}
         <div className="p-6 overflow-y-auto space-y-6 flex flex-col items-center w-full">
           {loading ? (
             <div className="text-center py-10 font-semibold text-gray-500">
@@ -81,6 +76,9 @@ export default function UserProfileModal({ userId, isOpen, onClose }) {
                   src={targetUser?.avatar_url || "/assets/Dummy_photo.png"} 
                   alt="Avatar" 
                   className="w-14 h-14 rounded-full object-cover border-2 border-[#a50034] bg-white flex-shrink-0"
+                  onError={(e) => {
+                    e.target.src = "/assets/Dummy_photo.png";
+                  }}
                 />
                 <div className="flex flex-col text-left">
                   <h3 className="text-xl font-black text-[#a50034] leading-tight">
@@ -105,8 +103,28 @@ export default function UserProfileModal({ userId, isOpen, onClose }) {
                 ) : (
                   <div className="w-full flex flex-col items-center gap-4">
                     {userPosts.map((postData) => (
-                      <div key={postData.id} className="w-full flex justify-center [&>div]:min-w-0 [&>div]:w-full">
-                        <Post post={postData} />
+                      <div 
+                        key={postData.id} 
+                        className="w-full bg-white border border-gray-200 rounded-xl p-4 shadow-xs flex flex-col gap-2 text-left"
+                      >
+                        <div className="flex justify-between items-center text-xs font-bold text-[#a50034]">
+                          <span>#{postData.tag || "Umum"}</span>
+                          <span className="text-[11px] text-gray-400 font-normal">
+                            {new Date(postData.created_at).toLocaleDateString("id-ID", {
+                              day: "numeric",
+                              month: "short",
+                              year: "numeric"
+                            })}
+                          </span>
+                        </div>
+                        <p className="text-gray-800 text-sm">{postData.description || "-"}</p>
+                        {postData.image_url && (
+                          <img 
+                            src={postData.image_url} 
+                            alt="Post Media" 
+                            className="mt-1 rounded-lg max-h-48 object-cover border border-gray-100"
+                          />
+                        )}
                       </div>
                     ))}
                   </div>
