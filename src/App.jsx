@@ -10,6 +10,8 @@ import Status from "./components/Status";
 import Notification from "./components/Notification";
 import Search_page from "./pages/Search_page";
 import VotePage from "./components/Vote";
+import AdminDashboard from "./pages/Admin_Dashboard";
+import ProtectedRoute from "./components/Protected_Route";
 import { StatusProvider } from "./components/StatusContext";
 import { ConfirmProvider } from "./components/ConfirmContext";
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
@@ -40,6 +42,7 @@ export default function App() {
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+    localStorage.removeItem("user_id");
     setUser(null);
     navigate("/login");
   };
@@ -97,6 +100,12 @@ export default function App() {
             path="/report"
             element={user ? <ReportProblem user={user} onNavigate={handleNavigate} /> : <Navigate to="/login" />}
           />
+
+          {/* RUTE KHUSUS ADMIN PANEL */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="/admin" element={<AdminDashboard />} />
+          </Route>
+
           <Route
             path="/"
             element={<Navigate to={user ? "/home" : "/login"} />}
