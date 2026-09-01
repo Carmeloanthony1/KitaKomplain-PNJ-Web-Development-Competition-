@@ -1,6 +1,6 @@
 import Post from "./Post";
-import Comment from "./Comment";
 import Vote from "./Vote";
+// import Comment_detail from "./Comment_detail"; // Hapus import jika tidak dipakai lagi
 
 export default function Focuspost({ 
   post, 
@@ -8,7 +8,7 @@ export default function Focuspost({
   focused_vote, 
   isOpen, 
   onClose,
-  onVoteSuccess // 1. TANGKAP PROP REFRESH DI SINI
+  onVoteSuccess
 }) {
   if (!isOpen || !post) return null;
 
@@ -38,20 +38,12 @@ export default function Focuspost({
         {/* 2. JIKA DIKLIK DARI TAB POLLING -> PANGGIL KOMPONEN VOTE */}
         {focused_vote && (
           <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-800">
-            {/* 2. OPER ONVOTESUCCESS KE KOMPONEN VOTE */}
             <Vote 
               vote={focused_vote} 
               post={post} 
               onClose={onClose} 
               onVoteSuccess={onVoteSuccess} 
             />
-          </div>
-        )}
-
-        {/* 3. JIKA DIKLIK DARI TAB COMMENT -> PANGGIL KOMPONEN COMMENT */}
-        {focused_comment && (
-          <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-800">
-            <Comment comment={focused_comment} isFocused={true} />
           </div>
         )}
 
