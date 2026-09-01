@@ -1,6 +1,5 @@
 import Post from "./Post";
 import Vote from "./Vote";
-// import Comment_detail from "./Comment_detail"; // Hapus import jika tidak dipakai lagi
 
 export default function Focuspost({ 
   post, 
@@ -23,17 +22,9 @@ export default function Focuspost({
         onClick={(e) => e.stopPropagation()} 
         className="bg-white dark:bg-[#1e1e1e] w-full max-w-xl rounded-2xl p-6 relative shadow-2xl overflow-y-auto max-h-[90vh] cursor-default"
       >
-        {/* Tombol Close ✕ */}
-        <button 
-          onClick={onClose} 
-          type="button"
-          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-white text-xl font-bold cursor-pointer z-20 p-1"
-        >
-          ✕
-        </button>
 
-        {/* 1. RENDER KOMPONEN POST UTAMA */}
-        <Post post={post} />
+        {/* 1. RENDER KOMPONEN POST UTAMA (Sembunyikan aksi/vote) */}
+        <Post post={post} hideaction={true} onClose={onClose} />
 
         {/* 2. JIKA DIKLIK DARI TAB POLLING -> PANGGIL KOMPONEN VOTE */}
         {focused_vote && (

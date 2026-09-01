@@ -30,12 +30,11 @@ const buildCommentTree = (comments = []) => {
   return tree;
 };
 
-
-
 export default function Post({
   post,
   onUserClick,
   hideaction = false,
+  hideVoteButton = false,
   focused_comment = null,
   onClose = null,
   onDelete = null,
@@ -50,7 +49,8 @@ export default function Post({
   const [isPop, setIsPop] = useState(false);
   const [showLikers, setShowLikers] = useState(false);
 
-  const [isCommentOpen, setIsCommentOpen] = useState(hideaction);
+  // Default state komentar diset false biar bisa di-toggle manual
+  const [isCommentOpen, setIsCommentOpen] = useState(false);
   const [commentCount, setCommentCount] = useState(0);
   const [commentsList, setCommentsList] = useState([]);
 
@@ -59,7 +59,7 @@ export default function Post({
   const [isedit_open, setIsedit_open] = useState(false);
 
   const [isVote_open, setIsVote_open] = useState(false);
-  const { showConfirm } = useConfirm()
+  const { showConfirm } = useConfirm();
   const currentUserId = localStorage.getItem("user_id");
 
   if (!post) return null;
@@ -83,22 +83,11 @@ export default function Post({
   }
   const [isdark, setIsdark] = useState(false);
 
-  const toggle_darkmode = () => {
-    const isdark = document.documentElement.classList.toggle("dark");
-    setIsdark(isdark);
-    if (isdark) {
-      localStorage.setItem("theme", "dark");
-    } else {
-      localStorage.setItem("theme", "light");
-    }
-  };
-
   useEffect(() => {
     if (localStorage.getItem("theme") === "dark") {
       document.documentElement.classList.add("dark");
-      setIsdark(isdark);
+      setIsdark(true);
     }
-
   }, []);
 
   const fetchLikes = async () => {
@@ -188,8 +177,11 @@ export default function Post({
   };
 
   const toggleLike = async () => {
+    // Disabled di mode admin
+    if (hideaction) return;
+
     if (!currentUserId) {
-      showStatus("Silakan login untuk memberikan like!", "error"); // 3. GANTI DI SINI
+      showStatus("Silakan login untuk memberikan like!", "error");
       return;
     }
 
@@ -243,7 +235,11 @@ export default function Post({
     }
   };
 
-  const handleToggleComment = () => setIsCommentOpen((prev) => !prev);
+  // Toggle komentar bisa di klik di mana aja
+  const handleToggleComment = () => {
+    setIsCommentOpen((prev) => !prev);
+  };
+
   const handle_share = () => setIsshare_open(true);
 
   const handle_delete = async () => {
@@ -268,13 +264,17 @@ export default function Post({
             <img
               src={avatar}
               alt={username}
-              onClick={() => onUserClick && onUserClick(post.user_id)}
-              className="w-10 h-10 mt-1 rounded-full object-cover flex-shrink-0 cursor-pointer border-2 border-[#a50034] dark:border-[#f1ece1] hover:opacity-80 transition-opacity"
+              onClick={() => !hideaction && onUserClick && onUserClick(post.user_id)}
+              className={`w-10 h-10 mt-1 rounded-full object-cover flex-shrink-0 border-2 border-[#a50034] dark:border-[#f1ece1] ${
+                hideaction ? "cursor-default" : "cursor-pointer hover:opacity-80 transition-opacity"
+              }`}
             />
           ) : (
             <div
-              onClick={() => onUserClick && onUserClick(post.user_id)}
-              className="w-10 h-10 mt-1 rounded-full flex justify-center bg-white text-[#a50034] border-2 border-[#a50034] dark:border-[#f1ece1] font-bold items-center object-cover flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity">
+              onClick={() => !hideaction && onUserClick && onUserClick(post.user_id)}
+              className={`w-10 h-10 mt-1 rounded-full flex justify-center bg-white text-[#a50034] border-2 border-[#a50034] dark:border-[#f1ece1] font-bold items-center object-cover flex-shrink-0 ${
+                hideaction ? "cursor-default" : "cursor-pointer hover:opacity-80 transition-opacity"
+              }`}>
               {(username || "U")[0].toLowerCase()}
             </div>
           )}
@@ -283,8 +283,10 @@ export default function Post({
             <div className="flex items-center gap-2 flex-wrap justify-between">
               <div className="flex flex-col">
                 <span
-                  onClick={() => onUserClick && onUserClick(post.user_id)}
-                  className="font-bold text-gray-800 dark:text-[#f1ece1] cursor-pointer hover:text-[#a50034] dark:hover:text-[#a50034]/60 transition-colors w-fit"
+                  onClick={() => !hideaction && onUserClick && onUserClick(post.user_id)}
+                  className={`font-bold text-gray-800 dark:text-[#f1ece1] w-fit ${
+                    hideaction ? "cursor-default" : "cursor-pointer hover:text-[#a50034] dark:hover:text-[#a50034]/60 transition-colors"
+                  }`}
                 >
                   {username}
                 </span>
@@ -301,9 +303,11 @@ export default function Post({
                         <span
                           key={idx}
                           onClick={() =>
-                            navigate(`/search?tag=${encodeURIComponent(cleanTag)}`)
+                            !hideaction && navigate(`/search?tag=${encodeURIComponent(cleanTag)}`)
                           }
-                          className="text-[#a50034] dark:text-[#f1ece1] bg-[#a50034]/10 dark:bg-transparent dark:border-1 dark:border-[#f1ece1] hover:bg-[#a50034] dark:hover:bg-transparent hover:text-white px-2 py-0.5 rounded-md font-bold text-xs transition-colors cursor-pointer"
+                          className={`text-[#a50034] dark:text-[#f1ece1] bg-[#a50034]/10 dark:bg-transparent dark:border-1 dark:border-[#f1ece1] px-2 py-0.5 rounded-md font-bold text-xs transition-colors ${
+                            hideaction ? "cursor-default" : "hover:bg-[#a50034] dark:hover:bg-transparent hover:text-white cursor-pointer"
+                          }`}
                         >
                           #{cleanTag}
                         </span>
@@ -361,7 +365,7 @@ export default function Post({
                             onClick={() => {
                               setIsmenu_open(false);
                               navigator.clipboard.writeText(window.location.href);
-                              showStatus("Tautan berhasil disalin!", "success"); // 6. GANTI DI SINI JUGA (bonus, sekalian)
+                              showStatus("Tautan berhasil disalin!", "success");
                             }}
                             className="w-full text-left font-bold px-4 py-2 hover:bg-gray-50 text-gray-700 flex items-center gap-2 cursor-pointer"
                           >
@@ -393,94 +397,104 @@ export default function Post({
               />
             )}
 
-            {!hideaction && (
-              <div className="flex justify-between gap-2 mt-2 items-center">
-                <div className="flex flex-row gap-3 items-center">
-                  <div className="flex items-center gap-2">
-                    <button onClick={toggleLike} className="focus:outline-none cursor-pointer">
-                      <svg
-                        style={{
-                          transform: isPop ? "scale(1.3)" : "scale(1)",
-                          transition:
-                            "transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
-                        }}
-                        className={`w-9 h-9 ${isLiked
-                            ? "fill-[#a50034] stroke-[#a50034] dark:fill-[#a50034] dark:stroke-[#a50034]"
-                            : "fill-none stroke-[#a50034] dark:stroke-white"
-                          }`}
-                        viewBox="0 0 24 24"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                      </svg>
-                    </button>
-
-                    {likes.length > 0 && (
-                      <span
-                        onClick={() => setShowLikers(true)}
-                        className={`font-bold text-sm cursor-pointer hover:underline transition-colors ${isLiked
-                            ? "text-[#a50034] dark:text-[#a50034]"
-                            : "text-[#a50034] dark:text-[#f1ece1] active:text-[#a50034] dark:active:text-[#a50034]"
-                          }`}
-                      >
-                        {likes.length}
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={handleToggleComment}
-                      className="focus:outline-none cursor-pointer"
+            {/* BARIS ACTION */}
+            <div className="flex justify-between gap-2 mt-2 items-center">
+              <div className="flex flex-row gap-3 items-center">
+                {/* LIKE SECTION (ReadOnly di admin) */}
+                <div className="flex items-center gap-2">
+                  <button 
+                    onClick={toggleLike} 
+                    disabled={hideaction}
+                    className={`focus:outline-none ${hideaction ? "cursor-default" : "cursor-pointer"}`}
+                  >
+                    <svg
+                      style={{
+                        transform: isPop ? "scale(1.3)" : "scale(1)",
+                        transition:
+                          "transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
+                      }}
+                      className={`w-9 h-9 ${isLiked
+                          ? "fill-[#a50034] stroke-[#a50034] dark:fill-[#a50034] dark:stroke-[#a50034]"
+                          : "fill-none stroke-[#a50034] dark:stroke-white"
+                        }`}
+                      viewBox="0 0 24 24"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
                     >
-                      <svg
-                        className="w-9 h-9 fill-[#a50034] dark:fill-white hover:scale-110 transition-transform cursor-pointer"
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 640 640"
-                      >
-                        <path d="M115.9 448.9C83.3 408.6 64 358.4 64 304C64 171.5 178.6 64 320 64C461.4 64 576 171.5 576 304C576 436.5 461.4 544 320 544C283.5 544 248.8 536.8 217.4 524L101 573.9C97.3 575.5 93.5 576 89.5 576C75.4 576 64 564.6 64 550.5C64 546.2 65.1 542 67.1 538.3L115.9 448.9zM153.2 418.7C165.4 433.8 167.3 454.8 158 471.9L140 505L198.5 479.9C210.3 474.8 223.7 474.7 235.6 479.6C261.3 490.1 289.8 496 319.9 496C437.7 496 527.9 407.2 527.9 304C527.9 200.8 437.8 112 320 112C202.2 112 112 200.8 112 304C112 346.8 127.1 386.4 153.2 418.7z" />
-                      </svg>
-                    </button>
+                      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                    </svg>
+                  </button>
 
-                    {commentCount > 0 && (
-                      <span className="font-bold text-sm text-[#a50034] dark:text-white">
-                        {commentCount}
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="flex items-center">
-                    <button onClick={handle_share} className="focus:outline-none cursor-pointer">
-                      <svg
-                        className="w-9 h-9 stroke-[#a50034] dark:stroke-white fill-none hover:scale-110 transition-transform cursor-pointer"
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="1.8"
-                          d="m5 12l-.604-5.437C4.223 5.007 5.825 3.864 7.24 4.535l11.944 5.658c1.525.722 1.525 2.892 0 3.614L7.24 19.466c-1.415.67-3.017-.472-2.844-2.028zm0 0h7"
-                        />
-                      </svg>
-                    </button>
-                  </div>
+                  {likes.length > 0 && (
+                    <span
+                      onClick={() => !hideaction && setShowLikers(true)}
+                      className={`font-bold text-sm ${hideaction ? "cursor-default text-[#a50034] dark:text-[#f1ece1]" : "cursor-pointer hover:underline transition-colors " + (isLiked ? "text-[#a50034] dark:text-[#a50034]" : "text-[#a50034] dark:text-[#f1ece1]")}`}
+                    >
+                      {likes.length}
+                    </span>
+                  )}
                 </div>
 
-                <button
-                  onClick={() => setIsVote_open(true)}
-                  className="bg-red-50 p-2 leading-relaxed rounded-lg text-black border-2 border-[#a50034] dark:border-[#f1ece1] font-semibold cursor-pointer">
-                  Vote
-                </button>
-                {isVote_open && (
-                  <VoteModal
-                    post={post}
-                    onClose={() => setIsVote_open(false)} />
-                )}
+                {/* COMMENT COUNT SECTION (Bisa diklik buat toggle) */}
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={handleToggleComment}
+                    className="focus:outline-none cursor-pointer"
+                  >
+                    <svg
+                      className="w-9 h-9 fill-[#a50034] dark:fill-white transition-transform hover:scale-110 cursor-pointer"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 640 640"
+                    >
+                      <path d="M115.9 448.9C83.3 408.6 64 358.4 64 304C64 171.5 178.6 64 320 64C461.4 64 576 171.5 576 304C576 436.5 461.4 544 320 544C283.5 544 248.8 536.8 217.4 524L101 573.9C97.3 575.5 93.5 576 89.5 576C75.4 576 64 564.6 64 550.5C64 546.2 65.1 542 67.1 538.3L115.9 448.9zM153.2 418.7C165.4 433.8 167.3 454.8 158 471.9L140 505L198.5 479.9C210.3 474.8 223.7 474.7 235.6 479.6C261.3 490.1 289.8 496 319.9 496C437.7 496 527.9 407.2 527.9 304C527.9 200.8 437.8 112 320 112C202.2 112 112 200.8 112 304C112 346.8 127.1 386.4 153.2 418.7z" />
+                    </svg>
+                  </button>
+
+                  {commentCount > 0 && (
+                    <span className="font-bold text-sm text-[#a50034] dark:text-white">
+                      {commentCount}
+                    </span>
+                  )}
+                </div>
+
+                {/* SHARE SECTION (Tetap tampil di mana pun) */}
+                <div className="flex items-center">
+                  <button onClick={handle_share} className="focus:outline-none cursor-pointer">
+                    <svg
+                      className="w-9 h-9 stroke-[#a50034] dark:stroke-white fill-none hover:scale-110 transition-transform cursor-pointer"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="1.8"
+                        d="m5 12l-.604-5.437C4.223 5.007 5.825 3.864 7.24 4.535l11.944 5.658c1.525.722 1.525 2.892 0 3.614L7.24 19.466c-1.415.67-3.017-.472-2.844-2.028zm0 0h7"
+                      />
+                    </svg>
+                  </button>
+                </div>
               </div>
-            )}
+
+              {!hideaction && !hideVoteButton && (
+                <>
+                  <button
+                    onClick={() => setIsVote_open(true)}
+                    className="bg-red-50 p-2 leading-relaxed rounded-lg text-black border-2 border-[#a50034] dark:border-[#f1ece1] font-semibold cursor-pointer"
+                  >
+                    Vote
+                  </button>
+
+                  {isVote_open && (
+                    <VoteModal
+                      post={post}
+                      onClose={() => setIsVote_open(false)} 
+                    />
+                  )}
+                </>
+              )}
+            </div>
 
             {focused_comment && (
               <div
@@ -496,7 +510,8 @@ export default function Post({
               </div>
             )}
 
-            {(hideaction || isCommentOpen) && (
+            {/* Komentar dibuka jika isCommentOpen true */}
+            {isCommentOpen && (
               <div className="mt-2">
                 <CommentSection
                   comments={commentsList}
@@ -510,7 +525,7 @@ export default function Post({
         </div>
       </div>
 
-      {!hideaction && isshare_open && (
+      {isshare_open && (
         <Share_post post={post} onclose={() => setIsshare_open(false)} />
       )}
 
