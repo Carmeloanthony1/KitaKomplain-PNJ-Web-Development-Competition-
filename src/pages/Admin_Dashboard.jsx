@@ -22,7 +22,8 @@ export default function AdminDashboard() {
         supabase.from("comments").select("*", { count: "exact", head: true }),
         supabase.from("posts").select("id, description, tag, is_anonim_mode, created_at, user_id, users(username)"),
         supabase.from("votes").select("post_id, vote_type"),
-        supabase.from("users").select("id, username, email, role, created_at")
+        // Ambil kolom yang benar-benar ada di tabel users Supabase kamu
+        supabase.from("users").select("id, username, email, avatar_url, created_at")
       ]);
 
       setStats({
@@ -231,9 +232,9 @@ export default function AdminDashboard() {
                   <table className="w-full text-left border-collapse">
                     <thead>
                       <tr className="border-b border-gray-700 text-xs font-bold text-gray-400 uppercase tracking-wider">
+                        <th className="py-3 px-4 text-center w-16">Profile</th>
                         <th className="py-3 px-4">Username</th>
                         <th className="py-3 px-4">Email</th>
-                        <th className="py-3 px-4 text-center">Role</th>
                         <th className="py-3 px-4">Tanggal Bergabung</th>
                         <th className="py-3 px-4 text-center">Aksi</th>
                       </tr>
@@ -241,24 +242,44 @@ export default function AdminDashboard() {
                     <tbody className="divide-y divide-gray-800 text-sm">
                       {usersList.map((usr) => (
                         <tr key={usr.id} className="hover:bg-gray-800/40 transition-colors">
+                          {/* Kolom 1: Profile Picture */}
+                          <td className="py-4 px-4 text-center">
+                            {usr.avatar_url ? (
+                              <img
+                                src={usr.avatar_url}
+                                alt={usr.username || "User"}
+                                className="w-9 h-9 rounded-full object-cover mx-auto border border-gray-700 shadow-sm"
+                                onError={(e) => {
+                                  // Jika image URL gagal/broken, ganti otomatis ke UI Avatar berwarna emas
+                                  e.target.onerror = null;
+                                  e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                                    usr.username || "U"
+                                  )}&background=d97706&color=fff&bold=true`;
+                                }}
+                              />
+                            ) : (
+                              <div className="w-9 h-9 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-400 font-extrabold flex items-center justify-center text-xs mx-auto uppercase">
+                                {usr.username ? usr.username.charAt(0) : "U"}
+                              </div>
+                            )}
+                          </td>
+
+                          {/* Kolom 2: Username */}
                           <td className="py-4 px-4 font-semibold text-white">
                             {usr.username || "Tanpa Nama"}
                           </td>
+
+                          {/* Kolom 3: Email */}
                           <td className="py-4 px-4 text-gray-300">
                             {usr.email || "-"}
                           </td>
-                          <td className="py-4 px-4 text-center">
-                            <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${
-                              usr.role === "admin" 
-                                ? "bg-rose-500/20 text-rose-400 border border-rose-500/30" 
-                                : "bg-gray-700/50 text-gray-300"
-                            }`}>
-                              {usr.role || "user"}
-                            </span>
-                          </td>
+
+                          {/* Kolom 4: Tanggal Bergabung */}
                           <td className="py-4 px-4 text-xs text-gray-400">
                             {usr.created_at ? new Date(usr.created_at).toLocaleDateString("id-ID") : "-"}
                           </td>
+
+                          {/* Kolom 5: Aksi */}
                           <td className="py-4 px-4 text-center">
                             <button
                               onClick={() => handleDeleteUser(usr.id)}
