@@ -406,9 +406,9 @@ export default function AdminDashboard() {
                                     setSelectedUserId(usr.id);
                                     setActiveMenuUserId(null);
                                   }}
-                                  className="w-full px-4 py-2 hover:bg-gray-800 text-amber-400 hover:text-amber-300 font-semibold transition-colors cursor-pointer text-left flex items-center gap-2"
+                                  className="w-full px-4 py-2 hover:bg-gray-800 text-gray-300 hover:text-white transition-colors cursor-pointer text-left"
                                 >
-                                  👁️ Lihat Detail
+                                   Lihat Detail
                                 </button>
 
                                 <button

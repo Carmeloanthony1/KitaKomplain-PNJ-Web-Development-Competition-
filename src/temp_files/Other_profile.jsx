@@ -269,45 +269,45 @@ export default function UserProfileModal({ userId, isOpen, onClose }) {
 
                   {/* TAB 3: RIWAYAT VOTE */}
                   {activeTab === "votes" && (
-                    <div className="w-full flex flex-col items-center">
-                      <h4 className="text-md font-bold text-gray-800 mb-4">Riwayat Vote</h4>
-                      {userVotes.length === 0 ? (
-                        <div className="text-center text-gray-500 bg-white rounded-xl border border-gray-200 p-6 w-full text-xs">
-                          Pengguna ini belum pernah melakukan vote.
-                        </div>
-                      ) : (
-                        <div className="w-full flex flex-col gap-3">
-                          {userVotes.map((vote) => (
-                            <div 
-                              key={vote.id}
-                              onClick={() => handleOpenFocusPost(vote, "votes")}
-                              className="w-full bg-white border border-gray-200 rounded-xl p-3 shadow-xs text-left flex justify-between items-center hover:border-[#a50034] transition cursor-pointer"
-                            >
-                              <div className="flex items-center gap-2">
-                                <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${
-                                  vote.vote_type === "up" 
-                                    ? "bg-green-100 text-green-700" 
-                                    : "bg-red-100 text-red-700"
-                                }`}>
-                                  {vote.vote_type === "up" ? "▲ Upvote" : "▼ Downvote"}
-                                </span>
-                                <span className="text-xs font-bold text-[#a50034]">
-                                  #{vote.posts?.tag || "Umum"}
-                                </span>
-                              </div>
-                              <span className="text-[11px] text-gray-400">
-                                {vote.created_at ? new Date(vote.created_at).toLocaleDateString("id-ID", {
-                                  day: "numeric",
-                                  month: "short",
-                                  year: "numeric"
-                                }) : ""}
+                  <div className="w-full flex flex-col items-center">
+                    <h4 className="text-md font-bold text-gray-800 mb-4">Riwayat Vote</h4>
+                    {userVotes.length === 0 ? (
+                      <div className="text-center text-gray-500 bg-white rounded-xl border border-gray-200 p-6 w-full text-xs">
+                        Pengguna ini belum pernah melakukan vote.
+                      </div>
+                    ) : (
+                      <div className="w-full flex flex-col gap-3">
+                        {userVotes.map((vote) => (
+                          <div 
+                            key={vote.id}
+                            /* onClick={() => handleOpenFocusPost(vote, "votes")} dan hover effect dihapus */
+                            className="w-full bg-white border border-gray-200 rounded-xl p-3 shadow-xs text-left flex justify-between items-center select-none"
+                          >
+                            <div className="flex items-center gap-2">
+                              <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${
+                                vote.vote_type === "up" 
+                                  ? "bg-green-100 text-green-700" 
+                                  : "bg-red-100 text-red-700"
+                              }`}>
+                                {vote.vote_type === "up" ? "▲ Upvote" : "▼ Downvote"}
+                              </span>
+                              <span className="text-xs font-bold text-[#a50034]">
+                                #{vote.posts?.tag || "Umum"}
                               </span>
                             </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  )}
+                            <span className="text-[11px] text-gray-400">
+                              {vote.created_at ? new Date(vote.created_at).toLocaleDateString("id-ID", {
+                                day: "numeric",
+                                month: "short",
+                                year: "numeric"
+                              }) : ""}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 </div>
               </>
