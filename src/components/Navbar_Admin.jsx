@@ -8,7 +8,7 @@ export default function NavbarAdmin({ activeTab, setActiveTab }) {
     { id: "moderation", label: "Moderation" },
     { id: "users", label: "Users" },
     { id: "comments", label: "Comments" },
-    { id: "settings", label: "Settings" },
+    { id: "reports", label: "Reports" },
   ];
 
   return (
@@ -36,7 +36,7 @@ export default function NavbarAdmin({ activeTab, setActiveTab }) {
               <button
                 key={item.id}
                 onClick={() => setActiveTab(item.id)}
-                className={`text-left text-xl font-extrabold transition-colors cursor-pointer ${
+                className={`text-left text-3xl font-extrabold transition-colors cursor-pointer ${
                   isActive ? "text-white" : "text-gray-400 hover:text-white"
                 }`}
               >

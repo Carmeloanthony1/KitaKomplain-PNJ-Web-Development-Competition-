@@ -4,6 +4,9 @@ import { supabase } from "../supabaseClient";
 import NavbarAdmin from "../components/Navbar_Admin";
 import User_profile from "../temp_files/Other_profile";
 
+// 📌 1. IMPORT KOMPONEN REPORT PANEL DI SINI
+import ReportPanel from "../components/Report_Panel"; // Sesuaikan path lokasi file ReportPanel.jsx kamu
+
 export default function AdminDashboard() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("moderation"); 
@@ -400,7 +403,6 @@ export default function AdminDashboard() {
                                 ref={dropdownRef}
                                 className="absolute right-6 top-12 w-44 bg-[#121212] border border-gray-700 rounded-xl shadow-2xl z-50 py-1 text-left text-xs"
                               >
-                                {/* FIX: Mengeset selectedUserId buat ngebuka Modal Other_profile */}
                                 <button
                                   onClick={() => {
                                     setSelectedUserId(usr.id);
@@ -437,13 +439,21 @@ export default function AdminDashboard() {
           </div>
         )}
 
-        {/* TAB 3 & 4 */}
-        {activeTab === "comments" && <div className="text-xl font-bold p-6">Menu Moderasi Komentar (Coming Soon)</div>}
-        {activeTab === "settings" && <div className="text-xl font-bold p-6">Menu Pengaturan Admin (Coming Soon)</div>}
+        {/* TAB 3: COMMENTS */}
+        {activeTab === "comments" && (
+          <div className="text-xl font-bold p-6">Menu Moderasi Komentar (Coming Soon)</div>
+        )}
+
+        {/* 📌 2. RENDER REPORT PANEL DI SINI SAAT TAB REPORTS AKTIF */}
+        {activeTab === "reports" && <ReportPanel />}
+
+        {/* TAB 5: SETTINGS */}
+        {activeTab === "settings" && (
+          <div className="text-xl font-bold p-6">Menu Pengaturan Admin (Coming Soon)</div>
+        )}
 
       </main>
 
-      {/* FIX: Memanggil Komponen User_profile (Other_profile) secara eksplisit */}
       <User_profile
         userId={selectedUserId}
         isOpen={!!selectedUserId}
