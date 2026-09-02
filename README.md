@@ -103,21 +103,19 @@ Alurnya sederhana:
 | Fitur    | Deskripsi    | Keunggulan    | 
 |----------|--------------|---------------|
 
-| **[ Post Komplain ]** | [Deskripsi singkat fitur] | [Mengapa fitur ini penting/unik] |
+| **[ Post Komplain ]** | [User dapat mengunggah sebuah komplenan berupa keluhan lingkungan sekitar maupun insiden] [Fitur ini penting karena keluhan yang di unggah akan di berikan kepada pihak pemerintah untuk di tindak lebih lanjut] |
 
-| **[ Feed & Interaksi Sosial ]** | [Deskripsi singkat fitur] | [Mengapa fitur ini penting/unik] |
+| **[ Feed & Interaksi Sosial (Comment) ]** | [Fitur ini berfungsi agar sesama pengguna dapat berinteraksi maupun berbagi pandangan mengenai unggahan yang tertera] | [ Membangun sense of community antar user mengenai masalah-masalah yang terdapat di Indonesia ] |
 
-| **[ Polling/Vote System ]** | [Deskripsi singkat fitur] | [Mengapa fitur ini penting/unik] |
-
-| **[ Exposure Berbasis Dukungan ]** | [Deskripsi singkat fitur] | [Mengapa fitur ini penting/unik] |
+| **[ Polling/Vote System ]** | [Fitur ini memungkinkan pengguna memberikan dukungan atau penolakan terhadap suatu komplain berdasarkan tingkat urgensi dan relevansi masalah yang diangkat.] | [Membantu menilai masalah user secara kolektif sehingga masalah yang paling relevan dan ramai dapat lebih cepat mendapat perhatian.] |
 
 ### Fitur Tambahan
 
-- **[Fitur A]** - [Penjelasan singkat]
+- **Pembuatan postingan dan Membuat tag dengan topik sesuai** - [Penjelasan singkat]
 
-- **[Fitur B]** - [Penjelasan singkat]
+- **Board yang di khususkan untuk melihat postingan dengan voting terbanyak** - [Penjelasan singkat]
 
-- **[Fitur C]** - [Penjelasan singkat]
+- **Dark mode website** - [Penjelasan singkat]
 
 - **[Fitur D]** - [Penjelasan singkat]
 
