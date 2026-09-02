@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient";
+import { useStatus } from "./StatusContext";
 
 // --- KOMPONEN UNTUK ITEM BALASAN (SUB-COMMENT) ---
 function ReplyItem({ reply, onReplyClick }) {
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
+  const { showStatus } = useStatus();
 
   const replyUser = reply?.users?.username || "Anonim";
   const replyAvatar = reply?.users?.avatar_url;
@@ -33,6 +35,19 @@ function ReplyItem({ reply, onReplyClick }) {
   const toggleReplyLike = async () => {
     if (!currentUserId) {
       alert("Silakan login untuk menyukai balasan!");
+      return;
+    }
+
+    // Verification check
+    const { data: userData } = await supabase
+      .from("users")
+      .select("is_verified")
+      .eq("id", currentUserId)
+      .single();
+
+    if (!userData?.is_verified)
+    {
+      showStatus("Akun belum diverifikasi! Tindakan ini tidak diizinkan.");
       return;
     }
 
@@ -153,6 +168,8 @@ export default function Comment_detail({ comment, postId }) {
   const [show_reply, setShow_reply] = useState(true);
   const [repliesList, setRepliesList] = useState(comment?.replies || []);
 
+  const { showStatus } = useStatus();
+
   const username = comment?.users?.username || "Anonim";
   const avatar = comment?.users?.avatar_url;
   const content = comment?.content || "";
@@ -186,6 +203,19 @@ export default function Comment_detail({ comment, postId }) {
   const toggleMainCommentLike = async () => {
     if (!currentUserId) {
       alert("Silakan login terlebih dahulu!");
+      return;
+    }
+
+    // Verification check
+    const { data: userData } = await supabase
+      .from("users")
+      .select("is_verified")
+      .eq("id", currentUserId)
+      .single();
+
+    if (!userData?.is_verified)
+    {
+      showStatus("Akun belum diverifikasi! Tindakan ini tidak diizinkan.");
       return;
     }
 
@@ -232,6 +262,20 @@ export default function Comment_detail({ comment, postId }) {
 
     if (!currentUserId) {
       alert("Silahkan login terlebih dahulu!");
+      return;
+    }
+
+    // Verification check
+    const { data: userData } = await supabase
+      .from("users")
+      .select("is_verified")
+      .eq("id", currentUserId)
+      .single();
+
+    if (!userData?.is_verified)
+    {
+      showStatus("Akun belum diverifikasi! Tindakan ini tidak diizinkan.");
+      setLoading(false);
       return;
     }
 

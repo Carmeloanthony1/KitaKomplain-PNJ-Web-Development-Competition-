@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient";
 import Comment_detail from "./Comment_detail";
+import { useStatus } from "./StatusContext";
 
 export default function CommentSection({ comments = [], onCommentAdded, postId, postOwnerId }) {
   const [commentList, setCommentList] = useState(comments);
   const [inputText, setInputText] = useState("");
   const [visibleCount, setVisibleCount] = useState(3);
   const [loading, setLoading] = useState(false);
+  const { showStatus } = useStatus();
 
   // SINKRONISASI: Tiap kali prop 'comments' dari Post.jsx berubah, update state lokal
   useEffect(() => {
@@ -25,6 +27,20 @@ export default function CommentSection({ comments = [], onCommentAdded, postId, 
     }
 
     setLoading(true);
+
+    // Verification check
+    const { data: userData } = await supabase
+      .from("users")
+      .select("is_verified")
+      .eq("id", currentUserId)
+      .single();
+
+    if (!userData?.is_verified)
+    {
+      showStatus("Akun belum diverifikasi! Silakan verifikasi untuk berkomentar.");
+      setLoading(false);
+      return;
+    }
 
     // Comment to supabase
     const { error: commentError } = await supabase.from("comments").insert([

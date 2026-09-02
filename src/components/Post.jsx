@@ -189,7 +189,20 @@ export default function Post({
 
   const toggleLike = async () => {
     if (!currentUserId) {
-      showStatus("Silakan login untuk memberikan like!", "error"); // 3. GANTI DI SINI
+      showStatus("Silakan login untuk memberikan like!", "error");
+      return;
+    }
+
+    // Verification check
+    const { data: userData } = await supabase
+      .from("users")
+      .select("is_verified")
+      .eq("id", currentUserId)
+      .single();
+
+    if (!userData?.is_verified)
+    {
+      showStatus("Akun belum diverifikasi! Silakan verifikasi untuk like postingan.", "error");
       return;
     }
 
@@ -258,6 +271,30 @@ export default function Post({
       showStatus("Postingan berhasil dihapus!", "success");
       if (onDelete) onDelete(post.id);
     }
+  };
+
+  const handleOpenVote = async () =>
+  {
+    if (!currentUserId)
+    {
+      showStatus("Silakan login terlebih dahulu!", "error");
+      return;
+    }
+
+    // Verification check
+    const { data: userData } = await supabase
+      .from("users")
+      .select("is_verified")
+      .eq("id", currentUserId)
+      .single();
+
+    if (!userData?.is_verified)
+      {
+      showStatus("Akun belum diverifikasi! Anda tidak dapat mengikuti voting ini.", "error");
+      return;
+    }
+
+    setIsVote_open(true);
   };
 
   return (
@@ -470,14 +507,14 @@ export default function Post({
                 </div>
 
                 <button
-                  onClick={() => setIsVote_open(true)}
+                  onClick={handleOpenVote}
                   className="bg-red-50 p-2 leading-relaxed rounded-lg text-black border-2 border-[#a50034] dark:border-[#f1ece1] font-semibold cursor-pointer">
                   Vote
                 </button>
                 {isVote_open && (
                   <VoteModal
                     post={post}
-                    onClose={() => setIsVote_open(false)} />
+                    onClose={handleOpenVote} />
                 )}
               </div>
             )}

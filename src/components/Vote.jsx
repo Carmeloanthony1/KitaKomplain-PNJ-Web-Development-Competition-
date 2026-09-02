@@ -1,12 +1,14 @@
 import { useState, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { supabase } from "../supabaseClient";
+import { useStatus } from "./StatusContext";
 
 export default function VoteModal({ post, onClose, onVoteSuccess }) {
   const [upvotes, setUpvotes] = useState(0);
   const [downvotes, setDownvotes] = useState(0);
   const [userVote, setUserVote] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { showStatus } = useStatus();
 
   const getActiveUserId = async () => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -51,7 +53,20 @@ export default function VoteModal({ post, onClose, onVoteSuccess }) {
 
     if (!activeUserId)
     {
-      alert("Silakan login terlebih dahulu!");
+      showStatus("Silakan login terlebih dahulu!");
+      return;
+    }
+
+    // Verification check
+    const { data: userData, error: userError } = await supabase
+      .from("users")
+      .select("is_verified")
+      .eq("id", activeUserId)
+      .single();
+
+    if (userError || !userData?.is_verified)
+    {
+      showStatus("Akun belum diverifikasi! Anda tidak dapat mengikuti voting ini.");
       return;
     }
 

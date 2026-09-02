@@ -1,12 +1,41 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { supabase } from "../supabaseClient";
+import { useStatus } from "./StatusContext";
 
-// TERIMA prop openPostModal di sini
 export default function Sidebar_kiri({ onNavigate, openNotifications, openPostModal }) {
   const [search, setSearch] = useState("");
   const navigate = useNavigate();
 
   const [isdark, setIsdark] = useState(false);
+
+  const { showStatus } = useStatus();
+
+  const handleNewPost = async () =>
+  {
+    const currentUserId = localStorage.getItem("user_id");
+    
+    if (!currentUserId)
+    {
+      showStatus("Silakan login terlebih dahulu!", "error");
+      return;
+    }
+
+    //Verification check
+    const { data: userData, error } = await supabase
+      .from("users")
+      .select("is_verified")
+      .eq("id", currentUserId)
+      .single();
+
+    if (error || !userData?.is_verified)
+    {
+      showStatus("Akun belum diverifikasi! Silakan verifikasi profil Anda untuk membuat postingan.", "error");
+      return;
+    }
+
+    openPostModal();
+  };
 
   const toggle_darkmode = () => {
     const isdark = document.documentElement.classList.toggle("dark");
@@ -21,7 +50,7 @@ export default function Sidebar_kiri({ onNavigate, openNotifications, openPostMo
   useEffect(() => {
     if(localStorage.getItem("theme") === "dark") {
       document.documentElement.classList.add("dark");
-      setIsdark(isdark);
+      setIsdark(true);
     }
   }, []);
 
@@ -30,9 +59,8 @@ export default function Sidebar_kiri({ onNavigate, openNotifications, openPostMo
       <div className="flex flex-col gap-10">
 
         <div className="flex flex-col gap-12">
-          {/* KLIK POST -> PANGGIL openPostModal DARI PARENT */}
           <button 
-            onClick={openPostModal}
+            onClick={handleNewPost}
             className="flex items-center text-3xl gap-4 font-bold text-[#a50034] dark:text-[#f1ece1] cursor-pointer hover:opacity-80 transition"
           >
             <svg className="w-12 h-12 fill-[#a50034] dark:fill-[#f1ece1] flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
