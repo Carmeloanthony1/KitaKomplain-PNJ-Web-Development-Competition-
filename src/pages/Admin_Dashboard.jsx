@@ -439,18 +439,8 @@ export default function AdminDashboard() {
           </div>
         )}
 
-        {/* TAB 3: COMMENTS */}
-        {activeTab === "comments" && (
-          <div className="text-xl font-bold p-6">Menu Moderasi Komentar (Coming Soon)</div>
-        )}
-
-        {/* 📌 2. RENDER REPORT PANEL DI SINI SAAT TAB REPORTS AKTIF */}
         {activeTab === "reports" && <ReportPanel />}
 
-        {/* TAB 5: SETTINGS */}
-        {activeTab === "settings" && (
-          <div className="text-xl font-bold p-6">Menu Pengaturan Admin (Coming Soon)</div>
-        )}
 
       </main>
 

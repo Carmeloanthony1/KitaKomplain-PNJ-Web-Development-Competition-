@@ -7,7 +7,6 @@ export default function NavbarAdmin({ activeTab, setActiveTab }) {
   const menuItems = [
     { id: "moderation", label: "Moderation" },
     { id: "users", label: "Users" },
-    { id: "comments", label: "Comments" },
     { id: "reports", label: "Reports" },
   ];
 

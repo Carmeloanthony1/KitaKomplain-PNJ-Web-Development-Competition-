@@ -87,8 +87,8 @@ export default function ReportPanel() {
   });
 
   return (
-    <div className="p-6 text-[#f1ece1] relative">
-      <h1 className="text-2xl font-bold mb-1">Reports Panel</h1>
+    <div className="p-4 text-[#f1ece1] relative max-w-5xl mx-auto">
+      <h1 className="text-4xl font-bold mb-1">Reports Panel</h1>
       <p className="text-xs text-gray-400 mb-6">
         Pantau laporan dan kelola dari user
       </p>
@@ -159,7 +159,7 @@ export default function ReportPanel() {
                   onClick={() => setSelectedReport(item)}
                   className="p-4 bg-[#121212] border border-gray-800 hover:border-gray-700 rounded-xl flex items-center justify-between gap-4 cursor-pointer transition-all hover:bg-[#161616]"
                 >
-                  <div className="flex flex-col gap-1">
+                  <div className="flex flex-col gap-1 pr-2 overflow-hidden">
                     <div className="flex items-center gap-2">
                       <span className="text-xs font-mono font-bold text-[#a50034]">
                         #{item.ticket}
@@ -167,21 +167,21 @@ export default function ReportPanel() {
                       <span className="text-[10px] px-2 py-0.5 rounded bg-gray-800 text-gray-300 font-semibold">
                         {item.problem_type}
                       </span>
-                      <span className="text-[10px] text-gray-500">
+                      <span className="text-[10px] text-gray-500 truncate">
                         by: {item.users?.username || "Unknown"}
                       </span>
                     </div>
-                    <h3 className="text-sm font-bold text-[#f1ece1]">
+                    <h3 className="text-sm font-bold text-[#f1ece1] truncate">
                       {item.category}
                     </h3>
-                    <p className="text-xs text-gray-400 line-clamp-1">
+                    <p className="text-xs text-gray-400 truncate">
                       {item.details}
                     </p>
                   </div>
 
                   <div 
                     className="flex flex-col items-end gap-1.5 shrink-0"
-                    onClick={(e) => e.stopPropagation()} // Mencegah modal kebuka saat klik dropdown
+                    onClick={(e) => e.stopPropagation()}
                   >
                     <select
                       value={item.status}
