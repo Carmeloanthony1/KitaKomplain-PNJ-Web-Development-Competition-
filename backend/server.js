@@ -291,6 +291,34 @@ app.get('/api/reports', verifytoken, async (req, res) => {
     }
 });
 
+// Endpoint Update Status Report (Khusus Admin)
+app.patch('/api/reports/:id/status', verifytoken, async (req, res) => {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    if (!status) {
+        return res.status(400).json({ message: "Status wajib dikirim!" });
+    }
+
+    try {
+        const { data, error } = await supabase
+            .from('reports')
+            .update({ status: status })
+            .eq('id', id)
+            .select();
+
+        if (error) throw error;
+
+        return res.status(200).json({
+            message: "Status laporan berhasil diperbarui!",
+            report: data[0]
+        });
+    } catch (error) {
+        console.error("Error updating status:", error.message);
+        return res.status(500).json({ message: "Gagal memperbarui status laporan" });
+    }
+});
+
 // Endpoint Create Report Problem
 app.post('/api/reports', verifytoken, async (req, res) => {
     const { category, problemType, problem_type, details } = req.body;
