@@ -14,8 +14,25 @@ import AdminDashboard from "./pages/Admin_Dashboard";
 import ProtectedRoute from "./components/Protected_Route";
 import { StatusProvider } from "./components/StatusContext";
 import { ConfirmProvider } from "./components/ConfirmContext";
-import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { useEffect, useState } from "react";
+
+// Helper Komponen: Auto Reset Scroll & Unlock Body tiap kali pindah halaman/route
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    // Maksa scroll balik ke paling atas
+    window.scrollTo(0, 0);
+    
+    // MAKSA UNLOCK SCROLLBODY (Pembersih sisa-sisa overflow modal yang nyangkut)
+    document.body.style.overflow = "unset";
+    document.body.style.position = "static";
+    document.documentElement.style.overflow = "unset";
+  }, [pathname]);
+
+  return null;
+}
 
 export default function App() {
   const [user, setUser] = useState(() => {
@@ -59,6 +76,9 @@ export default function App() {
   return (
     <StatusProvider>
       <ConfirmProvider>
+        {/* Pasang ScrollToTop di sini biar selalu running tiap navigasi */}
+        <ScrollToTop />
+        
         <Routes>
           <Route
             path="/login"
