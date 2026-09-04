@@ -258,9 +258,9 @@ export default function Post({
     <div
       className={`w-full ${
         hideaction ? "bg-transparent p-0" : "bg-transparent px-1 py-2 sm:py-3"
-      } flex flex-col items-center`}
+      } flex flex-col items-center justify-center`}
     >
-      <div className="flex flex-col w-full max-w-2xl p-3 sm:p-4 border-2 sm:border-4 border-[#a50034]/50 dark:border-[#f1ece1] rounded-xl sm:rounded-2xl bg-white dark:bg-[#1e1e1e] shadow-xs">
+      <div className="flex flex-col w-full p-3 sm:p-4 border-2 sm:border-4 border-[#a50034]/50 dark:border-[#f1ece1] rounded-xl sm:rounded-2xl bg-white dark:bg-[#1e1e1e] shadow-xs">
         <div className="flex items-center justify-between gap-3 w-full pb-2">
           <div className="flex items-center gap-2.5 min-w-0">
             {post.users?.avatar_url ? (
@@ -565,7 +565,7 @@ export default function Post({
                 </h3>
                 <button
                   onClick={() => setShowLikers(false)}
-                  className="text-gray-400 hover:text-black font-bold text-lg sm:text-xl cursor-pointer p-1"
+                  className="text-gray-400 hover:text-[#a50034] font-bold text-lg sm:text-xl cursor-pointer p-1"
                 >
                   ✕
                 </button>

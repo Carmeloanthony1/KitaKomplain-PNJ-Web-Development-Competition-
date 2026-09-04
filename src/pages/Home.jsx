@@ -89,10 +89,9 @@ export default function Home({ user, onLogout, onNavigate }) {
     );
   };
 
-  if (loading) return <div className="p-10 text-center text-gray-500">Loading posts...</div>;
+  if (loading) return <div className="p-10 text-center text-gray-500 dark:text-gray-400">Loading posts...</div>;
 
   return (
-    // DIHAPUS overflow-x-hidden DARI SINI BIAR STICKY NGGAK RUSAK
     <div className="w-full min-h-screen bg-[#f7f7f7] dark:bg-[#1e1e1e] flex flex-col">
       {/* Navbar Fixed di Atas */}
       <header className="fixed top-0 left-0 right-0 z-30 bg-white dark:bg-[#1e1e1e] border-b border-gray-200 dark:border-gray-800">
@@ -103,11 +102,11 @@ export default function Home({ user, onLogout, onNavigate }) {
         />
       </header>
 
-      {/* Main Layout Container: Grid simetris (350px - 1fr - 350px) biar Feed Center presisi & Most Polling lebar */}
+      {/* Main Layout Container: Grid simetris (350px - 1fr - 350px) biar Feed Center presisi & Most Polling proporsional */}
       <div className="pt-20 md:pt-24 pb-10 px-4 md:px-8 w-full grid grid-cols-1 md:grid-cols-[260px_1fr] lg:grid-cols-[350px_1fr_350px] gap-6 items-start">
         
         {/* SIDEBAR KIRI: Sticky Aktif */}
-        <aside className="hidden md:block w-full sticky top-24 self-start">
+        <aside className="hidden md:block w-full sticky top-24 self-start z-10">
           <Sidebar_Kiri 
             onNavigate={onNavigate}
             openNotifications={() => setIsNotificationOpen(true)}
@@ -118,7 +117,7 @@ export default function Home({ user, onLogout, onNavigate }) {
         {/* MAIN FEED: Pas di Tengah Layar */}
         <main className="w-full max-w-xl lg:max-w-2xl flex flex-col items-center justify-center min-w-0 mx-auto">
           {posts.length === 0 ? (
-            <div className="text-center text-gray-500 py-10">
+            <div className="text-center text-gray-500 dark:text-gray-400 py-10">
               Belum ada postingan.
             </div>
           ) : (
@@ -134,8 +133,8 @@ export default function Home({ user, onLogout, onNavigate }) {
           )}
         </main>
 
-        {/* SIDEBAR KANAN (Most Polling): Sticky Aktif & Memanjang ke Kiri */}
-        <aside className="hidden lg:block w-full sticky top-24 self-start">
+        {/* SIDEBAR KANAN (Most Polling): Sticky Aktif */}
+        <aside className="hidden lg:block w-full sticky top-24 self-start z-10">
           <Most_Polling />
         </aside>
 

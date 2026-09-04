@@ -64,7 +64,7 @@ export default function Navbar({ user, openNotifications }) {
     <div className="w-full bg-white dark:bg-[#1e1e1e] border-b border-gray-200 dark:border-slate-800 shadow-xs transition-colors">
       <nav className="relative w-full px-3 sm:px-6 md:px-10 py-2.5 sm:py-3 flex items-center justify-between">
         
-        {/* Logo Kiri */}
+        {/* Logo Kiri (2 baris di HP, 1 baris di desktop) */}
         <div 
           onClick={() => navigate('/home')}
           className="cursor-pointer transition hover:scale-105 active:scale-95 flex-shrink-0 z-10"
@@ -75,7 +75,7 @@ export default function Navbar({ user, openNotifications }) {
           </h1>
         </div>
         
-        {/* Search Bar Tengah - pointer-events-none di container luar biar gak nge-block scroll */}
+        {/* Search Bar Tengah - Presisi 50% Layar */}
         <div className="absolute left-1/2 -translate-x-1/2 w-[170px] sm:w-xs md:w-md lg:w-lg z-0 pointer-events-none">
           <form 
             onSubmit={handleSearch}
