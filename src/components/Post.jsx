@@ -61,6 +61,10 @@ export default function Post({
   const { showConfirm } = useConfirm();
   const currentUserId = localStorage.getItem("user_id");
 
+  // === FITUR READ MORE (PER KELIPATAN KATA) ===
+  const CHUNK_SIZE = 100; // Jumlah kata awal & penambahan per klik
+  const [visibleWordCount, setVisibleWordCount] = useState(CHUNK_SIZE);
+
   if (!post) return null;
 
   const ismypost = post.user_id === currentUserId;
@@ -254,13 +258,58 @@ export default function Post({
     }
   };
 
+  // === RENDER DESKRIPSI DENGAN READ MORE PER KATA ===
+  const renderDescription = () => {
+    const rawText = post.description || "";
+    const words = rawText.trim().split(/\s+/);
+    const totalWords = words.length;
+
+    if (totalWords <= CHUNK_SIZE) {
+      return (
+        <p className="text-gray-900 dark:text-white text-sm sm:text-base leading-relaxed break-words px-0.5">
+          {rawText}
+        </p>
+      );
+    }
+
+    const hasMore = visibleWordCount < totalWords;
+    const displayedWords = words.slice(0, visibleWordCount).join(" ");
+    const remainingWords = totalWords - visibleWordCount;
+    const nextChunk = Math.min(CHUNK_SIZE, remainingWords);
+
+    return (
+      <div className="flex flex-col items-start px-0.5">
+        <p className="text-gray-900 dark:text-white text-sm sm:text-base leading-relaxed break-words">
+          {displayedWords}
+          {hasMore && "..."}
+        </p>
+        
+        {hasMore ? (
+          <button
+            onClick={() => setVisibleWordCount((prev) => prev + CHUNK_SIZE)}
+            className="mt-1 text-xs sm:text-sm font-bold text-[#a50034] dark:text-[#f1ece1] hover:underline cursor-pointer focus:outline-none"
+          >
+            Lihat Selengkapnya
+          </button>
+        ) : (
+          <button
+            onClick={() => setVisibleWordCount(CHUNK_SIZE)}
+            className="mt-1 text-xs sm:text-sm font-bold text-gray-500 hover:text-[#a50034] dark:text-gray-400 dark:hover:text-[#f1ece1] hover:underline cursor-pointer focus:outline-none"
+          >
+            Sembunyikan
+          </button>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div
       className={`w-full ${
         hideaction ? "bg-transparent p-0" : "bg-transparent px-1 py-2 sm:py-3"
       } flex flex-col items-center justify-center`}
     >
-      <div className="flex flex-col w-full p-3 sm:p-4 border-2 sm:border-4 border-[#a50034]/50 dark:border-[#f1ece1] rounded-xl sm:rounded-2xl bg-white dark:bg-[#1e1e1e] shadow-xs">
+      <div className="flex flex-col w-full p-2.5 sm:p-3.5 border-2 sm:border-4 border-[#a50034]/50 dark:border-[#f1ece1] rounded-xl sm:rounded-2xl bg-white dark:bg-[#1e1e1e] shadow-xs">
         <div className="flex items-center justify-between gap-3 w-full pb-2">
           <div className="flex items-center gap-2.5 min-w-0">
             {post.users?.avatar_url ? (
@@ -389,19 +438,19 @@ export default function Post({
         </div>
 
         <div className="w-full flex flex-col gap-2 mt-1">
-          <p className="text-gray-900 dark:text-white text-sm sm:text-base leading-relaxed break-words px-0.5">
-            {post.description}
-          </p>
-
+          {/* 1. GAMBAR SEKARANG DI ATAS */}
           {post.image_url && (
             <div className="w-full rounded-lg overflow-hidden bg-neutral-100 dark:bg-neutral-800 my-1">
               <img
                 src={post.image_url}
                 alt="post"
-                className="w-full max-h-[480px] object-contain sm:object-cover mx-auto"
+                className="w-full h-auto max-h-[450px] object-contain rounded-lg block"
               />
             </div>
           )}
+
+          {/* 2. DESKRIPSI DI BAWAH GAMBAR */}
+          {renderDescription()}
 
           <div className="flex justify-between items-center gap-2 pt-2 border-t border-gray-100 dark:border-neutral-800">
             <div className="flex items-center gap-4">

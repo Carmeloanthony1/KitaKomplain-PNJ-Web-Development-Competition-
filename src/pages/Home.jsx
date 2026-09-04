@@ -102,10 +102,10 @@ export default function Home({ user, onLogout, onNavigate }) {
         />
       </header>
 
-      {/* Main Layout Container: Grid simetris (350px - 1fr - 350px) biar Feed Center presisi & Most Polling proporsional */}
-      <div className="pt-20 md:pt-24 pb-10 px-4 md:px-8 w-full grid grid-cols-1 md:grid-cols-[260px_1fr] lg:grid-cols-[350px_1fr_350px] gap-6 items-start">
+      {/* Grid dibuat FULL WIDTH (w-full px-4/px-6) biar mentok pinggir */}
+      <div className="pt-20 md:pt-24 pb-10 px-4 md:px-6 w-full grid grid-cols-1 md:grid-cols-[280px_1fr] lg:grid-cols-[300px_1fr_340px] gap-6 items-start">
         
-        {/* SIDEBAR KIRI: Sticky Aktif */}
+        {/* SIDEBAR KIRI: Mentok Kiri */}
         <aside className="hidden md:block w-full sticky top-24 self-start z-10">
           <Sidebar_Kiri 
             onNavigate={onNavigate}
@@ -114,8 +114,8 @@ export default function Home({ user, onLogout, onNavigate }) {
           />
         </aside>
 
-        {/* MAIN FEED: Pas di Tengah Layar */}
-        <main className="w-full max-w-xl lg:max-w-2xl flex flex-col items-center justify-center min-w-0 mx-auto">
+        {/* MAIN FEED: Di Tengah (1fr), postingan terpusat otomatis */}
+        <main className="w-full max-w-2xl flex flex-col items-center justify-center min-w-0 mx-auto">
           {posts.length === 0 ? (
             <div className="text-center text-gray-500 dark:text-gray-400 py-10">
               Belum ada postingan.
@@ -133,7 +133,7 @@ export default function Home({ user, onLogout, onNavigate }) {
           )}
         </main>
 
-        {/* SIDEBAR KANAN (Most Polling): Sticky Aktif */}
+        {/* SIDEBAR KANAN: Mentok Kanan */}
         <aside className="hidden lg:block w-full sticky top-24 self-start z-10">
           <Most_Polling />
         </aside>
