@@ -512,11 +512,11 @@ export default function Profile() {
           ))}
         </div>
 
-        {/* Konten Tab */}
-        <div className="bg-white dark:bg-[#222222] rounded-2xl border border-gray-200 dark:border-neutral-800 p-3 sm:p-6 min-h-[160px]">
+        {/* Konten Tab (Tinggi Otomatis Mengikuti Isi) */}
+        <div className="w-full bg-white dark:bg-[#222222] rounded-2xl border border-gray-200 dark:border-neutral-800 p-3 sm:p-5 h-auto transition-all duration-200">
           {activeTab === "posts" &&
             (posts.length === 0 ? (
-              <p className="text-gray-400 text-xs sm:text-sm text-center py-6">
+              <p className="text-gray-400 text-xs sm:text-sm text-center py-8">
                 Belum ada post yang dibuat.
               </p>
             ) : (
@@ -553,24 +553,24 @@ export default function Profile() {
 
           {activeTab === "comments" &&
             (user_comment.length === 0 ? (
-              <p className="text-gray-400 text-xs sm:text-sm text-center py-6">
+              <p className="text-gray-400 text-xs sm:text-sm text-center py-8">
                 Belum ada komentar yang dibuat.
               </p>
             ) : (
-              <div className="flex flex-col gap-2 w-full">
+              <div className="flex flex-col gap-3 w-full">
                 {user_comment.map((item) => (
                   <div
                     key={item.id}
                     onClick={() => handleComment_click(item)}
-                    className="bg-gray-50 dark:bg-[#1a1a1a] border border-gray-200 dark:border-neutral-800 rounded-xl p-3 text-left cursor-pointer hover:border-[#a50034] dark:hover:border-[#f1ece1] transition-colors"
+                    className="bg-gray-50 dark:bg-[#1a1a1a] border border-gray-200 dark:border-neutral-800 hover:border-[#a50034] dark:hover:border-[#f1ece1] rounded-xl p-3.5 text-left cursor-pointer transition-all shadow-2xs"
                   >
-                    <div className="flex justify-between items-center text-[10px] text-gray-400 mb-1">
+                    <div className="flex justify-between items-center text-[10px] text-gray-400 dark:text-neutral-400 mb-1.5">
                       <span>
                         Post: <strong className="text-[#a50034] dark:text-[#f1ece1]">#{item.posts?.tag || "komplain"}</strong>
                       </span>
                       <span>{new Date(item.created_at).toLocaleDateString("id-ID")}</span>
                     </div>
-                    <p className="text-xs font-semibold text-gray-800 dark:text-[#f1ece1]">
+                    <p className="text-xs sm:text-sm font-semibold text-gray-800 dark:text-[#f1ece1] leading-relaxed break-words">
                       "{item.content}"
                     </p>
                   </div>
@@ -580,28 +580,28 @@ export default function Profile() {
 
           {activeTab === "polling" &&
             (user_vote.length === 0 ? (
-              <p className="text-gray-400 text-xs sm:text-sm text-center py-6">
+              <p className="text-gray-400 text-xs sm:text-sm text-center py-8">
                 Belum ada kontribusi vote.
               </p>
             ) : (
-              <div className="flex flex-col gap-2 w-full">
+              <div className="flex flex-col gap-3 w-full">
                 {user_vote.map((item) => (
                   <div
                     key={item.id}
                     onClick={() => handle_voteclick(item)}
-                    className="bg-gray-50 dark:bg-[#1a1a1a] border border-gray-200 dark:border-neutral-800 rounded-xl p-3 text-left cursor-pointer hover:border-[#a50034] dark:hover:border-[#f1ece1] transition-colors"
+                    className="bg-gray-50 dark:bg-[#1a1a1a] border border-gray-200 dark:border-neutral-800 hover:border-[#a50034] dark:hover:border-[#f1ece1] rounded-xl p-3.5 text-left cursor-pointer transition-all shadow-2xs"
                   >
-                    <div className="flex justify-between items-center text-[10px] text-gray-400 mb-1">
+                    <div className="flex justify-between items-center text-[10px] text-gray-400 dark:text-neutral-400 mb-1.5">
                       <span>
                         Tag: <strong className="text-[#a50034] dark:text-[#f1ece1]">#{item.posts?.tag || "isu"}</strong>
                       </span>
                       <span>{new Date(item.created_at).toLocaleDateString("id-ID")}</span>
                     </div>
-                    <p className="text-xs text-gray-700 dark:text-gray-300 line-clamp-1 mb-2">
+                    <p className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 line-clamp-1 mb-2">
                       {item.posts?.description || "Tidak ada deskripsi"}
                     </p>
                     <span
-                      className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase ${
+                      className={`inline-block text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase ${
                         item.vote_type === "up"
                           ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400"
                           : "bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-400"

@@ -1,82 +1,165 @@
 import { useState } from "react";
+import { createPortal } from "react-dom";
+import { useStatus } from "./StatusContext";
 
 export default function Share_post({ post, onclose }) {
-  const [search, setSearch] = useState("");
+  const { showStatus } = useStatus();
+  const [copied, setCopied] = useState(false);
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-md transition-opacity duration-300 animate-in fade-in">
-      <div className="relative w-full max-w-xs h-auto gap-4 flex flex-col justify-center bg-[#ffffff] border-4 border-[#a50034] p-4 rounded-xl">
-        
-        <div className="relative flex items-center justify-center w-full mb-2">
-          <h1 className="text-xl font-bold text-[#a50034] text-center whitespace-nowrap">
-            Share This Post
-          </h1>
+  if (!post) return null;
 
-          <button 
-            onClick={onclose} 
-            className="absolute right-0 text-xl font-bold text-[#a50034] cursor-pointer hover:opacity-70 transition-opacity"
+  const shareUrl = `${window.location.origin}/search?tag=${encodeURIComponent(post.tag || "")}`;
+  const shareTitle = `Lihat postingan komplain #${post.tag || "isu"} di KitaKomplain:`;
+  const shareText = `"${(post.description || "").slice(0, 80)}..."`;
+
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      setCopied(true);
+      showStatus("Tautan berhasil disalin!", "success");
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      showStatus("Gagal menyalin tautan", "error");
+    }
+  };
+
+  const handleNativeShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: "KitaKomplain",
+          text: `${shareTitle} ${shareText}`,
+          url: shareUrl,
+        });
+      } catch (err) {
+        if (err.name !== "AbortError") {
+          console.error("Gagal share:", err);
+        }
+      }
+    } else {
+      handleCopyLink();
+    }
+  };
+
+  const shareOptions = [
+    {
+      name: "WhatsApp",
+      url: `https://api.whatsapp.com/send?text=${encodeURIComponent(`${shareTitle}\n${shareUrl}`)}`,
+      icon: (
+        <svg className="w-5 h-5 fill-emerald-500" viewBox="0 0 24 24">
+          <path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2zm.01 1.67c4.54 0 8.24 3.7 8.24 8.24 0 2.2-.86 4.27-2.42 5.82a8.19 8.19 0 0 1-5.82 2.42c-1.48 0-2.93-.39-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.19 8.19 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24z"/>
+        </svg>
+      ),
+      bgClass: "hover:bg-emerald-50 dark:hover:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400",
+    },
+    {
+      name: "X",
+      url: `https://twitter.com/intent/tweet?text=${encodeURIComponent(`${shareTitle}\n`)}&url=${encodeURIComponent(shareUrl)}`,
+      icon: (
+        <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
+          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+        </svg>
+      ),
+      bgClass: "hover:bg-neutral-100 dark:hover:bg-neutral-800 text-gray-900 dark:text-[#f1ece1]",
+    },
+    {
+      name: "Telegram",
+      url: `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareTitle)}`,
+      icon: (
+        <svg className="w-5 h-5 fill-sky-500" viewBox="0 0 24 24">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 0 0-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.75-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/>
+        </svg>
+      ),
+      bgClass: "hover:bg-sky-50 dark:hover:bg-sky-950/40 text-sky-600 dark:text-sky-400",
+    },
+  ];
+
+  const handleClose = (e) => {
+    if (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
+    if (typeof onclose === "function") {
+      onclose();
+    }
+  };
+
+  return createPortal(
+    <div
+      onClick={handleClose}
+      className="fixed inset-0 z-[999999] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fadeIn"
+      style={{ pointerEvents: "auto" }}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="relative max-w-sm w-full bg-white dark:bg-[#1e1e1e] border-2 border-[#a50034]/30 dark:border-[#f1ece1]/30 rounded-2xl p-5 shadow-2xl flex flex-col gap-4 text-center transition-colors"
+      >
+        {/* Tombol Tutup */}
+        <button
+          type="button"
+          onClick={handleClose}
+          aria-label="Tutup"
+          className="absolute top-3 right-3 text-gray-400 hover:text-gray-800 dark:hover:text-white w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-neutral-800 transition-colors cursor-pointer"
+        >
+          ✕
+        </button>
+
+        {/* Header Modal */}
+        <div className="flex flex-col items-center gap-1 mt-1">
+          <span className="bg-[#a50034]/10 dark:bg-white/10 text-[#a50034] dark:text-[#f1ece1] text-[11px] font-bold px-3 py-0.5 rounded-full uppercase tracking-wider">
+            Bagikan
+          </span>
+          <h3 className="text-base font-extrabold text-gray-800 dark:text-[#f1ece1]">
+            Bagikan Postingan Ini
+          </h3>
+        </div>
+
+        {/* Tombol Platform Sosial */}
+        <div className="grid grid-cols-3 gap-2">
+          {shareOptions.map((opt) => (
+            <a
+              key={opt.name}
+              href={opt.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={handleClose}
+              className={`flex flex-col items-center justify-center gap-1.5 p-2.5 rounded-xl border border-gray-100 dark:border-neutral-800 transition-all cursor-pointer ${opt.bgClass}`}
+            >
+              {opt.icon}
+              <span className="text-[11px] font-semibold">{opt.name}</span>
+            </a>
+          ))}
+        </div>
+
+        {/* Input Box Salin URL */}
+        <div className="flex items-center gap-2 bg-gray-50 dark:bg-[#141414] border border-gray-200 dark:border-neutral-700 rounded-xl p-1.5">
+          <input
+            type="text"
+            readOnly
+            value={shareUrl}
+            className="w-full text-xs bg-transparent px-2 text-gray-700 dark:text-[#f1ece1] outline-none truncate select-all"
+          />
+          <button
+            type="button"
+            onClick={handleCopyLink}
+            className="bg-[#a50034] hover:bg-[#85002a] text-white text-xs font-bold px-3 py-1.5 rounded-lg flex-shrink-0 transition-colors cursor-pointer"
           >
-            X
+            {copied ? "Tersalin!" : "Salin"}
           </button>
         </div>
 
-        <div className="flex flex-row gap-3 items-center justify-center">
-          {/* WA */}
-          <div className="border-4 border-[#a50034] p-1 rounded-lg hover:scale-105 transition-transform duration-120 ease-out">
-            <svg className="w-10 h-10 cursor-pointer" xmlns="http://www.w3.org/2000/svg" width="23.87" height="24" viewBox="0 0 360 362">
-              <path fill="#25d366" fillRule="evenodd" d="M307.546 52.566C273.709 18.684 228.706.017 180.756 0C81.951 0 1.538 80.404 1.504 179.235c-.017 31.594 8.242 62.432 23.928 89.609L0 361.736l95.024-24.925c26.179 14.285 55.659 21.805 85.655 21.814h.077c98.788 0 179.21-80.413 179.244-179.244c.017-47.898-18.608-92.926-52.454-126.807zm-126.79 275.788h-.06c-26.73-.008-52.952-7.194-75.831-20.765l-5.44-3.231l-56.391 14.791l15.05-54.981l-3.542-5.638c-14.912-23.721-22.793-51.139-22.776-79.286c.035-82.14 66.867-148.973 149.051-148.973c39.793.017 77.198 15.53 105.328 43.695c28.131 28.157 43.61 65.596 43.593 105.398c-.035 82.149-66.867 148.982-148.982 148.982zm81.719-111.577c-4.478-2.243-26.497-13.073-30.606-14.568c-4.108-1.496-7.09-2.243-10.073 2.243c-2.982 4.487-11.568 14.577-14.181 17.559c-2.613 2.991-5.226 3.361-9.704 1.117c-4.477-2.243-18.908-6.97-36.02-22.226c-13.313-11.878-22.304-26.54-24.916-31.027c-2.613-4.486-.275-6.91 1.959-9.136c2.011-2.011 4.478-5.234 6.721-7.847s2.983-4.486 4.478-7.469c1.496-2.991.748-5.603-.369-7.847c-1.118-2.243-10.073-24.289-13.812-33.253c-3.636-8.732-7.331-7.546-10.073-7.692c-2.613-.13-5.595-.155-8.586-.155s-7.839 1.118-11.947 5.604s-15.677 15.324-15.677 37.361s16.047 43.344 18.29 46.335s31.585 48.225 76.51 67.632c10.684 4.615 19.029 7.374 25.535 9.437c10.727 3.412 20.49 2.931 28.208 1.779c8.604-1.289 26.498-10.838 30.228-21.298s3.73-19.433 2.613-21.298s-4.108-2.991-8.586-5.234z" clipRule="evenodd"/>
-            </svg>
-          </div>
-          {/* DC */}
-          <div className="border-4 border-[#a50034] p-1 rounded-lg hover:scale-105 transition-transform duration-120 ease-out">
-            <svg className="w-10 h-10 cursor-pointer" xmlns="http://www.w3.org/2000/svg" width="30.88" height="24" viewBox="0 0 256 199">
-              <path fill="#5865f2" d="M216.856 16.597A208.5 208.5 0 0 0 164.042 0c-2.275 4.113-4.933 9.645-6.766 14.046q-29.538-4.442-58.533 0c-1.832-4.4-4.55-9.933-6.846-14.046a207.8 207.8 0 0 0-52.855 16.638C5.618 67.147-3.443 116.4 1.087 164.956c22.169 16.555 43.653 26.612 64.775 33.193A161 161 0 0 0 79.735 175.3a136.4 136.4 0 0 1-21.846-10.632a109 109 0 0 0 5.356-4.237c42.122 19.702 87.89 19.702 129.51 0a132 132 0 0 0 5.355 4.237a136 136 0 0 1-21.886 10.653c4.006 8.02 8.638 15.67 13.873 22.848c21.142-6.58 42.646-16.637 64.815-33.213c5.316-56.288-9.08-105.09-38.056-148.36ZM85.474 135.095c-12.645 0-23.015-11.805-23.015-26.18s10.149-26.2 23.015-26.2s23.236 11.804 23.015 26.2c.02 14.375-10.148 26.18-23.015 26.18m85.051 0c-12.645 0-23.014-11.805-23.014-26.18s10.148-26.2 23.014-26.2c12.867 0 23.236 11.804 23.015 26.2c0 14.375-10.148 26.18-23.015 26.18"/>
-            </svg>
-          </div>
-          {/* IG */}
-          <div className="border-4 border-[#a50034] p-1 rounded-lg hover:scale-105 transition-transform duration-120 ease-out">
-            <svg className="w-10 h-10 cursor-pointer" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 264.583 264.583">
-              <defs>
-                <radialGradient id="SVG8bDSUbTK" cx="158.429" cy="578.088" r="52.352" fx="158.429" fy="578.088" gradientTransform="matrix(0 -4.03418 4.28018 0 -2332.227 942.236)" gradientUnits="userSpaceOnUse" href="#SVGyEXqFe2C"/>
-                <radialGradient id="SVGHt3n4cxA" cx="172.615" cy="600.692" r="65" fx="172.615" fy="600.692" gradientTransform="rotate(-59.87 -448.718 683.191)scale(1.34356 1.74916)" gradientUnits="userSpaceOnUse" href="#SVGdDw0LeWO"/>
-                <radialGradient id="SVGHvxlGeKS" cx="144.012" cy="51.337" r="67.081" fx="144.012" fy="51.337" gradientTransform="matrix(-2.3989 .67549 -.23008 -.81732 464.996 -26.404)" gradientUnits="userSpaceOnUse" href="#SVGTCOYweHu"/>
-                <radialGradient id="SVG8E51ndLw" cx="199.788" cy="628.438" r="52.352" fx="199.788" fy="628.438" gradientTransform="rotate(164.25 577.79 780.16)scale(3.2292 2.32649)" gradientUnits="userSpaceOnUse" href="#SVGm1g5feOd"/>
-                <linearGradient id="SVGm1g5feOd"><stop offset="0" stopColor="#ff005f"/><stop offset="1" stopColor="#fc01d8"/></linearGradient>
-                <linearGradient id="SVGTCOYweHu"><stop offset="0" stopColor="#780cff"/><stop offset="1" stopColor="#820bff" stopOpacity="0"/></linearGradient>
-                <linearGradient id="SVGdDw0LeWO"><stop offset="0" stopColor="#fc0"/><stop offset="1" stopColor="#fc0" stopOpacity="0"/></linearGradient>
-                <linearGradient id="SVGyEXqFe2C"><stop offset="0" stopColor="#fc0"/><stop offset=".124" stopColor="#fc0"/><stop offset=".567" stopColor="#fe4a05"/><stop offset=".694" stopColor="#ff0f3f"/><stop offset="1" stopColor="#fe0657" stopOpacity="0"/></linearGradient>
-              </defs>
-              <path fill="url(#SVG8E51ndLw)" d="M204.15 18.143c-55.23 0-71.383.057-74.523.317c-11.334.943-18.387 2.728-26.07 6.554c-5.922 2.942-10.592 6.351-15.201 11.13c-8.394 8.716-13.481 19.439-15.323 32.184c-.895 6.188-1.156 7.45-1.209 39.056c-.02 10.536 0 24.4 0 42.999c0 55.2.062 71.341.326 74.476c.916 11.032 2.645 17.973 6.308 25.565c7 14.533 20.37 25.443 36.12 29.514c5.453 1.404 11.476 2.178 19.208 2.544c3.277.142 36.669.244 70.081.244s66.826-.04 70.02-.203c8.954-.422 14.153-1.12 19.901-2.606c15.852-4.09 28.977-14.838 36.12-29.575c3.591-7.409 5.412-14.614 6.236-25.07c.18-2.28.255-38.626.255-74.924c0-36.304-.082-72.583-.26-74.863c-.835-10.625-2.656-17.77-6.364-25.32c-3.042-6.182-6.42-10.799-11.324-15.519c-8.752-8.361-19.455-13.45-32.21-15.29c-6.18-.894-7.41-1.158-39.033-1.213z" transform="translate(-71.816 -18.143)"/>
-              <path fill="url(#SVG8bDSUbTK)" d="M204.15 18.143c-55.23 0-71.383.057-74.523.317c-11.334.943-18.387 2.728-26.07 6.554c-5.922 2.942-10.592 6.351-15.201 11.13c-8.394 8.716-13.481 19.439-15.323 32.184c-.895 6.188-1.156 7.45-1.209 39.056c-.02 10.536 0 24.4 0 42.999c0 55.2.062 71.341.326 74.476c.916 11.032 2.645 17.973 6.308 25.565c7 14.533 20.37 25.443 36.12 29.514c5.453 1.404 11.476 2.178 19.208 2.544c3.277.142 36.669.244 70.081.244s66.826-.04 70.02-.203c8.954-.422 14.153-1.12 19.901-2.606c15.852-4.09 28.977-14.838 36.12-29.575c3.591-7.409 5.412-14.614 6.236-25.07c.18-2.28.255-38.626.255-74.924c0-36.304-.082-72.583-.26-74.863c-.835-10.625-2.656-17.77-6.364-25.32c-3.042-6.182-6.42-10.799-11.324-15.519c-8.752-8.361-19.455-13.45-32.21-15.29c-6.18-.894-7.41-1.158-39.033-1.213z" transform="translate(-71.816 -18.143)"/>
-              <path fill="url(#SVGHt3n4cxA)" d="M204.15 18.143c-55.23 0-71.383.057-74.523.317c-11.334.943-18.387 2.728-26.07 6.554c-5.922 2.942-10.592 6.351-15.201 11.13c-8.394 8.716-13.481 19.439-15.323 32.184c-.895 6.188-1.156 7.45-1.209 39.056c-.02 10.536 0 24.4 0 42.999c0 55.2.062 71.341.326 74.476c.916 11.032 2.645 17.973 6.308 25.565c7 14.533 20.37 25.443 36.12 29.514c5.453 1.404 11.476 2.178 19.208 2.544c3.277.142 36.669.244 70.081.244s66.826-.04 70.02-.203c8.954-.422 14.153-1.12 19.901-2.606c15.852-4.09 28.977-14.838 36.12-29.575c3.591-7.409 5.412-14.614 6.236-25.07c.18-2.28.255-38.626.255-74.924c0-36.304-.082-72.583-.26-74.863c-.835-10.625-2.656-17.77-6.364-25.32c-3.042-6.182-6.42-10.799-11.324-15.519c-8.752-8.361-19.455-13.45-32.21-15.29c-6.18-.894-7.41-1.158-39.033-1.213z" transform="translate(-71.816 -18.143)"/>
-              <path fill="url(#SVGHvxlGeKS)" d="M204.15 18.143c-55.23 0-71.383.057-74.523.317c-11.334.943-18.387 2.728-26.07 6.554c-5.922 2.942-10.592 6.351-15.201 11.13c-8.394 8.716-13.481 19.439-15.323 32.184c-.895 6.188-1.156 7.45-1.209 39.056c-.02 10.536 0 24.4 0 42.999c0 55.2.062 71.341.326 74.476c.916 11.032 2.645 17.973 6.308 25.565c7 14.533 20.37 25.443 36.12 29.514c5.453 1.404 11.476 2.178 19.208 2.544c3.277.142 36.669.244 70.081.244s66.826-.04 70.02-.203c8.954-.422 14.153-1.12 19.901-2.606c15.852-4.09 28.977-14.838 36.12-29.575c3.591-7.409 5.412-14.614 6.236-25.07c.18-2.28.255-38.626.255-74.924c0-36.304-.082-72.583-.26-74.863c-.835-10.625-2.656-17.77-6.364-25.32c-3.042-6.182-6.42-10.799-11.324-15.519c-8.752-8.361-19.455-13.45-32.21-15.29c-6.18-.894-7.41-1.158-39.033-1.213z" transform="translate(-71.816 -18.143)"/>
-              <path fill="#fff" d="M132.345 33.973c-26.716 0-30.07.117-40.563.594c-10.472.48-17.62 2.136-23.876 4.567c-6.47 2.51-11.958 5.87-17.426 11.335c-5.472 5.464-8.834 10.948-11.354 17.412c-2.44 6.252-4.1 13.397-4.57 23.858c-.47 10.486-.593 13.838-.593 40.535s.119 30.037.594 40.522c.482 10.465 2.14 17.609 4.57 23.859c2.515 6.465 5.876 11.95 11.346 17.414c5.466 5.468 10.955 8.834 17.42 11.345c6.26 2.431 13.41 4.088 23.881 4.567c10.493.477 13.844.594 40.559.594c26.719 0 30.061-.117 40.555-.594c10.472-.48 17.63-2.136 23.888-4.567c6.468-2.51 11.948-5.877 17.414-11.345c5.472-5.464 8.834-10.949 11.354-17.412c2.419-6.252 4.079-13.398 4.57-23.858c.472-10.486.595-13.828.595-40.525s-.123-30.047-.594-40.533c-.492-10.465-2.152-17.608-4.57-23.858c-2.521-6.466-5.883-11.95-11.355-17.414c-5.472-5.468-10.944-8.827-17.42-11.335c-6.271-2.431-13.424-4.088-23.897-4.567c-10.493-.477-13.834-.594-40.558-.594zm-8.825 17.715c2.62-.004 5.542 0 8.825 0c26.266 0 29.38.094 39.752.565c9.591.438 14.797 2.04 18.264 3.385c4.591 1.782 7.864 3.912 11.305 7.352c3.443 3.44 5.575 6.717 7.362 11.305c1.346 3.46 2.951 8.663 3.388 18.247c.47 10.363.573 13.475.573 39.71c0 26.233-.102 29.346-.573 39.709c-.44 9.584-2.042 14.786-3.388 18.247c-1.783 4.587-3.919 7.854-7.362 11.292c-3.443 3.441-6.712 5.57-11.305 7.352c-3.463 1.352-8.673 2.95-18.264 3.388c-10.37.47-13.486.573-39.752.573c-26.268 0-29.38-.102-39.751-.573c-9.592-.443-14.797-2.044-18.267-3.39c-4.59-1.781-7.87-3.911-11.313-7.352c-3.443-3.44-5.574-6.709-7.362-11.298c-1.346-3.461-2.95-8.663-3.387-18.247c-.472-10.363-.566-13.476-.566-39.726s.094-29.347.566-39.71c.438-9.584 2.04-14.786 3.387-18.25c1.783-4.588 3.919-7.865 7.362-11.305c3.443-3.441 6.722-5.57 11.313-7.357c3.468-1.351 8.675-2.949 18.267-3.389c9.075-.41 12.592-.532 30.926-.553zm61.337 16.322c-6.518 0-11.805 5.277-11.805 11.792c0 6.512 5.287 11.796 11.805 11.796s11.804-5.284 11.804-11.796c0-6.513-5.287-11.796-11.805-11.796zm-52.512 13.782c-27.9 0-50.519 22.603-50.519 50.482s22.62 50.471 50.52 50.471s50.51-22.592 50.51-50.471s-22.613-50.482-50.513-50.482zm0 17.715c18.11 0 32.792 14.67 32.792 32.767c0 18.096-14.683 32.767-32.792 32.767s-32.791-14.671-32.791-32.767c0-18.098 14.68-32.767 32.791-32.767"/>
-            </svg>
-          </div>
-          {/* GMAIL */}
-          <div className="border-4 border-[#a50034] p-1 rounded-lg hover:scale-105 transition-transform duration-120 ease-out">
-            <svg className="w-10 h-10 cursor-pointer" xmlns="http://www.w3.org/2000/svg" width="30.77" height="24" viewBox="0 49.4 512 399.42">
-              <g fill="none" fillRule="evenodd">
-                <g fillRule="nonzero">
-                  <path fill="#4285f4" d="M34.91 448.818h81.454V251L0 163.727V413.91c0 19.287 15.622 34.91 34.91 34.91z"/>
-                  <path fill="#34a853" d="M395.636 448.818h81.455c19.287 0 34.909-15.622 34.909-34.909V163.727L395.636 251z"/>
-                  <path fill="#fbbc04" d="M395.636 99.727V251L512 163.727v-46.545c0-43.142-49.25-67.782-83.782-41.891z"/>
-                </g>
-                <path fill="#ea4335" d="M116.364 251V99.727L256 204.455L395.636 99.727V251L256 355.727z"/>
-                <path fill="#c5221f" fillRule="nonzero" d="M0 117.182v46.545L116.364 251V99.727L83.782 75.291C49.25 49.4 0 74.04 0 117.18z"/>
-              </g>
-            </svg>
-          </div>
-        </div>
-
-        {/* Button Copy Link */}
-        <button 
-          className="w-3/4 mx-auto bg-[#a50034] text-white font-bold text-base rounded-lg py-2 cursor-pointer
-          hover:scale-102 transition-transform duration-120 ease-out mt-1"
-        >
-          Copy Link
-        </button>
+        {/* Opsi Native Share di Perangkat Mobile */}
+        {"share" in navigator && (
+          <button
+            type="button"
+            onClick={handleNativeShare}
+            className="w-full py-2 text-xs font-semibold text-gray-600 dark:text-neutral-300 hover:text-black dark:hover:text-white border border-dashed border-gray-300 dark:border-neutral-700 rounded-xl transition-colors cursor-pointer"
+          >
+            Opsi Bagikan Lainnya...
+          </button>
+        )}
       </div>
-    </div>
-  );  
+    </div>,
+    document.body
+  );
 }
