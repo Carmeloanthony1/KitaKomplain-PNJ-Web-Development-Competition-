@@ -1,15 +1,17 @@
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import Navbar from "../components/Navbar";
+import Post from "../components/Post";
 
 export default function SearchPage({ user, onNavigate }) {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const queryTag = searchParams.get("tag") || "";
   
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  const [focused_post, setFocused_post] = useState(null); 
   const CHUNK_SIZE = 40;
   const [visibleWordsMap, setVisibleWordsMap] = useState({});
 
@@ -78,24 +80,28 @@ export default function SearchPage({ user, onNavigate }) {
 
         {hasMore ? (
           <button
-            onClick={() =>
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
               setVisibleWordsMap((prev) => ({
                 ...prev,
                 [post.id]: (prev[post.id] || CHUNK_SIZE) + CHUNK_SIZE,
-              }))
-            }
+              }));
+            }}
             className="mt-1 text-xs font-bold text-[#8B0021] dark:text-[#f1ece1] hover:underline cursor-pointer focus:outline-none"
           >
             Lihat selengkapnya
           </button>
         ) : (
           <button
-            onClick={() =>
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
               setVisibleWordsMap((prev) => ({
                 ...prev,
                 [post.id]: CHUNK_SIZE,
-              }))
-            }
+              }));
+            }}
             className="mt-1 text-xs font-bold text-gray-500 dark:text-neutral-400 hover:underline cursor-pointer focus:outline-none"
           >
             Sembunyikan
@@ -140,7 +146,8 @@ export default function SearchPage({ user, onNavigate }) {
               return (
                 <div
                   key={post.id}
-                  className="bg-white dark:bg-[#242424] border-2 border-[#8B0021]/30 rounded-2xl p-5 shadow-xs hover:border-[#8B0021] transition-all"
+                  onClick={() => setFocused_post(post)}
+                  className="bg-white dark:bg-[#242424] border-2 border-[#8B0021]/30 rounded-2xl p-5 shadow-xs hover:border-[#8B0021] dark:hover:border-[#f1ece1] cursor-pointer transition-all hover:scale-[1.01]"
                 >
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-3">
@@ -198,6 +205,40 @@ export default function SearchPage({ user, onNavigate }) {
           </div>
         )}
       </main>
+
+      {/* Modal Popup Focus Post */}
+      {focused_post && (
+        <div
+          onClick={() => setFocused_post(null)}
+          className="fixed inset-0 z-[99999] bg-black/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6 overflow-y-auto animate-fadeIn"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="w-full max-w-2xl bg-transparent relative my-auto"
+          >
+            <Post
+              post={focused_post}
+              hideaction={true}
+              onClose={() => setFocused_post(null)}
+              onUserClick={(userId) => {
+                setFocused_post(null);
+                if (onNavigate) onNavigate("profile");
+                else navigate(`/user/${userId}`);
+              }}
+              onUpdate={(updated) => {
+                setFocused_post((prev) => (prev ? { ...prev, ...updated } : null));
+                setPosts((prev) =>
+                  prev.map((p) => (p.id === updated.id ? { ...p, ...updated } : p))
+                );
+              }}
+              onDelete={(deletedId) => {
+                setFocused_post(null);
+                setPosts((prev) => prev.filter((p) => p.id !== deletedId));
+              }}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
