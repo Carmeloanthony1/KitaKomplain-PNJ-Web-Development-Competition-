@@ -99,6 +99,7 @@ export default function Home({ user, onLogout, onNavigate }) {
           user={user} 
           openProfile={() => onNavigate ? onNavigate("profile") : navigate("/profile")} 
           openNotifications={() => setIsNotificationOpen(true)}
+          onOpenNewPost={() => setIsPostModalOpen(true)}
         />
       </header>
 

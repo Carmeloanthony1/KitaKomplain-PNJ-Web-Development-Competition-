@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
-export default function Navbar({ user, openNotifications }) {
+export default function Navbar({ user, openNotifications, onOpenNewPost }) {
   const [search_params] = useSearchParams();
   const navigate = useNavigate();
   const inputRef = useRef(null);
@@ -79,7 +79,14 @@ export default function Navbar({ user, openNotifications }) {
     navigate("/login");
   };
 
-  // Helper untuk styling tombol menu biar rapi dan ga ngulang kode
+  const handleProfileClick = () => {
+    if (window.innerWidth >= 640) {
+      navigate('/profile');
+    } else {
+      setIsMenuOpen((prev) => !prev);
+    }
+  };
+
   const menuItemClass = "w-full text-left px-4 py-2.5 text-sm font-semibold text-gray-800 dark:text-[#f1ece1] hover:bg-gray-100 dark:hover:bg-black cursor-pointer transition-colors";
 
   return (
@@ -119,14 +126,14 @@ export default function Navbar({ user, openNotifications }) {
           </form>
         </div>
 
-        {/* Profile Akun Kanan dengan Dropdown Baru */}
+        {/* Profile Akun Kanan */}
         <div className="flex-shrink-0 z-20 relative" ref={menuRef}>
           <div 
-            onClick={() => setIsMenuOpen((prev) => !prev)}
+            onClick={handleProfileClick}
             className="flex items-center gap-1.5 sm:gap-3 bg-[#a50034] dark:bg-black dark:border-2 dark:border-[#f1ece1] text-white px-2 sm:px-5 py-1 sm:py-2 rounded-full font-bold shadow-md cursor-pointer hover:bg-[#801427] dark:hover:bg-[#f1ece1] dark:hover:text-black transition active:scale-95 select-none"
           >
             <span className="hidden sm:inline text-xs sm:text-base capitalize">
-              {user?.name || user?.username || "Kenji"}
+              {user?.name || user?.username}
             </span>
             <img 
               src={user?.avatar || user?.avatar_url || "/assets/Dummy_photo.png"} 
@@ -135,11 +142,16 @@ export default function Navbar({ user, openNotifications }) {
             />
           </div>
 
-          {/* Menu Dropdown */}
+          {/* Menu Dropdown: Hanya tampil di HP */}
           {isMenuOpen && (
-            <div className="absolute right-0 mt-3 w-32 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-slate-800 rounded-xl shadow-xl flex flex-col py-2 overflow-hidden animate-fadeIn">
-              
-              <button onClick={() => { setIsMenuOpen(false); navigate('/post'); }} className={menuItemClass}>
+            <div className="sm:hidden absolute right-0 mt-3 w-40 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-slate-800 rounded-xl shadow-xl flex flex-col py-2 overflow-hidden animate-fadeIn">
+              <button 
+                onClick={() => { 
+                  setIsMenuOpen(false); 
+                  if (onOpenNewPost) onOpenNewPost(); 
+                }} 
+                className={menuItemClass}
+              >
                 Make a Post
               </button>
               
@@ -151,7 +163,14 @@ export default function Navbar({ user, openNotifications }) {
                 History
               </button>
               
-              <button onClick={() => { setIsMenuOpen(false); navigate('/notifications'); }} className={menuItemClass}>
+              <button onClick={() => { 
+                  setIsMenuOpen(false); 
+                  if (openNotifications) {
+                    openNotifications();
+                  } else {
+                    navigate('/notifications');
+                  }
+                  }} className={menuItemClass}>
                 Notifikasi
               </button>
               
