@@ -70,7 +70,7 @@ html, body {
 .signup-form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 18px;
 }
 
 .signup-input {
@@ -189,7 +189,7 @@ html, body {
 
   .signup-logo {
     font-size: 32px;
-    margin-bottom: 20px;
+    margin-bottom: 80px;
   }
 
   .signup-right-background {
@@ -201,18 +201,18 @@ html, body {
   }
 
   .signup-card-background {
-    padding: 35px 24px 30px 24px;
+    padding: 40px 24px 35px 24px;
     border-width: 3px;
     border-radius: 24px;
   }
 
   .signup-card-text {
     font-size: 28px;
-    margin-bottom: 20px;
+    margin-bottom: 25px;
   }
 
   .signup-form {
-    gap: 14px;
+    gap: 16px;
   }
 
   .signup-input {
@@ -227,6 +227,6 @@ html, body {
   }
 
   .signup-login {
-    margin-top: 18px;
+    margin-top: 20px;
   }
 }
