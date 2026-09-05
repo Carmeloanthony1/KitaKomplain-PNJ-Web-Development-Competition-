@@ -6,7 +6,7 @@ import JWT from 'jsonwebtoken';
 import nodemailer from 'nodemailer';
 import { createClient } from '@supabase/supabase-js';
 
-dotenv.config(); // biar bisa di proses dalam code, ngebaca .env
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -16,20 +16,20 @@ app.use(express.json());
 
 const supabase = createClient(
     process.env.SUPABASE_URL,
-    process.env.SUPABASE_ANON_KEY // anon key ini di pake untuk akses databasenya
+    process.env.SUPABASE_ANON_KEY
 );
 
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-        user: process.env.EMAIL_USER, // email user
-        pass: process.env.EMAIL_APP_PASSWORD // email password
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_APP_PASSWORD
     }
 });
 
 const verifytoken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1]; // ngambil tokennya aja, bearer (0) token (1)
+    const token = authHeader && authHeader.split(' ')[1];
 
     if (!token) {
         return res.status(401).json({
@@ -38,7 +38,7 @@ const verifytoken = (req, res, next) => {
     }
 
     try {
-        const verified = JWT.verify(token, process.env.JWT_SECRET); // ngecheck kecocokannya dan masa kadarluasa
+        const verified = JWT.verify(token, process.env.JWT_SECRET || 'secretkey');
         req.user = verified; 
         next();
     } catch (error) {
@@ -58,7 +58,7 @@ app.post('/api/auth/sign_up', async (req, res) => {
         });
     }
     try {
-        const { data: existingUser, error: fetchError } = await supabase
+        const { data: existingUser } = await supabase
             .from('users')
             .select('email, username')
             .or(`email.eq.${email},username.eq.${username}`)
@@ -84,9 +84,7 @@ app.post('/api/auth/sign_up', async (req, res) => {
             ])
             .select();
         
-        if (insertError) {
-            throw insertError;
-        }
+        if (insertError) throw insertError;
         
         return res.status(200).json({
             message: "Sign up berhasil",
@@ -97,7 +95,7 @@ app.post('/api/auth/sign_up', async (req, res) => {
             }
         });
     } catch (error) {
-        console.error("Error sign up", error.message);
+        console.error("Error sign up:", error.message);
         return res.status(500).json({
             message: "Terjadi kesalahan pada server!"
         });
@@ -150,7 +148,7 @@ app.post('/api/auth/login', async (req, res) => {
             }
         });
     } catch (error) {
-        console.error("Error login: ", error.message);
+        console.error("Error login:", error.message);
         return res.status(500).json({
             message: "Terjadi kesalahan di server!"
         });
@@ -170,9 +168,7 @@ app.get('/api/tags', async (req, res) => {
 
         const { data, error } = await supabase_query;
 
-        if (error) {
-            throw error;
-        }
+        if (error) throw error;
 
         const tags = data
             .map(item => item.tag)
@@ -187,7 +183,7 @@ app.get('/api/tags', async (req, res) => {
     }
 });
 
-// Endpoint Fetch Posts (Title dihilangkan dari query pencarian)
+// Endpoint Fetch Posts
 app.get('/api/posts', async (req, res) => {
     try {
         const { query } = req.query;
@@ -207,7 +203,6 @@ app.get('/api/posts', async (req, res) => {
             `)
             .order('created_at', { ascending: false });
 
-        // Pencarian HANYA ke description dan tag (title dihilangkan)
         if (query && query.trim() !== '') {
             const search_term = `%${query.trim()}%`;
             supabase_query = supabase_query.or(`description.ilike.${search_term},tag.ilike.${search_term}`);
@@ -226,10 +221,10 @@ app.get('/api/posts', async (req, res) => {
     }
 });
 
-// Endpoint Buat Post Baru (Tanpa Title)
+// Endpoint Buat Post Baru
 app.post('/api/posts', verifytoken, async (req, res) => {
     const { description, image_url, tag } = req.body;
-    const userId = req.user.id; // Diambil dari JWT Token
+    const userId = req.user.id;
 
     if (!description) {
         return res.status(400).json({
@@ -238,7 +233,6 @@ app.post('/api/posts', verifytoken, async (req, res) => {
     }
 
     try {
-        // Bersihkan tanda '#' jika user memasukkan tag dengan hastag
         const cleanTag = tag ? tag.replace('#', '').trim() : null;
 
         const { data: newPost, error } = await supabase
@@ -253,9 +247,7 @@ app.post('/api/posts', verifytoken, async (req, res) => {
             ])
             .select();
 
-        if (error) {
-            throw error;
-        }
+        if (error) throw error;
 
         return res.status(201).json({
             message: "Postingan berhasil dibuat!",
@@ -269,9 +261,68 @@ app.post('/api/posts', verifytoken, async (req, res) => {
     }
 });
 
-// Endpoint Report/Support
+// Endpoint Fetch Reports
+app.get('/api/reports', verifytoken, async (req, res) => {
+    try {
+        const { data: reports, error } = await supabase
+            .from('reports')
+            .select(`
+                id,
+                ticket,
+                category,
+                problem_type,
+                details,
+                status,
+                created_at,
+                user_id,
+                users (
+                    username,
+                    email
+                )
+            `)
+            .order('created_at', { ascending: false });
+
+        if (error) throw error;
+
+        return res.status(200).json(reports || []);
+    } catch (error) {
+        console.error("Error fetching reports:", error.message);
+        return res.status(500).json({ message: "Gagal mengambil data report" });
+    }
+});
+
+// Endpoint Update Status Report (Khusus Admin)
+app.patch('/api/reports/:id/status', verifytoken, async (req, res) => {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    if (!status) {
+        return res.status(400).json({ message: "Status wajib dikirim!" });
+    }
+
+    try {
+        const { data, error } = await supabase
+            .from('reports')
+            .update({ status: status })
+            .eq('id', id)
+            .select();
+
+        if (error) throw error;
+
+        return res.status(200).json({
+            message: "Status laporan berhasil diperbarui!",
+            report: data[0]
+        });
+    } catch (error) {
+        console.error("Error updating status:", error.message);
+        return res.status(500).json({ message: "Gagal memperbarui status laporan" });
+    }
+});
+
+// Endpoint Create Report Problem
 app.post('/api/reports', verifytoken, async (req, res) => {
-    const { category, details } = req.body;
+    const { category, problemType, problem_type, details } = req.body;
+    const selectedProblemType = problemType || problem_type || "Technical";
 
     if (!category || !details) {
         return res.status(400).json({
@@ -285,30 +336,59 @@ app.post('/api/reports', verifytoken, async (req, res) => {
         const userId = req.user.id;
         const userEmail = req.user.email;
 
-        const emailText =
-            "User ID: " + userId + "\n" +
-            "User Email: " + userEmail + "\n" +
-            "Category: " + category + "\n\n" +
-            "Details:\n" +
-            details;
+        const { data: New_report, error } = await supabase
+            .from('reports')
+            .insert([
+                {
+                    ticket: ticket, 
+                    user_id: userId,
+                    category: category,
+                    problem_type: selectedProblemType,
+                    details: details,
+                    status: "Waiting"
+                }
+            ])
+            .select();
+        
+        if (error) {
+            console.error("Error inserting report:", error);
+            return res.status(500).json({
+                message: "Gagal menyimpan report ke database", 
+                error: error.message
+            });
+        }
 
-        await transporter.sendMail({
-            from: process.env.EMAIL_USER,
-            to: process.env.DEVELOPER_EMAIL,
-            subject: `[Support ${ticket} - ${category}]`,
-            text: emailText
-        });
+        const emailText =
+            `Nomor Ticket: ${ticket}\n` +  
+            `User ID: ${userId}\n` +
+            `User Email: ${userEmail}\n` +
+            `Category: ${category}\n` +
+            `Problem Type: ${selectedProblemType}\n\n` +
+            `Details:\n${details}`;
+
+        try {
+            await transporter.sendMail({
+                from: process.env.EMAIL_USER,
+                to: process.env.DEVELOPER_EMAIL,
+                subject: `[Support ${ticket} - ${category}]`,
+                text: emailText
+            });
+        } catch (mailError) {
+            console.error("Error sending email (laporan tetap tersimpan di DB):", mailError.message);
+        }
 
         return res.status(200).json({
             message: "Report berhasil dikirim!",
-            ticket
+            ticket: ticket,
+            report: New_report[0]
         });
 
     } catch (error) {
         console.error("Error sending report:", error);
 
         return res.status(500).json({
-            message: "Gagal mengirim report.", errordetail: error.message
+            message: "Gagal mengirim report.",
+            errordetail: error.message
         });
     }
 });

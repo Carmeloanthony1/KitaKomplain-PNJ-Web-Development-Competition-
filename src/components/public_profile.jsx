@@ -35,59 +35,75 @@ export default function PublicProfile() {
     if (!targetUserId) return;
     setLoading(true);
 
-    // 1. Fetch Data User
+    // 1. Fetch Data User (termasuk setting privasi)
     const { data: user, error: userError } = await supabase
       .from("users")
-      .select("id, username, bio, avatar_url, is_anonim_mode")
+      .select("id, username, bio, avatar_url, is_anonim_mode, hide_history, hide_comment, hide_vote")
       .eq("id", targetUserId)
       .single();
 
     if (userError) {
       console.error("Gagal mengambil data profile publik: ", userError.message);
-    } else {
-      setUserData(user);
+      setLoading(false);
+      return;
     }
+
+    setUserData(user);
 
     // Hanya fetch aktivitas publik jika user TIDAK dalam mode anonim
     if (user && !user.is_anonim_mode) {
-      // 2. Fetch Posts
-      const { data: publicPosts, error: postError } = await supabase
-        .from("posts")
-        .select(`id, description, image_url, tag, is_anonim_mode, created_at, user_id, users (username, avatar_url)`)
-        .eq("user_id", targetUserId)
-        .neq("is_anonim_mode", true)
-        .order("created_at", { ascending: false });
 
-      if (!postError) setPosts(publicPosts || []);
+      // 2. Fetch Posts (jika TIDAK di-hide oleh user)
+      if (!user.hide_history) {
+        const { data: publicPosts, error: postError } = await supabase
+          .from("posts")
+          .select(`id, description, image_url, tag, is_anonim_mode, created_at, user_id, users (username, avatar_url)`)
+          .eq("user_id", targetUserId)
+          .neq("is_anonim_mode", true)
+          .order("created_at", { ascending: false });
 
-      // 3. Fetch Comments
-      const { data: commentsData, error: commentError } = await supabase
-        .from("comments")
-        .select(`
-          id, content, created_at, post_id, 
-          posts ( id, description, image_url, tag, created_at, user_id, users (username, avatar_url) )
-        `)
-        .eq("user_id", targetUserId)
-        .order("created_at", { ascending: false });
+        if (!postError) setPosts(publicPosts || []);
+      } else {
+        setPosts([]);
+      }
 
-      if (!commentError) setUserComment(commentsData || []);
+      // 3. Fetch Comments (jika TIDAK di-hide oleh user)
+      if (!user.hide_comment) {
+        const { data: commentsData, error: commentError } = await supabase
+          .from("comments")
+          .select(`
+            id, content, created_at, post_id, 
+            posts ( id, description, image_url, tag, created_at, user_id, users (username, avatar_url) )
+          `)
+          .eq("user_id", targetUserId)
+          .order("created_at", { ascending: false });
 
-      // 4. Fetch Votes / Polling
-      const { data: voteData, error: voteError, count } = await supabase
-        .from("votes")
-        .select(
-          `
-          id, vote_type, created_at, post_id, 
-          posts ( id, tag, description, image_url, created_at, user_id, users (username, avatar_url) )
-        `,
-          { count: "exact" }
-        )
-        .eq("user_id", targetUserId)
-        .order("created_at", { ascending: false });
+        if (!commentError) setUserComment(commentsData || []);
+      } else {
+        setUserComment([]);
+      }
 
-      if (!voteError && voteData) {
-        setUserVote(voteData);
-        setPollsCount(count ?? voteData.length);
+      // 4. Fetch Votes / Polling (jika TIDAK di-hide oleh user)
+      if (!user.hide_vote) {
+        const { data: voteData, error: voteError, count } = await supabase
+          .from("votes")
+          .select(
+            `
+            id, vote_type, created_at, post_id, 
+            posts ( id, tag, description, image_url, created_at, user_id, users (username, avatar_url) )
+          `,
+            { count: "exact" }
+          )
+          .eq("user_id", targetUserId)
+          .order("created_at", { ascending: false });
+
+        if (!voteError && voteData) {
+          setUserVote(voteData);
+          setPollsCount(count ?? voteData.length);
+        }
+      } else {
+        setUserVote([]);
+        setPollsCount(0);
       }
     }
 
@@ -225,25 +241,25 @@ export default function PublicProfile() {
               </h2>
             </div>
 
-            {/* STAT BADGES (HANYA BUKAN ANONIM) */}
+            {/* STAT BADGES (DIPENGARUHI STATUS HIDE INDIVIDUAL) */}
             {!isAnonim && (
               <div className="my-5 inline-flex items-center gap-6 bg-gray-50/80 dark:bg-[#f1ece1] px-6 py-2.5 rounded-xl border border-gray-100 text-sm">
                 <div>
-                  <span className="font-bold text-gray-900">{posts.length}</span>{" "}
+                  <span className="font-bold text-gray-900">{userData.hide_history ? 0 : posts.length}</span>{" "}
                   <span className="text-gray-500 dark:text-gray-900 font-medium">Posts</span>
                 </div>
                 <div>
-                  <span className="font-bold text-gray-900">{userComment.length}</span>{" "}
+                  <span className="font-bold text-gray-900">{userData.hide_comment ? 0 : userComment.length}</span>{" "}
                   <span className="text-gray-500 dark:text-gray-900 font-medium">Comments</span>
                 </div>
                 <div>
-                  <span className="font-bold text-gray-900">{pollsCount}</span>{" "}
+                  <span className="font-bold text-gray-900">{userData.hide_vote ? 0 : pollsCount}</span>{" "}
                   <span className="text-gray-500 dark:text-gray-900 font-medium">Polls</span>
                 </div>
               </div>
             )}
 
-            {/* DESKRIPSI (SELALU TAMPIL) */}
+            {/* DESKRIPSI */}
             <div className="flex flex-col gap-1 mt-4">
               <h3 className="text-sm font-bold text-[#a50034] dark:text-[#f1ece1]">Deskripsi</h3>
               <p className="text-gray-700 dark:text-[#f1ece1] text-sm leading-relaxed">
@@ -254,16 +270,16 @@ export default function PublicProfile() {
           </div>
         </div>
 
-        {/* NOTIFIKASI ANONIM (MAX-W-2XL & MX-AUTO UNTUK CENTER) */}
+        {/* NOTIFIKASI ANONIM */}
         {isAnonim && (
-          <div className="mt-10 p-4 bg-amber-500/10 border border-amber-500/30 rounded-2xl w-full max-w-md mx-auto text-center shadow-sm">
-            <span className="text-sm font-medium text-amber-600 dark:text-amber-400">
-              Pengguna ini mengaktifkan mode anonim
+          <div className="px-5 py-3 bg-amber-500/10 border border-amber-500/30 rounded-xl max-w-md mx-auto text-center shadow-sm">
+            <span className="text-xs sm:text-sm font-medium text-amber-600 dark:text-amber-400">
+              Pengguna ini mengaktifkan mode anonim untuk post, comment, dan vote.
             </span>
           </div>
         )}
 
-        {/* NAVIGATION TABS & KONTEN AKTIVITAS (HANYA TAMPIL JIKA BUKAN ANONIM) */}
+        {/* NAVIGATION TABS & KONTEN AKTIVITAS */}
         {!isAnonim && (
           <>
             {/* Tabs Header */}
@@ -291,7 +307,11 @@ export default function PublicProfile() {
             <div className="bg-white dark:bg-[#1e1e1e] rounded-2xl min-h-[200px] flex items-center justify-center p-8">
               {/* TAB POSTS */}
               {activeTab === "posts" &&
-                (posts.length === 0 ? (
+                (userData.hide_history ? (
+                  <p className="text-gray-400 dark:text-[#f1ece1] text-sm font-medium">
+                    Pengguna menyembunyikan riwayat laporan.
+                  </p>
+                ) : posts.length === 0 ? (
                   <p className="text-gray-400 dark:text-[#f1ece1] text-sm font-medium">
                     Belum ada post yang dibuat.
                   </p>
@@ -323,7 +343,11 @@ export default function PublicProfile() {
 
               {/* TAB COMMENTS */}
               {activeTab === "comments" &&
-                (userComment.length === 0 ? (
+                (userData.hide_comment ? (
+                  <p className="text-gray-400 dark:text-[#f1ece1] text-sm font-medium">
+                    Pengguna menyembunyikan riwayat komentar.
+                  </p>
+                ) : userComment.length === 0 ? (
                   <p className="text-gray-400 dark:text-[#f1ece1] text-sm font-medium">
                     Belum ada komentar yang dibuat.
                   </p>
@@ -355,7 +379,11 @@ export default function PublicProfile() {
 
               {/* TAB POLLING */}
               {activeTab === "polling" &&
-                (userVote.length === 0 ? (
+                (userData.hide_vote ? (
+                  <p className="text-gray-400 dark:text-[#f1ece1] text-sm font-medium">
+                    Pengguna menyembunyikan riwayat vote/polling.
+                  </p>
+                ) : userVote.length === 0 ? (
                   <p className="text-gray-400 dark:text-[#f1ece1] text-sm font-medium">
                     Belum ada kontribusi terhadap suatu isu.
                   </p>

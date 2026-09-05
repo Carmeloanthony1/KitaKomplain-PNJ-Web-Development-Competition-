@@ -2,7 +2,19 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* Sembunyikan Scrollbar */
+/* Reset Layout & Buka Kunci Scroll (AMAN BIKIN STICKY JALAN) */
+html,
+body,
+#root {
+  min-height: 100vh;
+  /* JANGAN PAKAI overflow-y: auto DI SINI! Biarkan browser yang handle window scroll */
+}
+
+body {
+  overflow-x: hidden;
+}
+
+/* Sembunyikan Scrollbar Utama */
 html, body {
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE & Edge */

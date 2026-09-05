@@ -1,205 +1,222 @@
-html, body
-{
+* {
+  box-sizing: border-box;
+}
+
+html, body {
   margin: 0;
   padding: 0;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden; /* Mengunci scroll Y dan X total di Desktop */
 }
 
-.login-whole-background
-{
-    min-height: 100vh;
-    display: flex;
-    background: #ffffff;
+/* Base Layout (Desktop) */
+.login-whole-background {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  background: #ffffff;
+  overflow: hidden;
 }
 
-.login-left-background
-{
-    width: 50%;
-    min-height: 100vh;
-
-    display: flex;
-    align-items: center;
-
-    padding-left: 80px;
-
-    background: linear-gradient(
-        to right,
-        #f1ece1,
-        #ffc1b3
-    );
+/* Sisi Kiri (Logo) */
+.login-left-background {
+  width: 50%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  padding-left: 80px;
+  padding-right: 40px;
+  background: linear-gradient(to right, #f1ece1, #ffc1b3);
 }
 
-.login-logo
-{
-    color: #a50034;
-
-    font-size: 96px;
-    font-weight: 700;
-
-    line-height: 1.05;
+.login-logo {
+  color: #a50034;
+  font-size: clamp(48px, 5vw, 80px);
+  font-weight: 700;
+  line-height: 1.05;
 }
 
-.login-right-background
-{
-    width: 50%;
-    min-height: 100vh;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    padding: 10px;
+/* Sisi Kanan (Form) */
+.login-right-background {
+  width: 50%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
 }
 
-.login-card-background
-{
-    width: 60%;
-    height: 550px;
-
-    padding: 55px 65px;
-
-    background-color: #fffbf4;
-
-    border: 6px solid #a50034;
-    border-radius: 40px;
+/* Card Container */
+.login-card-background {
+  width: 100%;
+  max-width: 440px;
+  padding: 35px 30px;
+  background-color: #fffbf4;
+  border: 4px solid #a50034;
+  border-radius: 30px;
+  box-sizing: border-box;
 }
 
-.login-card-text
-{
-    position: relative;
-    bottom: 30px;
-
-    margin-bottom: 50px;
-
-    text-align: center;
-
-    color:#a50034;
-
-    font-size: 48px;
-    font-weight: 700;
+.login-card-text {
+  margin: 0 0 25px 0;
+  text-align: center;
+  color: #a50034;
+  font-size: 32px;
+  font-weight: 700;
 }
 
-.login-form
-{
-    position: relative;
-    bottom: 50px;
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
 
-    display: flex;
+.login-input {
+  width: 100%;
+  height: 50px;
+  padding: 0 20px;
+  border: 3px solid #a50034;
+  border-radius: 25px;
+  background-color: #ffffff;
+  font-size: 15px;
+  font-weight: 600;
+  text-align: left;
+  outline: none;
+  transition: 0.2s ease;
+}
+
+.login-input::placeholder {
+  color: #777;
+}
+
+.login-input:focus {
+  border-color: #8f0033;
+  box-shadow: 0 0 0 4px rgba(173, 0, 60, 0.15);
+}
+
+.login-input:focus::placeholder {
+  color: transparent;
+}
+
+.login-button-container {
+  display: flex;
+  justify-content: center;
+  padding-top: 5px;
+}
+
+.login-button {
+  width: 100%;
+  max-width: 220px;
+  height: 48px;
+  border: none;
+  border-radius: 24px;
+  background-color: #ff8888;
+  color: #ffffff;
+  font-size: 17px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.login-button:hover {
+  transform: translateY(-2px);
+  background-color: #ff7373;
+}
+
+.login-button:active {
+  transform: translateY(0);
+}
+
+.login-signup {
+  margin-top: 12px;
+  color: #a50034;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.login-signup-button {
+  padding: 0;
+  border: none;
+  background: none;
+  color: #0000EE;
+  font-size: inherit;
+  font-weight: inherit;
+  cursor: pointer;
+}
+
+.login-signup-button:hover {
+  text-decoration: underline;
+}
+
+/* ========================================== */
+/* RESPONSIVE UNTUK TAMPILAN HP (< 768px)      */
+/* ========================================== */
+@media (max-width: 768px) {
+  html, body {
+    overflow-y: auto;
+  }
+
+  .login-whole-background {
     flex-direction: column;
+    height: auto;
+    min-height: 100vh;
+    background: #ffffff;
+    justify-content: center; /* Posisikan seluruh konten persis di tengah layar */
+    align-items: center;
+    padding: 20px 0;
+  }
 
-    gap: 30px;
-}
-
-.login-input
-{
+  .login-left-background {
     width: 100%;
-    height: 65px;
+    height: auto;
+    padding: 0 20px 15px 20px;
+    justify-content: center;
+    text-align: center;
+    background: transparent;
+  }
 
-    padding: 0 30px;
+  .login-logo {
+    font-size: 32px;
+    margin-bottom: 80px;
+  }
 
-    border: 6px solid #a50034;
-    border-radius: 35px;
-
-    background-color: #ffffff;
-
-    font-size: 18px;
-    font-weight: 600;
-
-    text-align: left;
-
-    outline: none;
-
-    box-sizing: border-box;
-
-    transition: 0.2s ease;
-}
-
-.login-input::placeholder
-{
-    color : #777;
-}
-
-.login-input:focus
-{
-    border-color: #8f0033;
-
-    box-shadow: 0 0 0 4px rgba(173, 0, 60, 0.15);
-}
-
-.login-input:focus::placeholder
-{
-    color: transparent;
-}
-
-.login-button-container
-{
+  .login-right-background {
+    width: 100%;
+    height: auto;
+    padding: 0 16px;
     display: flex;
     justify-content: center;
+  }
 
-    padding-top: 15px;
-}
+  .login-card-background {
+    padding: 40px 24px 35px 24px; /* Padding atas & bawah diperbesar biar teks gak terlalu mepet border */
+    border-width: 3px;
+    border-radius: 24px;
+  }
 
-.login-button
-{
-    width: 250px;
-    height: 60px;
+  .login-card-text {
+    font-size: 28px;
+    margin-bottom: 25px; /* Jarak antara tulisan 'Login' ke input field */
+  }
 
-    border: none;
-    border-radius: 30px;
+  .login-form {
+    gap: 16px;
+  }
 
-    background-color: #ff8888;
+  .login-input {
+    height: 48px;
+    border-width: 2.5px;
+    font-size: 14px;
+  }
 
-    color: #ffffff;
-
-    font-size: 20px;
-    font-weight: 700;
-
-    cursor: pointer;
-
-    transition: 0.2s ease;
-}
-
-.login-button:hover
-{
-    transform: translateY(-2px);
-}
-
-.login-button:active
-{
-    transform: translateY(0);
-}
-
-.login-signup
-{
-    position: relative;
-    bottom: 20px;
-
-    margin-top: 5px;
-
-    color: #a50034;
-
+  .login-button {
+    height: 45px;
     font-size: 16px;
-    font-weight: 600;
+  }
 
-    text-align: center;
-}
-
-.login-signup-button
-{
-    padding: 0;
-
-    border: none;
-
-    background: none;
-
-    color: #0000EE;
-
-    font-size: inherit;
-    font-weight: inherit;
-
-    cursor: pointer;
-}
-
-.login-signup-button:hover
-{
-    text-decoration: underline;
+  .login-signup {
+    margin-top: 20px; /* Jarak teks bawah ke border bawah card */
+  }
 }

@@ -2,15 +2,15 @@
 
  
 
-  # [NAMA PROYEK]
+  # [KitaKomplain]
 
-  ### [Tagline Singkat dan Menarik]
+  ### [Kesal? Komplain dulu aja kiteee!!]
 
  
 
   [![Live Demo](https://img.shields.io/badge/🚀_Live_Demo-Visit_Site-success?style=for-the-badge)](https://[URL_DEMO])
 
-  [![GitHub](https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github)](https://[URL_REPO])
+  [![GitHub]([https://github.com/Carmeloanthony1/KitaKomplain-PNJ-Web-Development-Competition-])]
 
   [![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](LICENSE)
 
@@ -20,7 +20,7 @@
 
  
 
-  **By [Nama Tim]**
+  **By [KitaKomplain]**
 
  
 
@@ -56,19 +56,13 @@
 
 ## 👥 Tim Developer
 
-| Nama | Peran | GitHub |
+| Nama  | Peran     | GitHub  |
 
-|------|-------|--------|
+| **[Carmelo Anthony]** | Project Lead & Full Stack Developer | [GitHub](https://github.com/[retry30]) |
 
-| **[Nama Lengkap 1]** | Project Lead & Full Stack Developer | [GitHub](https://github.com/[username1]) |
+| **[Marvel Valenxius Gunawan]** | Full Stack Developer | [GitHub](https://github.com/[marvelvg]) |
 
-| **[Nama Lengkap 2]** | Frontend Developer | [GitHub](https://github.com/[username2]) |
-
-| **[Nama Lengkap 3]** | Backend Developer | [GitHub](https://github.com/[username3]) |
-
-| **[Nama Lengkap 4]** | UI/UX Designer | [GitHub](https://github.com/[username4]) |
-
-| **[Nama Lengkap 4]** | UI/UX Designer | [@username4](https://github.com/[username4]) |
+| **[Kentdji Orlando]** | Full Stack Developer | [GitHub](https://github.com/[Gordnum]) |
 
 ---
 
@@ -76,19 +70,29 @@
 
 ### Latar Belakang
 
-[Jelaskan konteks permasalahan yang ingin diselesaikan. Gunakan data atau fakta untuk memperkuat argumen. Contoh: "Berdasarkan survei X, 70% pengguna mengalami kesulitan dalam..."]
+[ Indonesia saat ini masih memiliki salah satu tantangan terbesar yakni pemerataan Infrastruktur dan transparansi alokasi dana pembangunan. Berdasarkan Jurnal Ilmu Administrasi Negara (2022) menyoroti bahwa salah satu "lubang terbesar dalam demokrasi infrastruktur kita adalah minimnya transparansi pengelolaan dana daerah dan kurangnya wadah bagi masyarakat untuk melacak keluhan mereka secara terbuka" ]
 
 ### Solusi yang Ditawarkan
 
-[Jelaskan bagaimana aplikasi ini menyelesaikan masalah tersebut dengan pendekatan yang unik atau inovatif]
+[ KitaKomplain di sini menjadi sebuah program yang menjembatani aspirasi masyarakat dan pemerintah, melalui melalui sebuah mekanisme sosial media yang familiar, namun diarahkan secara spesifik untuk pelaporan dan advokasi infrastruktur 
+Alurnya sederhana:
+
+Alurnya sederhana:
+
+1. Warga membuat sebuah postingan komplain mengenai infrastruktur, jalan, atau fasilitas publik yang rusak/tidak memadai di daerahnya, lengkap dengan fitur polling/vote.
+2. Semakin banyak dukungan (vote) yang diterima sebuah postingan, semakin besar indikasi bahwa masalah tersebut memang dirasakan dan disetujui oleh banyak warga sebagai isu prioritas bukan sekadar keluhan individu.
+3. Postingan dengan dukungan tinggi mendapat exposure lebih besar di platform, sehingga isu-isu di daerah tertinggal secara infrastruktur bisa lebih mudah terlihat dan didorong untuk ditindaklanjuti.
+
+]
 
 ### Tujuan Proyek
 
-- 🎯 **Tujuan Utama**: [Tujuan primer aplikasi]
+- 🎯 **Tujuan Utama**: [ Menjembatani user untuk menyampaikan aspirasinya/Keluh kesah mengenai infrastruktur/lingkungan/fasilitas umum dari pemerintah yang dimana selaras dengan SDG 7 (Affordable and Clean Energy), SDG 8 (Decent Work and Economic Growth), SDG 9 (Industry, Innovation, and Infrastructure
+) dan SDG 11 (Sustainable Cities And Communities) ]
 
-- 📊 **Target Pengguna**: [Siapa yang akan menggunakan aplikasi ini]
+- 📊 **Target Pengguna**: [ Masyarakat dengan penuh keluh kesah ]
 
-- 💡 **Value Proposition**: [Apa yang membuat aplikasi ini berbeda dari solusi lain]
+- 💡 **Value Proposition**: [ Belum ada aplikasi yang benar-benar menawarkan aspirasi masyarakat secara transparan & fitur autentikasinya credential yang sulit di palsukan]
 
 ---
 
@@ -96,25 +100,22 @@
 
 ### Fitur Utama
 
-| Fitur | Deskripsi | Keunggulan |
-
+| Fitur    | Deskripsi    | Keunggulan    | 
 |----------|--------------|---------------|
 
-| **[Nama Fitur 1]** | [Deskripsi singkat fitur] | [Mengapa fitur ini penting/unik] |
+| **[ Post Komplain ]** | [User dapat mengunggah sebuah komplenan berupa keluhan lingkungan sekitar maupun insiden] [Fitur ini penting karena keluhan yang di unggah akan di berikan kepada pihak pemerintah untuk di tindak lebih lanjut] |
 
-| **[Nama Fitur 2]** | [Deskripsi singkat fitur] | [Mengapa fitur ini penting/unik] |
+| **[ Feed & Interaksi Sosial (Comment) ]** | [Fitur ini berfungsi agar sesama pengguna dapat berinteraksi maupun berbagi pandangan mengenai unggahan yang tertera] | [ Membangun sense of community antar user mengenai masalah-masalah yang terdapat di Indonesia ] |
 
-| **[Nama Fitur 3]** | [Deskripsi singkat fitur] | [Mengapa fitur ini penting/unik] |
-
-| **[Nama Fitur 4]** | [Deskripsi singkat fitur] | [Mengapa fitur ini penting/unik] |
+| **[ Polling/Vote System ]** | [Fitur ini memungkinkan pengguna memberikan dukungan atau penolakan terhadap suatu komplain berdasarkan tingkat urgensi dan relevansi masalah yang diangkat.] | [Membantu menilai masalah user secara kolektif sehingga masalah yang paling relevan dan ramai dapat lebih cepat mendapat perhatian.] |
 
 ### Fitur Tambahan
 
-- **[Fitur A]** - [Penjelasan singkat]
+- **Pembuatan postingan dan Membuat tag dengan topik sesuai** - [Penjelasan singkat]
 
-- **[Fitur B]** - [Penjelasan singkat]
+- **Board yang di khususkan untuk melihat postingan dengan voting terbanyak** - [Penjelasan singkat]
 
-- **[Fitur C]** - [Penjelasan singkat]
+- **Dark mode website** - [Penjelasan singkat]
 
 - **[Fitur D]** - [Penjelasan singkat]
 
@@ -157,34 +158,25 @@
 ## 🛠️ Teknologi
 
 ### Tech Stack
-
 #### Frontend
 
 ```
 
-Framework    : [React / Next.js / Vue / dll]
-
-UI Library   : [Tailwind CSS / Material-UI / Chakra UI / dll]
-
-State Mgmt   : [Redux / Zustand / Context API / dll]
-
-Validation   : [Zod / Yup / React Hook Form / dll]
-
+Framework    : React
+UI Library   : Tailwind
+State Mgmt   : Context API
+Validation   : React Hook Form
 ```
 
 #### Backend
 
 ```
 
-Runtime      : [Node.js / Bun / Deno / dll]
-
-Framework    : [Express / Fastify / Hono / dll]
-
-Database     : [PostgreSQL / MongoDB / MySQL / dll]
-
-ORM          : [Prisma / Drizzle / TypeORM / dll]
-
-Auth         : [JWT / NextAuth / Clerk / dll]
+Runtime      : Node.js
+Framework    : Express
+Database     : Supabase (PostgreSQL)
+ORM          : Supabase Client / SQL
+Auth         : JWT
 
 ```
 
@@ -192,12 +184,9 @@ Auth         : [JWT / NextAuth / Clerk / dll]
 
 ```
 
-Deployment   : [Vercel / Netlify / Railway / dll]
-
-CI/CD        : [GitHub Actions / Vercel / dll]
-
+Deployment   : Vercel
+CI/CD        : Vercel / dll
 Testing      : [Jest / Vitest / Playwright / dll]
-
 Monitoring   : [Sentry / LogRocket / dll]
 
 ```
@@ -205,39 +194,30 @@ Monitoring   : [Sentry / LogRocket / dll]
 ### Alasan Pemilihan Teknologi
 
 | Teknologi | Alasan Pemilihan |
-
 |-----------|------------------|
+| **React** | React dipilih karena struktur komponennya yang reusable dan mudah di gunakan. Hal ini memudahkan pengembangan fitur seperti pemanggilan modal yang berulang, penggunaan useState, API dan struktur yang kompleks | 
+| **Tailwind CSS** | Tailwind CSS di pilih karena mempercepat proses development UI baik pengembangan maupun update UI baru |
+| **Express + Supabase** | Express digunakan sebagai backend API yang ringan dan flexible untuk menangani autentikasi, data komplain, serta integrasi fitur aplikasi. Supabase dipilih karena menyediakan database PostgreSQL, autentikasi, dan API realtime yang memudahkan pengelolaan data yang cepat dan aman. |
 
-| **[Tech 1]** | [Jelaskan mengapa memilih teknologi ini, keunggulannya untuk proyek ini] |
-
-| **[Tech 2]** | [Jelaskan mengapa memilih teknologi ini, keunggulannya untuk proyek ini] |
-
-| **[Tech 3]** | [Jelaskan mengapa memilih teknologi ini, keunggulannya untuk proyek ini] |
-
-### Dependencies Utama
+### Dependencies Utama 
 
 ```json
 
 {
 
   "dependencies": {
-
-    "[package-1]": "^x.x.x",
-
-    "[package-2]": "^x.x.x",
-
-    "[package-3]": "^x.x.x"
-
-  }
-
+    "@supabase/supabase-js": "^2.112.3",
+    "express": "^5.2.1",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "react-router-dom": "^7.18.2"
+    }
 }
-
 ```
 
 ---
 
 ## 🏗️ Arsitektur Sistem
-
 ### System Architecture
 
 ```
@@ -255,49 +235,77 @@ Monitoring   : [Sentry / LogRocket / dll]
 ```
 
 ### Folder Structure
-
 ```
 
-project-root/
-
+KitaKomplain-PNJ-Web-Development-Competition-
+├── backend/
+│   └── server.js
+├── data/
+│   └── Dummy_data.json
+├── public/
+│   └── assets/
 ├── src/
-
-│   ├── components/     # Reusable components
-
-│   ├── pages/          # Page components
-
-│   ├── hooks/          # Custom hooks
-
-│   ├── utils/          # Utility functions
-
-│   ├── services/       # API services
-
-│   ├── store/          # State management
-
-│   └── types/          # TypeScript types
-
-├── public/             # Static assets
-
-├── tests/              # Test files
-
-└── docs/               # Documentation
+│   ├── assets/
+│   ├── components/
+│   │   ├── Anonim_mode.jsx
+│   │   ├── Comment.jsx
+│   │   ├── Comment_detail.jsx
+│   │   ├── ConfirmContext.jsx
+│   │   ├── ConfirmModal.jsx
+│   │   ├── edit_post.jsx
+│   │   ├── FocusPost.jsx
+│   │   ├── Most_Polling.jsx
+│   │   ├── Navbar.jsx
+│   │   ├── Notification.jsx
+│   │   ├── Notification.css
+│   │   ├── newpost.jsx
+│   │   ├── Other_profile.jsx
+│   │   ├── Post.jsx
+│   │   ├── public_profile.jsx
+│   │   ├── Share_post.jsx
+│   │   ├── Sidebar_Kiri.jsx
+│   │   ├── Status.jsx
+│   │   ├── StatusContext.jsx
+│   │   ├── Verify.jsx
+│   │   ├── Vote.jsx
+│   │   └── edit_post.jsx
+│   ├── pages/
+│   │   ├── History.jsx
+│   │   ├── Home.jsx
+│   │   ├── Login.jsx
+│   │   ├── Login.css
+│   │   ├── Profile.jsx
+│   │   ├── ReportProblem.jsx
+│   │   ├── ReportProblem.css
+│   │   ├── Search_page.jsx
+│   │   ├── Settings.jsx
+│   │   ├── SignUp.jsx
+│   │   └── SignUp.css
+│   ├── App.css
+│   ├── App.jsx
+│   ├── index.css
+│   ├── main.jsx
+│   └── supabaseClient.js
+├── .gitignore
+├── eslint.config.js 
+├── index.html
+├── package-lock.json
+├── package.json
+├── README.md
+├── tailwind.config.js
+├── vite.config.js
+└── node_modules/
 
 ```
 
 ---
 
 ## ⚙️ Instalasi & Setup
-
 ### Prerequisites
 
 Pastikan Anda telah menginstall:
-
 - **Node.js** (v18.x atau lebih tinggi)
-
-- **npm** / **yarn** / **pnpm**
-
-- **[Database]** (jika diperlukan)
-
+- **npm** 
 - **Git**
 
 ### Langkah Instalasi
@@ -306,9 +314,9 @@ Pastikan Anda telah menginstall:
 
 ```bash
 
-git clone https://github.com/[username]/[repo-name].git
+git clone https://github.com/Carmeloanthony1/KitaKomplain-PNJ-Web-Development-Competition-.git
 
-cd [repo-name]
+cd [KitaKomplain-PNJ-Web-Development-Competition-]
 
 ```
 
@@ -317,95 +325,69 @@ cd [repo-name]
 ```bash
 
 # Menggunakan npm
-
 npm install
-
 # Atau menggunakan yarn
-
 yarn install
-
 # Atau menggunakan pnpm
-
 pnpm install
 
 ```
 
 #### 3️⃣ Setup Environment Variables
 
-Buat file `.env` di root directory:
+Buat file `.env` di root directory lalu masuk ke folder backend:
 
-```env
+```env.example
 
-# Database
-
-DATABASE_URL="[connection_string]"
-
-# Authentication
-
-JWT_SECRET="[your_jwt_secret]"
-
-NEXTAUTH_SECRET="[your_nextauth_secret]"
-
-# API Keys
-
-API_KEY="[your_api_key]"
-
-# Other configs
-
-NODE_ENV="development"
-
-PORT=3000
+PORT=
+SUPABASE_URL=
+SUPABASE_ANON_KEY=
+JWT_SECRET=
 
 ```
 
 #### 4️⃣ Setup Database
 
-```bash
+Project ini menggunakan Supabase sebagai database utama. Silakan buat project baru di Supabase, lalu buat tabel dan data awal lewat SQL Editor / Dashboard.
 
-# Jalankan migrasi database
-
-npm run db:migrate
-
-# Seed data (opsional)
-
-npm run db:seed
-
+```sql
+-- Contoh membuat tabel sederhana
+CREATE TABLE IF NOT EXISTS profiles (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  username TEXT,
+  bio TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
 ```
+
+Setelah itu, isi nilai `SUPABASE_URL` dan `SUPABASE_ANON_KEY` pada file `.env`.
 
 #### 5️⃣ Run Development Server
 
 ```bash
-
-npm run dev
-
-```
+npm run dev 
+``` 
 
 Aplikasi akan berjalan di `http://localhost:3000`
 
 ---
 
 ## 🚀 Penggunaan
-
 ### Menjalankan Aplikasi
 
 ```bash
 
 # Development mode
-
 npm run dev
 
 # Production build
-
 npm run build
-
 npm run start
 
 # Run tests
-
 npm run test
 
 # Linting
-
 npm run lint
 
 ```
@@ -414,11 +396,11 @@ npm run lint
 
 #### Untuk Pengguna Umum
 
-1. **Registrasi/Login**: [Jelaskan cara mendaftar atau login]
+1. **[Registrasi/Login]**: [ Sebelum memulai website setiap user wajib login akun terlebih dahulu, untuk berkomunikasi baik sebagai anonim/bukan anonim ]
 
-2. **[Fitur 1]**: [Jelaskan cara menggunakan fitur ini]
+2. **[Membuat Komplain]**:  [ Pengguna dapat menulis postingan terkait masalah infrastruktur, fasilitas umum, atau lingkungan yang ingin dilaporkan dengan menambahkan detail, lokasi, dan deskripsi yang jelas. ]
 
-3. **[Fitur 2]**: [Jelaskan cara menggunakan fitur ini]
+3. **[Memberi Dukungan / Vote]**: [ Pengguna dapat memberikan dukungan pada komplain yang dianggap penting agar isu tersebut lebih terlihat dan berpotensi mendapatkan perhatian lebih luas dari masyarakat maupun pihak terkait. ] 
 
 #### Untuk Admin
 
@@ -431,13 +413,11 @@ npm run lint
 ---
 
 ## 📚 API Documentation
-
 ### Base URL
 
 ```
 
 Development: http://localhost:3000/api
-
 Production:  https://[domain]/api
 
 ```
@@ -449,11 +429,8 @@ Production:  https://[domain]/api
 ```http
 
 POST /api/auth/register
-
 POST /api/auth/login
-
 POST /api/auth/logout
-
 GET  /api/auth/me
 
 ```
@@ -463,14 +440,10 @@ GET  /api/auth/me
 ```http
 
 GET    /api/[resource]       # Get all
-
 GET    /api/[resource]/:id   # Get by ID
-
 POST   /api/[resource]       # Create
-
-PUT    /api/[resource]/:id   # Update
-
-DELETE /api/[resource]/:id   # Delete
+PUT    /api/[resource]/:id   # Update 
+DELETE /api/[resource]/:id   # Delete 
 
 ```
 
@@ -496,7 +469,7 @@ const response = await fetch('/api/auth/login', {
 
 });
 
-```
+``` 
 
 📖 **[Dokumentasi API Lengkap](./docs/API.md)** _(opsional)_
 
@@ -531,11 +504,8 @@ npm run test:coverage
 ```
 
 Statements   : XX%
-
 Branches     : XX%
-
 Functions    : XX%
-
 Lines        : XX%
 
 ```
@@ -550,7 +520,7 @@ Proyek ini dilisensikan di bawah [MIT License](LICENSE) - lihat file LICENSE unt
 
 <div align="center">
 
-  **Made with ❤️ by [Nama Tim] for ITECHNO CUP 2026**
+  **Made with ❤️ by [KitaKomplain] for ITECHNO CUP 2026**
 
  
 

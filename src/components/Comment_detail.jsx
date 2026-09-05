@@ -3,7 +3,8 @@ import { supabase } from "../supabaseClient";
 import { useStatus } from "./StatusContext";
 
 // --- KOMPONEN UNTUK ITEM BALASAN (SUB-COMMENT) ---
-function ReplyItem({ reply, onReplyClick }) {
+function ReplyItem({ reply, onReplyClick, hideaction = false }) {
+  const { showStatus } = useStatus();
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
   const { showStatus } = useStatus();
@@ -12,7 +13,6 @@ function ReplyItem({ reply, onReplyClick }) {
   const replyAvatar = reply?.users?.avatar_url;
   const currentUserId = localStorage.getItem("user_id");
 
-  // Fetch data likes untuk balasan ini
   const fetchReplyLikes = async () => {
     if (!reply?.id) return;
     const { data, error } = await supabase
@@ -33,8 +33,10 @@ function ReplyItem({ reply, onReplyClick }) {
   }, [reply?.id, currentUserId]);
 
   const toggleReplyLike = async () => {
+    if (hideaction) return; // 🔒 MATIKAN FUNGSI LIKE BALASAN PAS ADMIN
+
     if (!currentUserId) {
-      alert("Silakan login untuk menyukai balasan!");
+      showStatus("Silakan login untuk menyukai balasan!", "error");
       return;
     }
 
@@ -102,22 +104,26 @@ function ReplyItem({ reply, onReplyClick }) {
           {replyUser}
         </span>
 
-        {/* Isi balasan */}
         <p className="text-xs text-gray-700 dark:text-gray-300 leading-relaxed break-words">
           {reply.content}
         </p>
 
         <div className="flex items-center gap-3 mt-1 font-medium text-xs">
-          {/* LIKE BUTTON FOR REPLY */}
+          {/* LIKE BUTTON BALASAN (TETAP ADA, TAPI DISABLED) */}
           <button
             onClick={toggleReplyLike}
-            className="focus:outline-none cursor-pointer flex items-center gap-1 group"
+            disabled={hideaction}
+            className={`focus:outline-none flex items-center gap-1 group ${
+              hideaction ? "cursor-default" : "cursor-pointer"
+            }`}
           >
             <svg
-              className={`w-3.5 h-3.5 transition-transform group-hover:scale-110 ${
+              className={`w-3.5 h-3.5 transition-transform ${
+                hideaction ? "" : "group-hover:scale-110"
+              } ${
                 isLiked
                   ? "fill-[#a50034] stroke-[#a50034]"
-                  : "fill-none stroke-gray-400 group-hover:stroke-[#a50034]"
+                  : `fill-none stroke-gray-400 ${hideaction ? "" : "group-hover:stroke-[#a50034]"}`
               }`}
               viewBox="0 0 24 24"
               strokeWidth="2"
@@ -137,11 +143,16 @@ function ReplyItem({ reply, onReplyClick }) {
             )}
           </button>
 
-          {/* TOMBOL BALAS (SVG COMMENT) */}
+          {/* TOMBOL BALAS (TETAP ADA, TAPI DISABLED) */}
           <button
-            onClick={() => onReplyClick(replyUser)}
-            className="text-gray-400 hover:text-[#a50034] font-semibold cursor-pointer"
-            title="Balas komentar"
+            onClick={() => !hideaction && onReplyClick(replyUser)}
+            disabled={hideaction}
+            className={`font-semibold ${
+              hideaction
+                ? "text-gray-400 opacity-60 cursor-default"
+                : "text-gray-400 hover:text-[#a50034] cursor-pointer"
+            }`}
+            title={hideaction ? "Tidak dapat membalas di mode admin" : "Balas komentar"}
           >
             <svg
               className="w-4 h-4 fill-current transition-colors"
@@ -158,7 +169,8 @@ function ReplyItem({ reply, onReplyClick }) {
 }
 
 // --- KOMPONEN UTAMA COMMENT DETAIL ---
-export default function Comment_detail({ comment, postId }) {
+export default function Comment_detail({ comment, postId, hideaction = false }) {
+  const { showStatus } = useStatus();
   const [isCommentLiked, setIsCommentLiked] = useState(false);
   const [commentLikeCount, setCommentLikeCount] = useState(0);
   const [isComment_getcomment, setIsComment_getcomment] = useState(false);
@@ -201,8 +213,10 @@ export default function Comment_detail({ comment, postId }) {
   }, [comment?.id, currentUserId]);
 
   const toggleMainCommentLike = async () => {
+    if (hideaction) return; // 🔒 MATIKAN FUNGSI LIKE KOMENTAR PAS ADMIN
+
     if (!currentUserId) {
-      alert("Silakan login terlebih dahulu!");
+      showStatus("Silakan login terlebih dahulu!", "error");
       return;
     }
 
@@ -252,16 +266,18 @@ export default function Comment_detail({ comment, postId }) {
   };
 
   const handle_reply_click = (targetUser) => {
+    if (hideaction) return; // 🔒 MATIKAN KLIK BALAS PAS ADMIN
     setIsComment_getcomment(true);
     setReply_text(`@${targetUser} `);
   };
 
   const handle_sendreply = async (e) => {
     e.preventDefault();
+    if (hideaction) return; // 🔒 MATIKAN KIRIM BALASAN PAS ADMIN
     if (!reply_text.trim()) return;
 
     if (!currentUserId) {
-      alert("Silahkan login terlebih dahulu!");
+      showStatus("Silakan login terlebih dahulu!", "error");
       return;
     }
 
@@ -303,7 +319,7 @@ export default function Comment_detail({ comment, postId }) {
       .single();
 
     if (error) {
-      alert("Gagal membalas komentar: " + error.message);
+      showStatus("Gagal membalas komentar: " + error.message, "error");
     } else if (data) {
       setRepliesList((prev) => [...prev, data]);
       setReply_text("");
@@ -316,7 +332,6 @@ export default function Comment_detail({ comment, postId }) {
 
   return (
     <div className="flex flex-col gap-1 p-3 rounded-xl bg-slate-100 dark:bg-zinc-800 shadow-sm transition-colors">
-      {/* 1. KOMENTAR UTAMA */}
       <div className="flex gap-3 text-sm p-2 rounded-xl">
         {avatar ? (
           <img
@@ -339,16 +354,21 @@ export default function Comment_detail({ comment, postId }) {
           </p>
 
           <div className="flex items-center gap-3 mt-1 font-medium text-xs">
-            {/* LIKE KOMENTAR UTAMA */}
+            {/* LIKE KOMENTAR UTAMA (DISABLED DI ADMIN) */}
             <button
               onClick={toggleMainCommentLike}
-              className="focus:outline-none cursor-pointer flex items-center gap-1 group"
+              disabled={hideaction}
+              className={`focus:outline-none flex items-center gap-1 group ${
+                hideaction ? "cursor-default" : "cursor-pointer"
+              }`}
             >
               <svg
-                className={`w-4 h-4 transition-transform group-hover:scale-110 ${
+                className={`w-4 h-4 transition-transform ${
+                  hideaction ? "" : "group-hover:scale-110"
+                } ${
                   isCommentLiked
                     ? "fill-[#a50034] stroke-[#a50034]"
-                    : "fill-none stroke-gray-400 group-hover:stroke-[#a50034]"
+                    : `fill-none stroke-gray-400 ${hideaction ? "" : "group-hover:stroke-[#a50034]"}`
                 }`}
                 viewBox="0 0 24 24"
                 strokeWidth="2"
@@ -368,18 +388,23 @@ export default function Comment_detail({ comment, postId }) {
               )}
             </button>
 
-            {/* REPLY KOMENTAR UTAMA (SVG COMMENT) */}
+            {/* TOMBOL BALAS (TETAP ADA, TAPI DISABLED) */}
             <button
               onClick={() => handle_reply_click(username)}
-              className="text-gray-400 hover:text-[#a50034] font-semibold cursor-pointer"
-              title="Balas komentar"
+              disabled={hideaction}
+              className={`font-semibold ${
+                hideaction
+                  ? "text-gray-400 opacity-60 cursor-default"
+                  : "text-gray-400 hover:text-[#a50034] cursor-pointer"
+              }`}
+              title={hideaction ? "Tidak dapat membalas di mode admin" : "Balas komentar"}
             >
               <svg
                 className="w-4 h-4 fill-current transition-colors"
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 640 640"
               >
-                <path d="M115.9 448.9C83.3 408.6 64 358.4 64 304C64 171.5 178.6 64 320 64C461.4 64 576 171.5 576 304C576 436.5 461.4 544 320 544C283.5 544 248.8 536.8 217.4 524L101 573.9C97.3 575.5 93.5 576 89.5 576C75.4 576 64 564.6 64 550.5C64 546.2 65.1 542 67.1 538.3L115.9 448.9zM153.2 418.7C165.4 433.8 167.3 454.8 158 471.9L140 505L198.5 479.9C210.3 474.8 223.7 474.7 235.6 479.6C261.3 490.1 289.8 496 319.9 496C437.7 496 527.9 407.2 527.9 304C527.9 200.8 437.8 112 320 112C202.2 112 112 200.8 112 304C112 346.8 127.1 386.4 153.2 418.7z" />
+                <path d="M115.9 448.9C83.3 408.6 64 358.4 64 304C64 171.5 178.6 64 320 64C461.4 64 576 171.5 576 304C576 436.5 461.4 544 320 544C283.5 544 248.8 536.8 217.4 524L101 573.9C97.3 575.5 93.5 576 89.5 576C75.4 576 64 564.6 64 550.5C64 546.2 65.1 542 67.1 538.3L115.9 448.9zM153.2 418.7C165.4 433.8 167.3 454.8 158 471.9L140 505L198.5 479.9C210.3 474.8 223.7 474.7 235.6 479.6C261.3 490.1 289.8 496 319.9 496C437.7 496 527.9 407.2 527.9 304C527.9 200.8 112 200.8 112 304C112 346.8 127.1 386.4 153.2 418.7z" />
               </svg>
             </button>
 
@@ -396,8 +421,8 @@ export default function Comment_detail({ comment, postId }) {
             )}
           </div>
 
-          {/* INPUT FORM BALASAN */}
-          {isComment_getcomment && (
+          {/* FORM BALASAN */}
+          {!hideaction && isComment_getcomment && (
             <form onSubmit={handle_sendreply} className="flex gap-2 mt-2">
               <input
                 type="text"
@@ -419,7 +444,7 @@ export default function Comment_detail({ comment, postId }) {
         </div>
       </div>
 
-      {/* 2. DAFTAR BALASAN (SUB-COMMENTS) */}
+      {/* DAFTAR BALASAN */}
       {show_reply && repliesList.length > 0 && (
         <div className="ml-8 pl-3 border-l-2 border-slate-300 dark:border-zinc-700 flex flex-col">
           {repliesList.map((reply) => (
@@ -427,6 +452,7 @@ export default function Comment_detail({ comment, postId }) {
               key={reply.id}
               reply={reply}
               onReplyClick={handle_reply_click}
+              hideaction={hideaction}
             />
           ))}
         </div>

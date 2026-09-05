@@ -94,7 +94,7 @@ export function NewPost({ isOpen, onClose, onPostCreated }) {
       if (onClose) onClose();
     } catch (error) {
       console.error("Gagal membuat post:", error.message);
-      showStatus("Gagal mengirim postingan: " + error.message, "error"); // 6. GANTI
+      showStatus("Gagal mengirim postingan: " + error.message, "error");
     } finally {
       setLoading(false);
     }

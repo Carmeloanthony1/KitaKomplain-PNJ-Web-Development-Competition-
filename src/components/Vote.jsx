@@ -82,7 +82,7 @@ export default function VoteModal({ post, onClose, onVoteSuccess }) {
       if (error)
       {
         console.error("Gagal menghapus vote:", error.message);
-        alert("Gagal menghapus vote: " + error.message);
+        showStatus("Gagal menghapus vote: " + error.message, "error");
         return;
       }
 
@@ -104,7 +104,7 @@ export default function VoteModal({ post, onClose, onVoteSuccess }) {
       if (error)
       {
         console.error("Gagal menyimpan vote:", error.message);
-        alert("Gagal menyimpan vote: " + error.message);
+        showStatus("Gagal menyimpan vote: " + error.message, "error");
         return;
       }
 
