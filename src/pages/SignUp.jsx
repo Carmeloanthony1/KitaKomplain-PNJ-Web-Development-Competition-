@@ -26,7 +26,7 @@ function SignUp({ switchToLogin })
 
     setLoading(true)
     try {
-      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000'
+      const API_URL = 'https://kitakomplainback.vercel.app';
       const response = await fetch(`${API_URL}/api/auth/sign_up`, {
         method: 'POST',
         headers: {
