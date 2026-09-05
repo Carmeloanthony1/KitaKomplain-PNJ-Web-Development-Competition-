@@ -11,12 +11,12 @@ export default function Login({ switchToSignup, onLoginSuccess }) {
     const navigate = useNavigate();
 
     const handleSubmit = async (event) => {
-        event.preventDefault(); // Mencegah reload halaman
+        event.preventDefault();
         setLoading(true);
 
         try {
-            // Tembak API Login backend
-            const response = await fetch('http://localhost:5000/api/auth/login', {
+            const API_URL = import.meta.env.VITE_API_URL || 'https://kitakomplainback.vercel.app';
+            const response = await fetch(`${API_URL}/api/auth/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -31,13 +31,12 @@ export default function Login({ switchToSignup, onLoginSuccess }) {
                 throw new Error(data.message || 'Login gagal! Periksa kembali akunmu.');
             }
 
-            // Simpan token JWT ke browser
             localStorage.setItem('token', data.token);
 
-            if(data.user && data.user.id){
+            if (data.user && data.user.id) {
                 localStorage.setItem('user_id', data.user.id);
             }
-            // Langsung panggil callback buat pindah halaman di App.jsx tanpa alert
+
             if (onLoginSuccess) {
                 onLoginSuccess(data.user);
             }
@@ -51,8 +50,6 @@ export default function Login({ switchToSignup, onLoginSuccess }) {
 
     return (
         <div className="login-whole-background">
-
-            {/* Left Side */}
             <div className="login-left-background">
                 <h1 className="login-logo">
                     Kita
@@ -61,7 +58,6 @@ export default function Login({ switchToSignup, onLoginSuccess }) {
                 </h1>
             </div>
 
-            {/* Right Side */}
             <div className="login-right-background">
                 <div className="login-card-background">
                     <h2 className="login-card-text">
@@ -69,7 +65,6 @@ export default function Login({ switchToSignup, onLoginSuccess }) {
                     </h2>
 
                     <form onSubmit={handleSubmit} className="login-form">
-                        
                         <input
                             type="text"
                             placeholder="Username/Email"
@@ -93,7 +88,8 @@ export default function Login({ switchToSignup, onLoginSuccess }) {
                                 type="submit"
                                 className="login-button" 
                                 disabled={loading}
-                            > {loading ? 'Memproses...' : 'Submit'}
+                            >
+                                {loading ? 'Memproses...' : 'Submit'}
                             </button>  
                         </div>
 
