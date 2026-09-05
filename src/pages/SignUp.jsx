@@ -2,6 +2,7 @@ import { useState } from 'react'
 import "./SignUp.css"
 import { useNavigate } from 'react-router-dom'
 import { useStatus } from "../components/StatusContext"
+import Verify from "../components/Verify";
 
 function SignUp({ switchToLogin })
 {
@@ -10,8 +11,9 @@ function SignUp({ switchToLogin })
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [loading, setLoading] = useState(false)
+  const [isVerifyOpen, setIsVerifyOpen] = useState(false)
+  
   const { showStatus } = useStatus()
-
   const navigate = useNavigate()
 
   const handleSubmit = async (event) => 
@@ -26,7 +28,9 @@ function SignUp({ switchToLogin })
 
     setLoading(true)
     try {
-      const API_URL = 'https://kitakomplainback.vercel.app';
+      const API_URL = import.meta.env.VITE_API_URL || 'https://kitakomplainback.vercel.app';
+      
+      // Proses Sign Up
       const response = await fetch(`${API_URL}/api/auth/sign_up`, {
         method: 'POST',
         headers: {
@@ -41,17 +45,61 @@ function SignUp({ switchToLogin })
         throw new Error(data.message || 'Gagal melakukan sign up')
       }
 
-      showStatus('Sign up berhasil! Silahkan login.', 'success')
-      if(switchToLogin){
-        switchToLogin()
+      // 2. OTOMATIS LOGIN AGAR MENDAPATKAN TOKEN UNTUK OTP
+      const loginResponse = await fetch(`${API_URL}/api/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ identifier: email, password }),
+      });
+
+      if (loginResponse.ok) {
+        const loginData = await loginResponse.json();
+        
+        // Simpan token dan data user
+        localStorage.setItem("token", loginData.token);
+        localStorage.setItem("user_id", loginData.user.id);
+        localStorage.setItem("user", JSON.stringify(loginData.user));
+        
+        showStatus('Sign up berhasil! Mengirimkan kode OTP...', 'success');
+        
+        // Munculkan Modal Verifikasi (ini akan otomatis mengirim OTP dari useEffect VerifyAccount)
+        setIsVerifyOpen(true);
       } else {
-        navigate('/login')
+        // Fallback jika auto-login gagal
+        showStatus('Sign up berhasil! Silahkan login.', 'success')
+        if(switchToLogin) switchToLogin(); else navigate('/login');
       }
+
     } catch (error){
       showStatus(error.message || 'Gagal melakukan sign up', 'error')
     } finally {
       setLoading(false)
     }
+  }
+
+  // Fungsi saat proses verifikasi selesai (atau ditutup)
+  const handleVerificationDone = () =>
+  {
+    setIsVerifyOpen(false);
+    navigate('/home');
+  }
+
+  const handleVerificationCancel = () =>
+  {
+    setIsVerifyOpen(false);
+    
+    // Hapus seluruh data sesi secara paksa (Logout)
+    localStorage.removeItem("token");
+    localStorage.removeItem("user_id");
+    localStorage.removeItem("user");
+    
+    showStatus("Sign Up dibatalkan. Anda wajib memverifikasi email untuk masuk.", "error");
+    
+    // Kembalikan ke halaman login
+    if (switchToLogin)
+      switchToLogin(); 
+    else
+      navigate('/login');
   }
 
   return (
@@ -130,6 +178,15 @@ function SignUp({ switchToLogin })
           </form>
         </div>
       </div>
+
+      {/* Render modal state verifikasi */}
+      {isVerifyOpen && (
+        <Verify 
+          isOpen={isVerifyOpen}
+          onClose={handleVerificationCancel} // Jika ditutup, tidak bisa lanjut ke home
+          onSuccess={handleVerificationDone} // Jika sukses, lanjut ke home
+        />
+      )}
     </div>
   )
 }

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import Focuspost from "../components/FocusPost";
 import { useStatus } from "../components/StatusContext";
-import VerifyAccount from "../components/Verify";
+//import VerifyAccount from "../components/Verify";
 
 export default function Profile() {
   const navigate = useNavigate();
@@ -17,8 +17,8 @@ export default function Profile() {
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
 
-  const [isVerifyOpen, setIsVerifyOpen] = useState(false);
-  const [isVerified, setIsVerified] = useState(false);
+  //const [isVerifyOpen, setIsVerifyOpen] = useState(false);
+  //const [isVerified, setIsVerified] = useState(false);
 
   const [posts, setPosts] = useState([]);
   const [user_comment, setUser_comment] = useState([]);
@@ -392,6 +392,7 @@ export default function Profile() {
               </h2>
             )}
 
+            {/*
             {!isVerified && (
               <button
                 type="button"
@@ -401,6 +402,7 @@ export default function Profile() {
                 Verify?
               </button>
             )}
+            */}
 
             <button
               type="button"
@@ -639,11 +641,14 @@ export default function Profile() {
         onVoteSuccess={refreshpage}
       />
 
+      {/*
       <VerifyAccount
         isOpen={isVerifyOpen}
         onClose={() => setIsVerifyOpen(false)}
         onSuccess={() => setIsVerified(true)}
       />
+      */}
+      
     </div>
   );
 }

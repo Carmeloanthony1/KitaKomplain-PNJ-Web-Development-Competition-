@@ -65,6 +65,8 @@ export default function VoteModal({ post, onClose, onVoteSuccess }) {
       return;
     }
 
+    // Verification check
+    /*
     const { data: userData, error: userError } = await supabase
       .from("users")
       .select("is_verified")
@@ -75,6 +77,7 @@ export default function VoteModal({ post, onClose, onVoteSuccess }) {
       showStatus("Akun belum diverifikasi! Anda tidak dapat mengikuti voting ini.");
       return;
     }
+    */
 
     if (userVote === type) {
       const { error } = await supabase

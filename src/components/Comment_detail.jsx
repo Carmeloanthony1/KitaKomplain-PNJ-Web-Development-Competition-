@@ -218,7 +218,8 @@ export default function Comment_detail({ comment, postId, hideaction = false }) 
       return;
     }
 
-    // Verification check
+    // Verification Check
+    /*
     const { data: userData } = await supabase
       .from("users")
       .select("is_verified")
@@ -230,6 +231,7 @@ export default function Comment_detail({ comment, postId, hideaction = false }) 
       showStatus("Akun belum diverifikasi! Tindakan ini tidak diizinkan.");
       return;
     }
+    */
 
     const prevIsLiked = isCommentLiked;
     const prevCount = commentLikeCount;
