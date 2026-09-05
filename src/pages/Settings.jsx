@@ -123,18 +123,18 @@ export default function Settings({ user, onNavigate }) {
     <div className={`min-h-screen w-full flex flex-col transition-colors duration-300 ${isDarkMode ? "bg-[#1e1e1e] text-white" : "bg-[#f7f7f7] text-gray-800"}`}>
       
       {/* Top Header Khusus HP */}
-      <div className="md:hidden sticky top-0 z-30 flex items-center justify-between px-4 py-3 bg-white/90 dark:bg-[#1e1e1e]/90 backdrop-blur-md border-b border-gray-200 dark:border-neutral-800">
+      <div className="md:hidden sticky top-0 z-30 flex items-center gap-3 px-4 py-3 bg-white/90 dark:bg-[#1e1e1e]/90 backdrop-blur-md border-b border-gray-200 dark:border-neutral-800">
         <button
           onClick={() => navigate('/home')}
-          className="flex items-center gap-2 text-sm font-bold text-[#a50034] dark:text-[#f1ece1] cursor-pointer"
+          className="flex items-center gap-1.5 text-sm font-bold text-[#a50034] dark:text-[#f1ece1] cursor-pointer hover:opacity-80 transition"
         >
           <svg className="w-5 h-5 fill-current" viewBox="0 0 640 640">
             <path d="M41.4 342.6C28.9 330.1 28.9 309.8 41.4 297.3L169.4 169.3C178.6 160.1 192.3 157.4 204.3 162.4C216.3 167.4 224 179.1 224 192L224 256L560 256C586.5 256 608 277.5 608 304L608 336C608 362.5 586.5 384 560 384L224 384L224 448C224 460.9 216.2 472.6 204.2 477.6C192.2 482.6 178.5 479.8 169.3 470.7L41.3 342.7z" />
           </svg>
           Kembali
         </button>
+        <div className="h-4 w-px bg-gray-300 dark:bg-neutral-700"></div>
         <span className="text-base font-bold text-[#a50034] dark:text-[#f1ece1]">Settings</span>
-        <div className="w-6"></div>
       </div>
 
       <div className="flex flex-col md:flex-row flex-1 pt-4 md:pt-6">
