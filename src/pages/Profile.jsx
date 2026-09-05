@@ -66,7 +66,7 @@ export default function Profile() {
 
   useEffect(() => {
     if (!userId) {
-      setLoading(false);
+      navigate("/login");
       return;
     }
 
@@ -77,18 +77,23 @@ export default function Profile() {
         .from("users")
         .select("username, bio, avatar_url, is_anonim_mode, created_at")
         .eq("id", userId)
-        .single();
+        .maybeSingle();
 
-      if (userError) {
-        console.error("Gagal mengambil data user: ", userError.message);
-      } else if (data) {
-        setUsername(data.username || "");
-        setBio(data.bio || "Belum ada deskripsi");
-        setAvatarUrl(data.avatar_url || "");
-        setIsAnonimMode(data.is_anonim_mode || false);
-        setTempUsername(data.username || "");
-        setTempBio(data.bio || "");
+      if (userError || !data) {
+        localStorage.removeItem("user_id");
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        showStatus("Akun tidak ditemukan atau telah dihapus.", "error");
+        navigate("/login");
+        return;
       }
+
+      setUsername(data.username || "");
+      setBio(data.bio || "Belum ada deskripsi");
+      setAvatarUrl(data.avatar_url || "");
+      setIsAnonimMode(data.is_anonim_mode || false);
+      setTempUsername(data.username || "");
+      setTempBio(data.bio || "");
 
       const { data: userPosts, error: postError } = await supabase
         .from("posts")
@@ -120,8 +125,9 @@ export default function Profile() {
       await refreshpage();
       setLoading(false);
     }
+
     fetchUserData();
-  }, [userId, refreshpage]);
+  }, [userId, navigate, refreshpage, showStatus]);
 
   const handleToggleAnonim = async () => {
     const nextStatus = !isAnonimMode;
