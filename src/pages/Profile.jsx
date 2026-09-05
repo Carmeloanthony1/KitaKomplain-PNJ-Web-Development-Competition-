@@ -84,7 +84,6 @@ export default function Profile() {
         .eq("id", userId)
         .maybeSingle();
 
-      // Handle error or missing user data first
       if (userError || !data) {
         if (userError) console.error("Gagal mengambil data user: ", userError.message);
         
@@ -93,10 +92,9 @@ export default function Profile() {
         localStorage.removeItem("user");
         showStatus("Akun tidak ditemukan atau telah dihapus.", "error");
         navigate("/login");
-        return; // Stop execution here
+        return;
       }
 
-      // Data is safe, set the states exactly once
       setUsername(data.username || "");
       setBio(data.bio || "Belum ada deskripsi");
       setAvatarUrl(data.avatar_url || "");
@@ -105,7 +103,6 @@ export default function Profile() {
       setTempBio(data.bio || "");
       setIsVerified(data.is_verified || false);
 
-      // Fetch Posts
       const { data: userPosts, error: postError } = await supabase
         .from("posts")
         .select(`id, description, image_url, tag, is_anonim_mode, created_at, user_id, users (username, avatar_url)`)
@@ -118,7 +115,6 @@ export default function Profile() {
         setPosts(userPosts);
       }
 
-      // Fetch Comments
       const { data: commentsData, error: commentError } = await supabase
         .from("comments")
         .select(`
@@ -306,6 +302,7 @@ export default function Profile() {
         {/* Header Tombol Kembali */}
         <div className="flex items-center gap-3">
           <button
+            type="button"
             onClick={() => window.history.back()}
             className="p-1.5 sm:p-2 rounded-full hover:bg-gray-200 dark:hover:bg-neutral-800 transition-colors cursor-pointer"
           >
@@ -323,13 +320,13 @@ export default function Profile() {
           </h1>
         </div>
 
-        {/* Kartu Profil Utama */}
+        {/* Kartu Profil Utama (Full Center) */}
         <div className="bg-white dark:bg-[#222222] rounded-2xl shadow-sm border border-gray-200 dark:border-neutral-800 overflow-hidden">
           <div className="h-28 sm:h-36 bg-[#f1ece1] dark:bg-[#e4ded3] w-full"></div>
 
-          <div className="px-4 sm:px-8 pb-6 relative flex flex-col items-center sm:items-start">
-            {/* Foto Profil */}
-            <div className="-mt-14 sm:-mt-16 mb-3 relative inline-block">
+          <div className="px-4 sm:px-8 pb-6 relative flex flex-col items-center text-center">
+            {/* Foto Profil & Badge Anonim */}
+            <div className="-mt-14 sm:-mt-16 mb-3 relative inline-flex flex-col items-center">
               <label className="relative cursor-pointer group rounded-full overflow-hidden block w-24 h-24 sm:w-28 sm:h-28 border-4 border-white dark:border-[#222222] shadow bg-white dark:bg-[#222222]">
                 {avatarUrl ? (
                   <img
@@ -357,86 +354,85 @@ export default function Profile() {
               </label>
 
               {isAnonimMode && (
-                <span className="absolute bottom-0 right-1/2 translate-x-1/2 sm:translate-x-0 sm:right-0 bg-gray-900 text-white text-[10px] font-bold px-2 py-0.5 rounded-full border border-gray-700 shadow">
+                <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full border border-gray-700 shadow whitespace-nowrap z-10">
                   Anonim
                 </span>
               )}
             </div>
 
-            {/* Info Nama & Switch Mode Anonim */}
-            <div className="flex flex-wrap items-center justify-between gap-4 w-full">
-              <div className="flex flex-col gap-1 w-full sm:w-auto">
-                <div className="flex items-center justify-center sm:justify-start gap-2">
-                  {isEditingName ? (
-                    <input
-                      type="text"
-                      value={tempUsername}
-                      onChange={(e) => setTempUsername(e.target.value)}
-                      onBlur={handleSaveName}
-                      onKeyDown={(e) => e.key === "Enter" && handleSaveName()}
-                      autoFocus
-                      className="text-2xl font-bold border-b-2 border-[#a50034] dark:border-[#f1ece1] outline-none bg-transparent text-gray-900 dark:text-[#f1ece1] text-center sm:text-left"
-                    />
-                  ) : (
-                    <h2 className="text-2xl font-bold text-gray-900 dark:text-[#f1ece1] flex items-center gap-1.5 justify-center sm:justify-start">
-                      {username || "User"}
-                    </h2>
-                  )}
-
-                  <button
-                    onClick={() => setIsEditingName((prev) => !prev)}
-                    className="text-gray-500 hover:text-gray-700 dark:text-[#f1ece1] transition cursor-pointer flex-shrink-0"
-                  >
-                    <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
-                      <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
-                    </svg>
-                  </button>
-                </div>
-
-                {!isVerified && (
-                  <p
-                    onClick={() => setIsVerifyOpen(true)} 
-                    className="text-xs text-rose-600 dark:text-rose-400 font-medium cursor-pointer hover:underline text-center sm:text-left mt-1"
-                  >
-                    Verify your account?
-                  </p>
+            {/* Nama & Status Verifikasi */}
+            <div className="flex flex-col items-center justify-center gap-1 w-full">
+              <div className="flex items-center justify-center gap-2">
+                {isEditingName ? (
+                  <input
+                    type="text"
+                    value={tempUsername}
+                    onChange={(e) => setTempUsername(e.target.value)}
+                    onBlur={handleSaveName}
+                    onKeyDown={(e) => e.key === "Enter" && handleSaveName()}
+                    autoFocus
+                    className="text-2xl font-bold border-b-2 border-[#a50034] dark:border-[#f1ece1] outline-none bg-transparent text-gray-900 dark:text-[#f1ece1] text-center"
+                  />
+                ) : (
+                  <h2 className="text-2xl font-bold text-gray-900 dark:text-[#f1ece1] flex items-center gap-1.5 justify-center">
+                    {username || "User"}
+                  </h2>
                 )}
-              </div>
 
-              {/* Toggle Switch Mode Anonim */}
-              <div className="flex items-center gap-2.5 bg-gray-100 dark:bg-[#1a1a1a] px-3.5 py-1.5 rounded-full border border-gray-200 dark:border-neutral-800 sm:ml-auto">
-                <span className="text-xs font-semibold text-gray-700 dark:text-[#f1ece1]">
-                  Mode Anonim
-                </span>
                 <button
                   type="button"
-                  onClick={handleToggleAnonim}
-                  className={`relative inline-flex items-center h-5 w-10 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                    isAnonimMode ? "bg-[#a50034] dark:bg-[#a50034]" : "bg-gray-300 dark:bg-neutral-600"
-                  }`}
+                  onClick={() => setIsEditingName((prev) => !prev)}
+                  className="text-gray-500 hover:text-gray-700 dark:text-[#f1ece1] transition cursor-pointer flex-shrink-0"
                 >
-                  <span
-                    className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
-                      isAnonimMode ? "translate-x-5" : "translate-x-0"
-                    }`}
-                  />
+                  <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                    <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+                  </svg>
                 </button>
               </div>
+
+              {!isVerified && (
+                <p
+                  onClick={() => setIsVerifyOpen(true)} 
+                  className="text-xs text-rose-600 dark:text-rose-400 font-medium cursor-pointer hover:underline text-center mt-0.5"
+                >
+                  Verify your account?
+                </p>
+              )}
             </div>
 
-            {/* Statistik Posts / Comments / Polls */}
-            <div className="w-full flex justify-center sm:justify-start my-4">
-              <div className="flex items-center gap-6 bg-gray-50 dark:bg-[#1a1a1a] px-5 py-2 rounded-xl border border-gray-100 dark:border-neutral-800 text-xs sm:text-sm">
+            {/* Toggle Switch Mode Anonim (Center) */}
+            <div className="flex items-center justify-center gap-2.5 bg-gray-100 dark:bg-[#1a1a1a] px-4 py-1.5 rounded-full border border-gray-200 dark:border-neutral-800 my-3">
+              <span className="text-xs font-semibold text-gray-700 dark:text-[#f1ece1] select-none">
+                Mode Anonim
+              </span>
+              <button
+                type="button"
+                onClick={handleToggleAnonim}
+                className={`relative inline-flex items-center h-5 w-10 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                  isAnonimMode ? "bg-[#a50034] dark:bg-[#a50034]" : "bg-gray-300 dark:bg-neutral-600"
+                }`}
+              >
+                <span
+                  className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                    isAnonimMode ? "translate-x-5" : "translate-x-0"
+                  }`}
+                />
+              </button>
+            </div>
+
+            {/* Statistik Posts / Comments / Polls (Center) */}
+            <div className="w-full flex justify-center my-2">
+              <div className="flex items-center justify-center gap-6 bg-gray-50 dark:bg-[#1a1a1a] px-6 py-2.5 rounded-xl border border-gray-100 dark:border-neutral-800 text-xs sm:text-sm shadow-2xs">
                 <div className="text-center">
                   <span className="font-bold text-gray-900 dark:text-white">{posts.length}</span>{" "}
                   <span className="text-gray-500 dark:text-gray-400">Posts</span>
                 </div>
-                <div className="w-px h-3 bg-gray-300 dark:bg-neutral-700"></div>
+                <div className="w-px h-3.5 bg-gray-300 dark:bg-neutral-700"></div>
                 <div className="text-center">
                   <span className="font-bold text-gray-900 dark:text-white">{user_comment.length}</span>{" "}
                   <span className="text-gray-500 dark:text-gray-400">Comments</span>
                 </div>
-                <div className="w-px h-3 bg-gray-300 dark:bg-neutral-700"></div>
+                <div className="w-px h-3.5 bg-gray-300 dark:bg-neutral-700"></div>
                 <div className="text-center">
                   <span className="font-bold text-gray-900 dark:text-white">{pollsCount}</span>{" "}
                   <span className="text-gray-500 dark:text-gray-400">Polls</span>
@@ -444,11 +440,12 @@ export default function Profile() {
               </div>
             </div>
 
-            {/* Bagian Deskripsi / Bio */}
-            <div className="w-full flex flex-col gap-1 text-center sm:text-left">
-              <div className="flex items-center justify-center sm:justify-start gap-1.5">
+            {/* Deskripsi / Bio (Center) */}
+            <div className="w-full max-w-md flex flex-col items-center justify-center gap-1 mt-2 text-center">
+              <div className="flex items-center justify-center gap-1.5">
                 <h3 className="text-xs font-bold text-[#a50034] dark:text-[#f1ece1]">Deskripsi</h3>
                 <button
+                  type="button"
                   onClick={() => setIsEditingBio((prev) => !prev)}
                   className="text-gray-400 hover:text-gray-600 dark:hover:text-[#f1ece1] transition cursor-pointer p-0.5"
                 >
@@ -459,30 +456,32 @@ export default function Profile() {
               </div>
 
               {isEditingBio ? (
-                <div className="flex flex-col gap-2 mt-1">
+                <div className="flex flex-col items-center gap-2 mt-1 w-full">
                   <textarea
                     value={tempBio}
                     onChange={(e) => setTempBio(e.target.value)}
                     rows={2}
-                    className="w-full text-xs p-2 border border-gray-300 dark:border-neutral-700 rounded-lg focus:outline-none bg-gray-50 dark:bg-[#1a1a1a] text-gray-900 dark:text-[#f1ece1] resize-none"
+                    className="w-full text-xs p-2.5 border border-gray-300 dark:border-neutral-700 rounded-lg focus:outline-none bg-gray-50 dark:bg-[#1a1a1a] text-gray-900 dark:text-[#f1ece1] text-center resize-none"
                   />
-                  <div className="flex justify-end gap-2">
+                  <div className="flex justify-center gap-2">
                     <button
+                      type="button"
                       onClick={() => setIsEditingBio(false)}
-                      className="text-xs px-2.5 py-1 rounded-md text-gray-500 cursor-pointer"
+                      className="text-xs px-3 py-1 rounded-md text-gray-500 cursor-pointer"
                     >
                       Batal
                     </button>
                     <button
+                      type="button"
                       onClick={handleSaveBio}
-                      className="text-xs px-2.5 py-1 rounded-md bg-[#a50034] text-white cursor-pointer"
+                      className="text-xs px-3 py-1 rounded-md bg-[#a50034] text-white cursor-pointer"
                     >
                       Simpan
                     </button>
                   </div>
                 </div>
               ) : (
-                <p className="text-gray-600 dark:text-neutral-300 text-xs leading-relaxed">
+                <p className="text-gray-600 dark:text-neutral-300 text-xs leading-relaxed text-center px-4">
                   {bio}
                 </p>
               )}
@@ -491,8 +490,8 @@ export default function Profile() {
           </div>
         </div>
 
-        {/* Tab Navigasi */}
-        <div className="flex items-center gap-6 border-b border-gray-200 dark:border-neutral-800 px-2">
+        {/* Tab Navigasi (Center) */}
+        <div className="flex items-center justify-center gap-8 border-b border-gray-200 dark:border-neutral-800 px-2">
           {[
             { id: "posts", label: "Posts" },
             { id: "comments", label: "Comments" },
@@ -500,6 +499,7 @@ export default function Profile() {
           ].map((tab) => (
             <button
               key={tab.id}
+              type="button"
               onClick={() => setActiveTab(tab.id)}
               className={`text-xs sm:text-sm font-bold transition-all pb-2.5 border-b-2 cursor-pointer ${
                 activeTab === tab.id
@@ -525,7 +525,7 @@ export default function Profile() {
                   <div
                     key={item.id}
                     onClick={() => handlePost_click(item)}
-                    className="aspect-square bg-gray-100 dark:bg-[#1a1a1a] rounded-xl border-2 border-gray-300 overflow-hidden cursor-pointer hover:opacity-90 transition-opacity relative group"
+                    className="aspect-square bg-gray-100 dark:bg-[#1a1a1a] rounded-xl border-2 border-gray-300 dark:border-neutral-700 overflow-hidden cursor-pointer hover:opacity-90 transition-opacity relative group"
                   >
                     {item.is_anonim_mode && (
                       <div className="absolute top-2 left-2 z-10 bg-black/75 text-white text-[9px] font-bold px-1.5 py-0.5 rounded shadow">
@@ -562,7 +562,7 @@ export default function Profile() {
                   <div
                     key={item.id}
                     onClick={() => handleComment_click(item)}
-                    className="bg-gray-50 dark:bg-[#1a1a1a] border border-gray-200 dark:border-neutral-800 rounded-xl p-3 text-left cursor-pointer hover:border-[#a50034] transition-colors"
+                    className="bg-gray-50 dark:bg-[#1a1a1a] border border-gray-200 dark:border-neutral-800 rounded-xl p-3 text-left cursor-pointer hover:border-[#a50034] dark:hover:border-[#f1ece1] transition-colors"
                   >
                     <div className="flex justify-between items-center text-[10px] text-gray-400 mb-1">
                       <span>
@@ -589,7 +589,7 @@ export default function Profile() {
                   <div
                     key={item.id}
                     onClick={() => handle_voteclick(item)}
-                    className="bg-gray-50 dark:bg-[#1a1a1a] border border-gray-200 dark:border-neutral-800 rounded-xl p-3 text-left cursor-pointer hover:border-[#a50034] transition-colors"
+                    className="bg-gray-50 dark:bg-[#1a1a1a] border border-gray-200 dark:border-neutral-800 rounded-xl p-3 text-left cursor-pointer hover:border-[#a50034] dark:hover:border-[#f1ece1] transition-colors"
                   >
                     <div className="flex justify-between items-center text-[10px] text-gray-400 mb-1">
                       <span>
