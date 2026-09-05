@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
-export default function Navbar({ user, openNotifications, onOpenNewPost, openPollingModal }) {
+export default function Navbar({ user, openNotifications, onOpenNewPost, openPollingModal, openHistory }) {
   const [search_params] = useSearchParams();
   const navigate = useNavigate();
   const inputRef = useRef(null);
@@ -70,8 +70,32 @@ export default function Navbar({ user, openNotifications, onOpenNewPost, openPol
     }
   }, [search_term, quert_tag]);
 
-  const handleSearch = (e) => {
+  // Save history
+  const saveSearchToHistory = (term) =>
+  {
+    const cleanTerm = term.replace("#", "").trim().toLowerCase();
+    if (!cleanTerm) return;
+    
+    let history = JSON.parse(localStorage.getItem("search_history")) || [];
+    
+    history = history.filter(item => item !== cleanTerm);
+    
+    history.unshift(cleanTerm);
+    
+    // Batasi history maksimal 20 item agar tidak berat
+    if (history.length > 20) history.pop(); 
+    
+    localStorage.setItem("search_history", JSON.stringify(history));
+  };
+
+  const handleSearch = (e) =>
+  {
     if (e) e.preventDefault();
+    saveSearchToHistory(search_term);
+
+    const clean_keyword = search_term.replace("#", "").trim().toLowerCase(); 
+    if (clean_keyword !== "")
+      navigate(`/search?tag=${clean_keyword}`, { replace: true });
   };
 
   const handleLogout = () => {
@@ -116,7 +140,7 @@ export default function Navbar({ user, openNotifications, onOpenNewPost, openPol
               placeholder="Cari topik" 
               value={search_term}
               onChange={(e) => setSearch_term(e.target.value)} 
-              className="w-full bg-transparent text-black placeholder-[#a50034]/60 dark:placeholder-[#f1ece1] dark:text-[#f1ece1] text-center font-semibold focus:outline-none text-[11px] sm:text-base pr-4 sm:pr-6"
+              className="w-full bg-transparent text-black placeholder-[#a50034]/60 dark:placeholder-[#f1ece1] dark:text-[#f1ece1] text-center font-semibold focus:outline-none focus:placeholder-transparent text-[11px] sm:text-base pr-4 sm:pr-6 transition-colors"
             />
             <button type="submit" aria-label="Search" className="absolute right-2.5 sm:right-4 focus:outline-none flex-shrink-0">
               <svg className="w-3.5 h-3.5 sm:w-5 sm:h-5 fill-[#a50034] dark:fill-[#f1ece1] cursor-pointer hover:scale-110 transition-transform" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
@@ -159,7 +183,15 @@ export default function Navbar({ user, openNotifications, onOpenNewPost, openPol
                 Profile
               </button>
               
-              <button onClick={() => { setIsMenuOpen(false); navigate('/history'); }} className={menuItemClass}>
+              <button onClick={() => { 
+                setIsMenuOpen(false); 
+                if (openHistory) 
+                  openHistory(); 
+                else 
+                  navigate('/search');
+                }}
+                className={menuItemClass}
+              >
                 History
               </button>
               

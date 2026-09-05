@@ -380,12 +380,6 @@ export default function Profile() {
                   ) : (
                     <h2 className="text-2xl font-bold text-gray-900 dark:text-[#f1ece1] flex items-center gap-1.5 justify-center sm:justify-start">
                       {username || "User"}
-                      
-                      {isVerified && (
-                        <svg className="w-5 h-5 sm:w-6 sm:h-6 fill-blue-500 flex-shrink-0" viewBox="0 0 24 24">
-                          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
-                        </svg>
-                      )}
                     </h2>
                   )}
 
