@@ -10,6 +10,9 @@ export default function SearchPage({ user, onNavigate }) {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const CHUNK_SIZE = 40;
+  const [visibleWordsMap, setVisibleWordsMap] = useState({});
+
   useEffect(() => {
     async function fetchSearchPosts() {
       if (!queryTag) {
@@ -48,16 +51,69 @@ export default function SearchPage({ user, onNavigate }) {
     fetchSearchPosts();
   }, [queryTag]);
 
+  const renderDescription = (post) => {
+    const rawText = post.description || "";
+    const words = rawText.trim().split(/\s+/);
+    const totalWords = words.length;
+
+    const currentVisible = visibleWordsMap[post.id] || CHUNK_SIZE;
+
+    if (totalWords <= CHUNK_SIZE) {
+      return (
+        <p className="text-gray-800 dark:text-neutral-200 text-sm leading-relaxed sm:pl-[52px] break-words whitespace-pre-line">
+          {rawText}
+        </p>
+      );
+    }
+
+    const hasMore = currentVisible < totalWords;
+    const displayedWords = words.slice(0, currentVisible).join(" ");
+
+    return (
+      <div className="flex flex-col items-start sm:pl-[52px]">
+        <p className="text-gray-800 dark:text-neutral-200 text-sm leading-relaxed break-words whitespace-pre-line">
+          {displayedWords}
+          {hasMore && "..."}
+        </p>
+
+        {hasMore ? (
+          <button
+            onClick={() =>
+              setVisibleWordsMap((prev) => ({
+                ...prev,
+                [post.id]: (prev[post.id] || CHUNK_SIZE) + CHUNK_SIZE,
+              }))
+            }
+            className="mt-1 text-xs font-bold text-[#8B0021] dark:text-[#f1ece1] hover:underline cursor-pointer focus:outline-none"
+          >
+            Lihat selengkapnya
+          </button>
+        ) : (
+          <button
+            onClick={() =>
+              setVisibleWordsMap((prev) => ({
+                ...prev,
+                [post.id]: CHUNK_SIZE,
+              }))
+            }
+            className="mt-1 text-xs font-bold text-gray-500 dark:text-neutral-400 hover:underline cursor-pointer focus:outline-none"
+          >
+            Sembunyikan
+          </button>
+        )}
+      </div>
+    );
+  };
+
   return (
-    <div className="min-h-screen bg-[#f7f7f7] flex flex-col">
-      <header className="fixed top-0 left-0 right-0 z-30 bg-[#f7f7f7] border-b border-gray-200">
+    <div className="min-h-screen bg-[#f7f7f7] dark:bg-[#1a1a1a] flex flex-col transition-colors">
+      <header className="fixed top-0 left-0 right-0 z-30 bg-[#f7f7f7] dark:bg-[#1a1a1a] border-b border-gray-200 dark:border-neutral-800">
         <Navbar user={user} openProfile={() => onNavigate && onNavigate("profile")} />
       </header>
 
       <main className="flex-1 max-w-3xl mx-auto w-full pt-24 pb-12 px-4">
-        {/* Header Tag Populer / Active Tag */}
         <div className="mb-6">
-          <h2 className="text-gray-700 font-semibold mb-2">Tag Populer</h2>
+          <h2 className="text-gray-700 dark:text-neutral-300 font-semibold mb-2">Tag Populer</h2>
           {queryTag && (
             <span className="inline-block bg-[#8B0021] text-white px-4 py-1.5 rounded-full text-sm font-bold">
               #{queryTag}
@@ -65,11 +121,10 @@ export default function SearchPage({ user, onNavigate }) {
           )}
         </div>
 
-        {/* Content List */}
         {loading ? (
-          <div className="text-center py-10 text-gray-500">Mencari postingan...</div>
+          <div className="text-center py-10 text-gray-500 dark:text-neutral-400">Mencari postingan...</div>
         ) : posts.length === 0 ? (
-          <div className="text-center py-10 text-gray-500">
+          <div className="text-center py-10 text-gray-500 dark:text-neutral-400">
             Tidak ada postingan dengan tag #{queryTag}
           </div>
         ) : (
@@ -85,37 +140,37 @@ export default function SearchPage({ user, onNavigate }) {
               return (
                 <div
                   key={post.id}
-                  className="bg-white border-2 border-[#8B0021]/30 rounded-2xl p-5 shadow-sm hover:border-[#8B0021] transition-all"
+                  className="bg-white dark:bg-[#242424] border-2 border-[#8B0021]/30 rounded-2xl p-5 shadow-xs hover:border-[#8B0021] transition-all"
                 >
-                  {/* Header User + Tag Sebelah Kanan */}
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-3">
-                      <img
-                        src={post.users?.avatar_url || "https://via.placeholder.com/40"}
-                        alt={post.users?.username || "User"}
-                        className="w-10 h-10 rounded-full object-cover border border-gray-200"
-                      />
-                      <h4 className="font-bold text-gray-900 text-sm">
+                      {post.users?.avatar_url ? (
+                        <img
+                          src={post.users.avatar_url}
+                          alt={post.users?.username || "User"}
+                          className="w-10 h-10 rounded-full object-cover border border-gray-200 dark:border-neutral-700"
+                        />
+                      ) : (
+                        <div className="w-10 h-10 rounded-full bg-[#8B0021] text-white font-bold flex items-center justify-center uppercase text-sm">
+                          {(post.users?.username || "U")[0]}
+                        </div>
+                      )}
+                      <h4 className="font-bold text-gray-900 dark:text-[#f1ece1] text-sm">
                         {post.users?.username || "Anonim"}
                       </h4>
                     </div>
 
-                    {/* Tag Posisi Kanan */}
                     {post.tag && (
-                      <span className="inline-block bg-[#8B0021]/10 text-[#8B0021] text-xs font-semibold px-2.5 py-1 rounded-full">
+                      <span className="inline-block bg-[#8B0021]/10 text-[#8B0021] dark:bg-[#8B0021]/20 dark:text-[#f1ece1] text-xs font-semibold px-2.5 py-1 rounded-full">
                         #{post.tag}
                       </span>
                     )}
                   </div>
 
-                  {/* Body Deskripsi */}
-                  <p className="text-gray-800 text-sm leading-relaxed pl-[52px]">
-                    {post.description}
-                  </p>
+                  {renderDescription(post)}
 
-                  {/* Attachment Index Indicator (W-FIT Pill Badge) */}
                   {attachmentCount > 0 && (
-                    <div className="mt-3 pt-2 pl-[52px]">
+                    <div className="mt-3 pt-2 sm:pl-[52px]">
                       <div className="inline-flex items-center gap-1.5 bg-[#8B0021] text-white text-xs font-medium px-3 py-1.5 rounded-lg w-fit">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"

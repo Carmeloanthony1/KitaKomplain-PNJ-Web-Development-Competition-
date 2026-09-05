@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { supabase } from "../supabaseClient";
 
 export default function Most_Polling({ onUserClick, onPostClick }) {
@@ -6,7 +6,7 @@ export default function Most_Polling({ onUserClick, onPostClick }) {
   const [isdark, setIsdark] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  const fetch_mypolling = async (isSilent = false) => {
+  const fetch_mypolling = useCallback(async (isSilent = false) => {
     try {
       if (!isSilent) setLoading(true);
 
@@ -49,13 +49,15 @@ export default function Most_Polling({ onUserClick, onPostClick }) {
     } finally {
       if (!isSilent) setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetch_mypolling();
 
-    const channel = supabase
-      .channel('most-polling-tracker')
+    const channelId = `most-polling-${Math.random().toString(36).substring(2, 9)}`;
+    const channel = supabase.channel(channelId);
+
+    channel
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'votes' },
@@ -74,7 +76,7 @@ export default function Most_Polling({ onUserClick, onPostClick }) {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, []);
+  }, [fetch_mypolling]);
 
   useEffect(() => {
     const checkTheme = () => {
@@ -95,8 +97,8 @@ export default function Most_Polling({ onUserClick, onPostClick }) {
   return (
     <aside className="w-full bg-white dark:bg-black rounded-2xl shadow-md border border-gray-200 dark:border-2 dark:border-[#f1ece1] flex flex-col transition-colors overflow-hidden">
       
-      {/* Header Most Polling */}
-      <div className="bg-[#a50034] dark:bg-[#1e1e1e] py-3 px-4 flex items-center justify-center rounded-t-2xl transition-colors">
+      {/* Judul: Hilang di HP, Muncul di Desktop (hidden sm:flex) */}
+      <div className="hidden sm:flex bg-[#a50034] dark:bg-[#1e1e1e] py-3 px-4 items-center justify-center rounded-t-2xl transition-colors">
         <h1 className="text-white dark:text-[#f1ece1] text-xl font-bold tracking-wide">
           Most Polling
         </h1>
@@ -137,7 +139,7 @@ export default function Most_Polling({ onUserClick, onPostClick }) {
                   #{index + 1}
                 </span>
 
-                {/* Card Polling Item (Dipasang onClick di sini) */}
+                {/* Card Polling Item */}
                 <div 
                   onClick={() => onPostClick && onPostClick(item)}
                   className="group bg-gray-50 dark:bg-[#1e1e1e] hover:bg-red-50/50 border border-gray-200 hover:border-[#a50034]/40 dark:hover:border-[#f1ece1] p-3 rounded-xl transition duration-200 flex flex-col gap-2 cursor-pointer flex-1 w-full min-w-0"
@@ -150,7 +152,7 @@ export default function Most_Polling({ onUserClick, onPostClick }) {
                           src={avatarUrl}
                           alt={username}
                           onClick={(e) => {
-                            e.stopPropagation(); // Biar gak ke-trigger modal post saat klik avatar
+                            e.stopPropagation();
                             if (onUserClick) onUserClick(item.user_id);
                           }}
                           className="w-6 h-6 rounded-full object-cover flex-shrink-0 cursor-pointer border border-[#a50034] dark:border-[#f1ece1] hover:opacity-80 transition-opacity"
@@ -158,7 +160,7 @@ export default function Most_Polling({ onUserClick, onPostClick }) {
                       ) : (
                         <div
                           onClick={(e) => {
-                            e.stopPropagation(); // Biar gak ke-trigger modal post
+                            e.stopPropagation();
                             if (onUserClick) onUserClick(item.user_id);
                           }}
                           className="w-6 h-6 rounded-full flex justify-center bg-white text-[#a50034] border border-[#a50034] dark:border-[#f1ece1] text-xs font-bold items-center flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity"
