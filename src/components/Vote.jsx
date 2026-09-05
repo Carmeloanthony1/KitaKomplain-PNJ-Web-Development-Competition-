@@ -47,49 +47,47 @@ export default function VoteModal({ post, onClose, onVoteSuccess }) {
     fetchVoteData(true);
   }, [fetchVoteData]);
 
-  const handleVote = async (type) =>
-  {
+  const handleClose = (e) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    if (typeof onClose === "function") {
+      onClose();
+    }
+  };
+
+  const handleVote = async (type) => {
     const activeUserId = await getActiveUserId();
 
-    if (!activeUserId)
-    {
+    if (!activeUserId) {
       showStatus("Silakan login terlebih dahulu!");
       return;
     }
 
-    // Verification check
     const { data: userData, error: userError } = await supabase
       .from("users")
       .select("is_verified")
       .eq("id", activeUserId)
       .single();
 
-    if (userError || !userData?.is_verified)
-    {
+    if (userError || !userData?.is_verified) {
       showStatus("Akun belum diverifikasi! Anda tidak dapat mengikuti voting ini.");
       return;
     }
 
-    if (userVote === type)
-    {
-      // THIS BLOCK RUNS WHEN REMOVING A VOTE
+    if (userVote === type) {
       const { error } = await supabase
         .from("votes")
         .delete()
         .eq("post_id", post.id)
         .eq("user_id", activeUserId);
 
-      if (error)
-      {
-        console.error("Gagal menghapus vote:", error.message);
+      if (error) {
         showStatus("Gagal menghapus vote: " + error.message, "error");
         return;
       }
-
-    }
-    else
-    {
-      // THIS BLOCK RUNS WHEN ADDING/CHANGING A VOTE
+    } else {
       const { error } = await supabase.from("votes").upsert(
         [
           {
@@ -101,149 +99,66 @@ export default function VoteModal({ post, onClose, onVoteSuccess }) {
         { onConflict: "post_id, user_id" }
       );
 
-      if (error)
-      {
-        console.error("Gagal menyimpan vote:", error.message);
+      if (error) {
         showStatus("Gagal menyimpan vote: " + error.message, "error");
         return;
-      }
-
-      // Milestone Notification Logic
-      if (type === "up")
-      {
-        const newUpvotes = upvotes + 1; // Calculate what the new score is
-        
-        if (newUpvotes % 3 === 0 && newUpvotes > 0)
-        {
-          // Check if we already sent this specific milestone to prevent spam
-          const { data: existingMilestone } = await supabase
-            .from("notifications")
-            .select("id")
-            .eq("post_id", post.id)
-            .eq("type", `milestone_${newUpvotes}`)
-            .maybeSingle();
-
-          // If it doesn't exist, create it!
-          if (!existingMilestone)
-          {
-            await supabase.from("notifications").insert([
-              {
-                user_id: post.user_id,     // Post owner receives it
-                actor_id: activeUserId,    // The 3rd voter
-                post_id: post.id,
-                type: `milestone_${newUpvotes}`,
-                is_read: false
-              }
-            ]);
-          }
-        }
-      }
-      
-      // Top Most Polling Logic
-
-      // Fetch all posts and votes to calculate current ranks
-      const { data: allPosts } = await supabase
-        .from('posts')
-        .select('id, user_id, votes(vote_type)');
-
-      if (allPosts)
-      {
-        // Calculate upvotes + sort highest to lowest
-        const rankedPosts = allPosts.map(p => {
-          const upCount = p.votes ? p.votes.filter(v => v.vote_type === 'up' || v.vote_type === 'setuju').length : 0;
-          return { id: p.id, user_id: p.user_id, upCount };
-        }).sort((a, b) => b.upCount - a.upCount);
-
-        const top5Posts = rankedPosts.slice(0, 5);
-        const isTop5 = top5Posts.some(p => p.id === post.id);
-
-        if (isTop5)
-        {
-          // Check if we already notified them about entering the top 5 to avoid spam
-          const { data: existingRankNotif } = await supabase
-            .from("notifications")
-            .select("id")
-            .eq("post_id", post.id)
-            .eq("type", "rank_top_5")
-            .maybeSingle();
-
-          if (!existingRankNotif)
-          {
-            await supabase.from("notifications").insert([
-              {
-                user_id: post.user_id,
-                actor_id: activeUserId,
-                post_id: post.id,
-                type: "rank_top_5",
-                is_read: false
-              }
-            ]);
-          }
-        }
       }
     }
 
     await fetchVoteData(false);
 
-    if (typeof onVoteSuccess === "function")
-    {
+    if (typeof onVoteSuccess === "function") {
       await onVoteSuccess();
     }
 
-    // NUTUP MODAL LANGSUNG ABIS VOTE, GAK PEDULI UP ATAU DOWN
-    if (typeof onClose === "function")
-    {
-      onClose();
-    }
-
+    handleClose();
   };
 
   if (!post) return null;
 
   return createPortal(
     <div
-      onClick={onClose}
-      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-fadeIn"
+      onClick={handleClose}
+      className="fixed inset-0 z-[999999] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fadeIn"
+      style={{ pointerEvents: "auto" }}
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="relative max-w-lg w-full bg-white border-4 border-[#a50034]/50 rounded-2xl p-6 shadow-2xl flex flex-col items-center text-center gap-5"
+        className="relative max-w-lg w-full bg-white dark:bg-[#1e1e1e] border-4 border-[#a50034]/50 dark:border-[#f1ece1]/30 rounded-2xl p-6 shadow-2xl flex flex-col items-center text-center gap-5 transition-colors"
+        style={{ pointerEvents: "auto" }}
       >
-
         <button
           type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            if (typeof onClose === "function") onClose();
-          }}
-          className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 font-bold text-xl w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors cursor-pointer"
+          onClick={handleClose}
+          aria-label="Tutup modal"
+          className="absolute top-3 right-3 z-50 text-gray-500 hover:text-black dark:text-[#f1ece1] hover:bg-gray-100 dark:hover:bg-neutral-800 w-10 h-10 flex items-center justify-center rounded-full text-2xl font-black transition-colors cursor-pointer select-none"
         >
           ✕
         </button>
 
         {loading ? (
-          <div className="py-12 font-semibold text-gray-600">
-            Memperbaharui Data polling...
+          <div className="py-12 font-semibold text-gray-600 dark:text-gray-300">
+            Memperbaharui Data voting...
           </div>
         ) : (
           <>
-            <div className="flex flex-col items-center gap-1.5">
-              <span className="bg-[#a50034]/10 text-[#a50034] text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
-                Polling Postingan
+            <div className="flex flex-col items-center gap-1.5 mt-1">
+              <span className="bg-[#a50034]/10 dark:bg-white/10 text-[#a50034] dark:text-[#f1ece1] text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                Vote Postingan
               </span>
-              <h2 className="text-xl font-extrabold text-gray-800">
+              <h2 className="text-xl font-extrabold text-gray-800 dark:text-[#f1ece1]">
                 Apakah issue ini penting?
               </h2>
             </div>
 
-            <div className="w-full bg-red-50 border border-red-200 py-3 rounded-xl">
-              <p className="text-xs text-gray-600 font-medium">Total Dukungan Saat Ini</p>
-              <div className="text-lg font-black text-[#a50034] mt-1 flex items-center justify-center gap-2">
+            <div className="w-full bg-red-50 dark:bg-[#252525] border border-red-200 dark:border-neutral-700 py-3 rounded-xl">
+              <p className="text-xs text-gray-600 dark:text-gray-400 font-medium">Total Dukungan Saat Ini</p>
+              <div className="text-lg font-black text-[#a50034] dark:text-[#f1ece1] mt-1 flex items-center justify-center gap-2">
                 {upvotes}
                 <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
                   <path d="M12 4l-8 8h5v8h6v-8h5z" />
                 </svg>
-                <span className="text-gray-300 mx-1">|</span>
+                <span className="text-gray-300 dark:text-neutral-600 mx-1">|</span>
                 {downvotes}
                 <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
                   <path d="M12 20l8-8h-5V4h-6v8H4z" />
@@ -253,11 +168,13 @@ export default function VoteModal({ post, onClose, onVoteSuccess }) {
 
             <div className="flex gap-3 w-full justify-center">
               <button
+                type="button"
                 onClick={() => handleVote("up")}
-                className={`flex-1 py-2.5 px-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 border-2 transition-all cursor-pointer ${userVote === "up"
+                className={`flex-1 py-2.5 px-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 border-2 transition-all cursor-pointer ${
+                  userVote === "up"
                     ? "bg-[#a50034] text-white border-[#a50034] shadow-md scale-105"
-                    : "bg-white text-[#a50034] border-[#a50034] hover:bg-red-50"
-                  }`}
+                    : "bg-white dark:bg-transparent text-[#a50034] dark:text-[#f1ece1] border-[#a50034] dark:border-[#f1ece1] hover:bg-red-50 dark:hover:bg-white/10"
+                }`}
               >
                 <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
                   <path d="M12 4l-8 8h5v8h6v-8h5z" />
@@ -266,11 +183,13 @@ export default function VoteModal({ post, onClose, onVoteSuccess }) {
               </button>
 
               <button
+                type="button"
                 onClick={() => handleVote("down")}
-                className={`flex-1 py-2.5 px-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 border-2 transition-all cursor-pointer ${userVote === "down"
+                className={`flex-1 py-2.5 px-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 border-2 transition-all cursor-pointer ${
+                  userVote === "down"
                     ? "bg-[#a50034] text-white border-[#a50034] shadow-md scale-105"
-                    : "bg-white text-[#a50034] border-[#a50034] hover:bg-red-50"
-                  }`}
+                    : "bg-white dark:bg-transparent text-[#a50034] dark:text-[#f1ece1] border-[#a50034] dark:border-[#f1ece1] hover:bg-red-50 dark:hover:bg-white/10"
+                }`}
               >
                 <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
                   <path d="M12 20l8-8h-5V4h-6v8H4z" />
@@ -280,7 +199,6 @@ export default function VoteModal({ post, onClose, onVoteSuccess }) {
             </div>
           </>
         )}
-
       </div>
     </div>,
     document.body

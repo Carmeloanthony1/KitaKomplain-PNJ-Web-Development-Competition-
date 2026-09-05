@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { supabase } from "../supabaseClient";
 
 export default function Navbar({ user, openNotifications, onOpenNewPost, openPollingModal, openHistory }) {
   const [search_params] = useSearchParams();
@@ -12,6 +13,29 @@ export default function Navbar({ user, openNotifications, onOpenNewPost, openPol
   
   const [isDark, setIsDark] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [liveAvatar, setLiveAvatar] = useState(user?.avatar_url || user?.avatar || "");
+  const [liveUsername, setLiveUsername] = useState(user?.username || user?.name || "User");
+
+  const currentUserId = user?.id || localStorage.getItem("user_id");
+
+  useEffect(() => {
+    if (!currentUserId) return;
+
+    const fetchCurrentProfile = async () => {
+      const { data, error } = await supabase
+        .from("users")
+        .select("username, avatar_url")
+        .eq("id", currentUserId)
+        .single();
+
+      if (!error && data) {
+        if (data.avatar_url) setLiveAvatar(data.avatar_url);
+        if (data.username) setLiveUsername(data.username);
+      }
+    };
+
+    fetchCurrentProfile();
+  }, [currentUserId]);
 
   const toggle_darkmode = () => {
     const isdark = document.documentElement.classList.toggle('dark');
@@ -70,26 +94,19 @@ export default function Navbar({ user, openNotifications, onOpenNewPost, openPol
     }
   }, [search_term, quert_tag]);
 
-  // Save history
-  const saveSearchToHistory = (term) =>
-  {
+  const saveSearchToHistory = (term) => {
     const cleanTerm = term.replace("#", "").trim().toLowerCase();
     if (!cleanTerm) return;
     
     let history = JSON.parse(localStorage.getItem("search_history")) || [];
-    
     history = history.filter(item => item !== cleanTerm);
-    
     history.unshift(cleanTerm);
     
-    // Batasi history maksimal 20 item agar tidak berat
     if (history.length > 20) history.pop(); 
-    
     localStorage.setItem("search_history", JSON.stringify(history));
   };
 
-  const handleSearch = (e) =>
-  {
+  const handleSearch = (e) => {
     if (e) e.preventDefault();
     saveSearchToHistory(search_term);
 
@@ -100,6 +117,8 @@ export default function Navbar({ user, openNotifications, onOpenNewPost, openPol
 
   const handleLogout = () => {
     localStorage.removeItem("user_id");
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
     navigate("/login");
   };
 
@@ -157,16 +176,23 @@ export default function Navbar({ user, openNotifications, onOpenNewPost, openPol
             className="flex items-center gap-1.5 sm:gap-3 bg-[#a50034] dark:bg-black dark:border-2 dark:border-[#f1ece1] text-white px-2 sm:px-5 py-1 sm:py-2 rounded-full font-bold shadow-md cursor-pointer hover:bg-[#801427] dark:hover:bg-[#f1ece1] dark:hover:text-black transition active:scale-95 select-none"
           >
             <span className="hidden sm:inline text-xs sm:text-base capitalize">
-              {user?.name || user?.username}
+              {liveUsername}
             </span>
-            <img 
-              src={user?.avatar || user?.avatar_url || "/assets/Dummy_photo.png"} 
-              alt="avatar" 
-              className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-white object-cover border sm:border-2 border-white dark:border-black flex-shrink-0"
-            />
+
+            {liveAvatar ? (
+              <img 
+                src={liveAvatar} 
+                alt="avatar" 
+                className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-white object-cover border sm:border-2 border-white dark:border-black flex-shrink-0"
+              />
+            ) : (
+              <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-white text-[#a50034] dark:bg-[#1e1e1e] dark:text-[#f1ece1] font-bold text-xs sm:text-sm flex items-center justify-center uppercase border border-white dark:border-black flex-shrink-0">
+                {(liveUsername || "U")[0]}
+              </div>
+            )}
           </div>
 
-          {/* Menu Dropdown: Hanya tampil di HP */}
+          {/* Menu Dropdown: Tampil di Mobile */}
           {isMenuOpen && (
             <div className="sm:hidden absolute right-0 mt-3 w-40 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-slate-800 rounded-xl shadow-xl flex flex-col py-2 overflow-hidden animate-fadeIn">
               <button 
