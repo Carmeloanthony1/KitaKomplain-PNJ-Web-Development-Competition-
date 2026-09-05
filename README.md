@@ -149,12 +149,6 @@ Alurnya sederhana:
 
 </div>
 
-### Video Demo
-
-📹 **[Link Video Demo](https://[URL_VIDEO])** _(opsional)_
-
----
-
 ## 🛠️ Teknologi
 
 ### Tech Stack
@@ -185,8 +179,8 @@ Auth         : JWT
 ```
 
 Deployment   : Vercel
-CI/CD        : Vercel / dll
-Testing      : [Jest / Vitest / Playwright / dll]
+CI/CD        : Vercel 
+Testing      : Vitest
 Monitoring   : [Sentry / LogRocket / dll]
 
 ```
@@ -228,11 +222,7 @@ Monitoring   : [Sentry / LogRocket / dll]
 
 ### Database Schema
 
-```
-
-[Tambahkan diagram ERD atau schema database]
-
-```
+<img src="src/assets/ERD_KitaKomplen.webp" alt="ERD KitaKomplain" height="800" width="800" />
 
 ### Folder Structure
 ```
@@ -337,7 +327,7 @@ pnpm install
 
 Buat file `.env` di root directory lalu masuk ke folder backend:
 
-```env.example
+``` env.example
 
 PORT=
 SUPABASE_URL=
@@ -475,7 +465,7 @@ const response = await fetch('/api/auth/login', {
 
 ---
 
-## 🧪 Testing
+## 🧪 Testing 
 
 ### Running Tests
 
