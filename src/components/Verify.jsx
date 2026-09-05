@@ -10,17 +10,16 @@ export default function VerifyAccount({ isOpen, onClose, onSuccess }) {
   const { showStatus } = useStatus();
 
   const currentUserId = localStorage.getItem("user_id");
-  const token = localStorage.getItem("token"); // Ambil JWT token dari storage
+  const token = localStorage.getItem("token");
 
-  useEffect(() =>
-{
+  const API_URL = import.meta.env.VITE_API_URL || "https://kitakomplainback.vercel.app";
+
+  useEffect(() => {
     if (!isOpen || !currentUserId) return;
 
-    const initVerification = async () => 
-    {
+    const initVerification = async () => {
       setOtp("");
       
-      // Ambil email dari database untuk ditampilkan di UI
       const { data, error } = await supabase
         .from("users")
         .select("email")
@@ -40,17 +39,13 @@ export default function VerifyAccount({ isOpen, onClose, onSuccess }) {
 
   if (!isOpen) return null;
 
-  // Fungsi untuk hit API pengiriman email
-  const sendOtpToBackend = async (isInitial = false) =>
-{
-    try
-    {
-      const response = await fetch("http://localhost:5000/api/auth/send-otp", 
-      {
+  const sendOtpToBackend = async (isInitial = false) => {
+    try {
+      const response = await fetch(`${API_URL}/api/auth/send-otp`, {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}` // Kirim token untuk middleware backend
+          "Authorization": `Bearer ${token}`
         },
       });
 
@@ -60,30 +55,24 @@ export default function VerifyAccount({ isOpen, onClose, onSuccess }) {
       
       if (!isInitial)
         showStatus("Email verifikasi baru telah dikirim!", "success");
-    } 
-    catch (error) 
-    {
+    } catch (error) {
       console.error(error);
       showStatus(error.message || "Terjadi kesalahan saat mengirim OTP.", "error");
     }
   };
 
-  const handleVerify = async (e) => 
-  {
+  const handleVerify = async (e) => {
     e.preventDefault();
 
-    if (otp.length < 6) 
-    {
+    if (otp.length < 6) {
       showStatus("Masukkan 6 digit kode OTP yang valid.", "error");
       return;
     }
 
     setLoading(true);
 
-    try 
-    {
-      const response = await fetch("http://localhost:5000/api/auth/verify-otp", 
-    {
+    try {
+      const response = await fetch(`${API_URL}/api/auth/verify-otp`, {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
@@ -96,24 +85,18 @@ export default function VerifyAccount({ isOpen, onClose, onSuccess }) {
 
       if (!response.ok) throw new Error(result.message);
 
-      // Pastikan status di Supabase update ke frontend lokal
       showStatus("Email berhasil diverifikasi!", "success");
       setOtp("");
       if (onSuccess) onSuccess();
       onClose();
-    } 
-    catch (error) 
-    {
+    } catch (error) {
       showStatus(error.message || "Gagal memverifikasi akun.", "error");
-    } 
-    finally 
-    {
+    } finally {
       setLoading(false);
     }
   };
 
-  const handleResend = () => 
-  {
+  const handleResend = () => {
     sendOtpToBackend(false);
   };
 
@@ -157,7 +140,7 @@ export default function VerifyAccount({ isOpen, onClose, onSuccess }) {
             type="text"
             maxLength="6"
             value={otp}
-            onChange={(e) => setOtp(e.target.value.replace(/[^0-9]/g, ''))} // Memaksa input hanya angka
+            onChange={(e) => setOtp(e.target.value.replace(/[^0-9]/g, ''))}
             placeholder="000000"
             disabled={loading}
             autoFocus
