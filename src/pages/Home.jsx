@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import Navbar from "../components/Navbar";
 import Sidebar_Kiri from "../components/Sidebar_Kiri";
 import Post from "../components/Post";
+import Focuspost from "../components/FocusPost";
 import Most_Polling from "../components/Most_Polling";
 import Notification from "../components/Notification";
 import { NewPost } from "../components/newpost";
@@ -11,20 +12,23 @@ import History from "../components/History";
 
 export default function Home({ user, onLogout, onNavigate }) {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const sharedPostId = searchParams.get("post_id");
+  const [sharedFocusedPost, setSharedFocusedPost] = useState(null);
+
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [isPostModalOpen, setIsPostModalOpen] = useState(false);
   const [isPollingModalOpen, setIsPollingModalOpen] = useState(false);
-
   const [isdark, setIsdark] = useState(false);
 
   const toggle_darkmode = () => {
-    const isdark = document.documentElement.classList.toggle("dark");
-    setIsdark(isdark);
-    if (isdark) {
+    const isdarkState = document.documentElement.classList.toggle("dark");
+    setIsdark(isdarkState);
+    if (isdarkState) {
       localStorage.setItem("theme", "dark");
     } else {
       localStorage.setItem("theme", "light");
@@ -71,6 +75,57 @@ export default function Home({ user, onLogout, onNavigate }) {
     fetchAllPosts(true);
   }, [fetchAllPosts]);
 
+  useEffect(() => {
+    if (!sharedPostId) {
+      setSharedFocusedPost(null);
+      return;
+    }
+
+    const fetchSharedPost = async () => {
+      const { data, error } = await supabase
+        .from("posts")
+        .select(`
+          id,
+          description,
+          image_url,
+          tag,
+          is_anonim_mode,
+          created_at,
+          user_id,
+          users (
+            username,
+            avatar_url
+          )
+        `)
+        .eq("id", sharedPostId)
+        .single();
+
+      if (!error && data) {
+        setSharedFocusedPost(data);
+      }
+    };
+
+    fetchSharedPost();
+  }, [sharedPostId]);
+
+  useEffect(() => {
+    if (sharedFocusedPost) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [sharedFocusedPost]);
+
+  const handleCloseSharedFocus = () => {
+    setSharedFocusedPost(null);
+    const newParams = new URLSearchParams(searchParams);
+    newParams.delete("post_id");
+    setSearchParams(newParams, { replace: true });
+  };
+
   const handleUserClick = (targetUserId) => {
     const currentUserId = user?.id || localStorage.getItem("user_id");
 
@@ -87,20 +142,25 @@ export default function Home({ user, onLogout, onNavigate }) {
   };
 
   const handlePostUpdated = (updatedPost) => {
+    if (!updatedPost?.id) {
+      fetchAllPosts(false);
+      return;
+    }
     setPosts((prev) =>
       prev.map((post) => (post.id === updatedPost.id ? { ...post, ...updatedPost } : post))
     );
   };
 
-  if (loading) return <div className="p-10 text-center text-gray-500 dark:text-gray-400">Loading posts...</div>;
+  if (loading) {
+    return <div className="p-10 text-center text-gray-500 dark:text-gray-400">Loading posts...</div>;
+  }
 
   return (
     <div className="w-full min-h-screen bg-[#f7f7f7] dark:bg-[#1e1e1e] flex flex-col">
-      {/* Navbar Fixed di Atas */}
       <header className="fixed top-0 left-0 right-0 z-30 bg-white dark:bg-[#1e1e1e] border-b border-gray-200 dark:border-gray-800">
         <Navbar 
           user={user} 
-          openProfile={() => onNavigate ? onNavigate("profile") : navigate("/profile")} 
+          openProfile={() => (onNavigate ? onNavigate("profile") : navigate("/profile"))} 
           openNotifications={() => setIsNotificationOpen(true)}
           openHistory={() => setIsHistoryOpen(true)}
           onOpenNewPost={() => setIsPostModalOpen(true)}
@@ -108,10 +168,7 @@ export default function Home({ user, onLogout, onNavigate }) {
         />
       </header>
 
-      {/* Grid dibuat FULL WIDTH (w-full px-4/px-6) biar mentok pinggir */}
       <div className="pt-20 md:pt-24 pb-10 px-4 md:px-6 w-full grid grid-cols-1 md:grid-cols-[280px_1fr] lg:grid-cols-[300px_1fr_340px] gap-6 items-start">
-        
-        {/* SIDEBAR KIRI: Mentok Kiri */}
         <aside className="hidden md:block w-full sticky top-24 self-start z-10">
           <Sidebar_Kiri 
             onNavigate={onNavigate}
@@ -121,7 +178,6 @@ export default function Home({ user, onLogout, onNavigate }) {
           />
         </aside>
 
-        {/* MAIN FEED: Di Tengah (1fr), postingan terpusat otomatis */}
         <main className="w-full max-w-2xl flex flex-col items-center justify-center min-w-0 mx-auto">
           {posts.length === 0 ? (
             <div className="text-center text-gray-500 dark:text-gray-400 py-10">
@@ -140,14 +196,42 @@ export default function Home({ user, onLogout, onNavigate }) {
           )}
         </main>
 
-        {/* SIDEBAR KANAN: Mentok Kanan di Desktop */}
         <aside className="hidden lg:block w-full sticky top-24 self-start z-10">
           <Most_Polling />
         </aside>
-
       </div>
 
-      {/* Modal Popup Most Polling (Khusus Mobile dengan Backdrop Blur) */}
+      {sharedFocusedPost && (
+        <div
+          onClick={handleCloseSharedFocus}
+          className="fixed inset-0 z-[99999] bg-black/60 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 overflow-y-auto animate-fadeIn"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="w-full max-w-2xl bg-transparent relative my-auto"
+          >
+            <Post
+              post={sharedFocusedPost}
+              hideaction={false}
+              onClose={handleCloseSharedFocus}
+              onUserClick={(userId) => {
+                handleCloseSharedFocus();
+                if (onNavigate) onNavigate("profile");
+                else navigate(`/user/${userId}`);
+              }}
+              onUpdate={(updated) => {
+                setSharedFocusedPost((prev) => (prev ? { ...prev, ...updated } : null));
+                fetchAllPosts(false);
+              }}
+              onDelete={() => {
+                handleCloseSharedFocus();
+                fetchAllPosts(false);
+              }}
+            />
+          </div>
+        </div>
+      )}
+
       {isPollingModalOpen && (
         <div 
           onClick={() => setIsPollingModalOpen(false)}
@@ -160,6 +244,7 @@ export default function Home({ user, onLogout, onNavigate }) {
             <div className="flex justify-between items-center mb-3 pb-2 border-b border-gray-100 dark:border-neutral-800">
               <h2 className="font-bold text-base text-[#a50034] dark:text-[#f1ece1]">Most Polling</h2>
               <button 
+                type="button"
                 onClick={() => setIsPollingModalOpen(false)}
                 className="text-gray-400 hover:text-black dark:hover:text-white font-bold text-lg p-1 cursor-pointer"
               >
@@ -172,7 +257,6 @@ export default function Home({ user, onLogout, onNavigate }) {
         </div>
       )}
 
-      {/* Global Modals */}
       <NewPost 
         isOpen={isPostModalOpen}
         onClose={() => setIsPostModalOpen(false)}
