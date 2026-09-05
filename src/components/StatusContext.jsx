@@ -23,14 +23,15 @@ export function StatusProvider({ children }) {
     <StatusContext.Provider value={{ showStatus }}>
       {children}
 
-      <div className="fixed top-4 right-4 z-[9999] flex flex-col gap-2">
+      <div className="fixed top-4 right-4 z-[2147483647] flex flex-col gap-2 pointer-events-none">
         {statusList.map((s) => (
-          <Status
-            key={s.id}
-            status={s.message}
-            type={s.type}
-            onClose={() => closeStatus(s.id)}
-          />
+          <div key={s.id} className="pointer-events-auto">
+            <Status
+              status={s.message}
+              type={s.type}
+              onClose={() => closeStatus(s.id)}
+            />
+          </div>
         ))}
       </div>
     </StatusContext.Provider>

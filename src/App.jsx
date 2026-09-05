@@ -93,7 +93,7 @@ export default function App() {
           />
           <Route
             path="/profile"
-            element={user ? <Profile user={user} onNavigate={handleNavigate} /> : <Navigate to="/login" />}
+            element={<Profile user={user} onNavigate={handleNavigate} />}
           />
           <Route 
             path="/user/:id"

@@ -261,7 +261,7 @@ export default function Post({
 
   const handleOpenVote = async () => {
     if (!currentUserId) {
-      showStatus("Silakan login terlebih dahulu!", "error");
+      showStatus("Silakan login terlebih dahulu untuk membuat post!", "error");
       return;
     }
 
