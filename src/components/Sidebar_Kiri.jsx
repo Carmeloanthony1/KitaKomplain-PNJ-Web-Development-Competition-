@@ -22,6 +22,7 @@ export default function Sidebar_kiri({ onNavigate, openNotifications, openPostMo
     }
 
     //Verification check
+    /*
     const { data: userData, error } = await supabase
       .from("users")
       .select("is_verified")
@@ -33,6 +34,7 @@ export default function Sidebar_kiri({ onNavigate, openNotifications, openPostMo
       showStatus("Akun belum diverifikasi! Silakan verifikasi profil Anda untuk membuat postingan.", "error");
       return;
     }
+    */
 
     openPostModal();
   };

@@ -39,6 +39,7 @@ export default function CommentSection({
     setLoading(true);
 
     // Verification check
+    /*
     const { data: userData } = await supabase
       .from("users")
       .select("is_verified")
@@ -51,6 +52,7 @@ export default function CommentSection({
       setLoading(false);
       return;
     }
+    */
 
     // Comment to supabase
     const { error: commentError } = await supabase.from("comments").insert([

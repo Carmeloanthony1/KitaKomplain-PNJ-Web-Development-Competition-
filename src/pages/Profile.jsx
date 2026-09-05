@@ -3,12 +3,13 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import Focuspost from "../components/FocusPost";
 import { useStatus } from "../components/StatusContext";
-import VerifyAccount from "../components/Verify";
+//import VerifyAccount from "../components/Verify";
 
-export default function Profile() {
+export default function Profile({user}) {
   const navigate = useNavigate();
   const { showStatus } = useStatus();
-  const userId = localStorage.getItem("user_id");
+
+  const userId = user?.id || localStorage.getItem("user_id");
 
   const [username, setUsername] = useState("");
   const [bio, setBio] = useState("");
@@ -17,8 +18,8 @@ export default function Profile() {
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
 
-  const [isVerifyOpen, setIsVerifyOpen] = useState(false);
-  const [isVerified, setIsVerified] = useState(false);
+  //const [isVerifyOpen, setIsVerifyOpen] = useState(false);
+  //const [isVerified, setIsVerified] = useState(false);
 
   const [posts, setPosts] = useState([]);
   const [user_comment, setUser_comment] = useState([]);
@@ -70,6 +71,7 @@ export default function Profile() {
 
   useEffect(() => {
     if (!userId) {
+      setLoading(false);
       navigate("/login");
       return;
     }
@@ -99,7 +101,6 @@ export default function Profile() {
       setIsAnonimMode(data.is_anonim_mode || false);
       setTempUsername(data.username || "");
       setTempBio(data.bio || "");
-      setIsVerified(data.is_verified || false);
 
       const { data: userPosts, error: postError } = await supabase
         .from("posts")
@@ -392,6 +393,7 @@ export default function Profile() {
               </h2>
             )}
 
+            {/*
             {!isVerified && (
               <button
                 type="button"
@@ -401,6 +403,7 @@ export default function Profile() {
                 Verify?
               </button>
             )}
+            */}
 
             <button
               type="button"
@@ -639,11 +642,14 @@ export default function Profile() {
         onVoteSuccess={refreshpage}
       />
 
+      {/*
       <VerifyAccount
         isOpen={isVerifyOpen}
         onClose={() => setIsVerifyOpen(false)}
         onSuccess={() => setIsVerified(true)}
       />
+      */}
+
     </div>
   );
 }

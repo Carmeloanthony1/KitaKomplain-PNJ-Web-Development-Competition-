@@ -171,96 +171,109 @@ export default function Navbar({ user, openNotifications, onOpenNewPost, openPol
 
         {/* Profile Akun Kanan */}
         <div className="flex-shrink-0 z-20 relative" ref={menuRef}>
-          <div 
-            onClick={handleProfileClick}
-            className="flex items-center gap-1.5 sm:gap-3 bg-[#a50034] dark:bg-black dark:border-2 dark:border-[#f1ece1] text-white px-2 sm:px-5 py-1 sm:py-2 rounded-full font-bold shadow-md cursor-pointer hover:bg-[#801427] dark:hover:bg-[#f1ece1] dark:hover:text-black transition active:scale-95 select-none"
-          >
-            <span className="hidden sm:inline text-xs sm:text-base capitalize">
-              {liveUsername}
-            </span>
+          {currentUserId ? (
+            // Jika user sudah login
+            <>
+              <div 
+                onClick={handleProfileClick}
+                className="flex items-center gap-1.5 sm:gap-3 bg-[#a50034] dark:bg-black dark:border-2 dark:border-[#f1ece1] text-white px-2 sm:px-5 py-1 sm:py-2 rounded-full font-bold shadow-md cursor-pointer hover:bg-[#801427] dark:hover:bg-[#f1ece1] dark:hover:text-black transition active:scale-95 select-none"
+              >
+                <span className="hidden sm:inline text-xs sm:text-base capitalize">
+                  {liveUsername}
+                </span>
 
-            {liveAvatar ? (
-              <img 
-                src={liveAvatar} 
-                alt="avatar" 
-                className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-white object-cover border sm:border-2 border-white dark:border-black flex-shrink-0"
-              />
-            ) : (
-              <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-white text-[#a50034] dark:bg-[#1e1e1e] dark:text-[#f1ece1] font-bold text-xs sm:text-sm flex items-center justify-center uppercase border border-white dark:border-black flex-shrink-0">
-                {(liveUsername || "U")[0]}
+                {liveAvatar ? (
+                  <img 
+                    src={liveAvatar} 
+                    alt="avatar" 
+                    className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-white object-cover border sm:border-2 border-white dark:border-black flex-shrink-0"
+                  />
+                ) : (
+                  <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-white text-[#a50034] dark:bg-[#1e1e1e] dark:text-[#f1ece1] font-bold text-xs sm:text-sm flex items-center justify-center uppercase border border-white dark:border-black flex-shrink-0">
+                    {(liveUsername || "U")[0]}
+                  </div>
+                )}
               </div>
-            )}
-          </div>
 
-          {/* Menu Dropdown: Tampil di Mobile */}
-          {isMenuOpen && (
-            <div className="sm:hidden absolute right-0 mt-3 w-40 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-slate-800 rounded-xl shadow-xl flex flex-col py-2 overflow-hidden animate-fadeIn">
-              <button 
-                onClick={() => { 
-                  setIsMenuOpen(false); 
-                  if (onOpenNewPost) onOpenNewPost(); 
-                }} 
-                className={menuItemClass}
-              >
-                Make a Post
-              </button>
-              
-              <button onClick={() => { setIsMenuOpen(false); navigate('/profile'); }} className={menuItemClass}>
-                Profile
-              </button>
-              
-              <button onClick={() => { 
-                setIsMenuOpen(false); 
-                if (openHistory) 
-                  openHistory(); 
-                else 
-                  navigate('/search');
-                }}
-                className={menuItemClass}
-              >
-                History
-              </button>
-              
-              <button onClick={() => { 
-                  setIsMenuOpen(false); 
-                  if (openNotifications) {
-                    openNotifications();
-                  } else {
-                    navigate('/notifications');
-                  }
-                }} 
-                className={menuItemClass}
-              >
-                Notifikasi
-              </button>
-              
-              <button 
-                onClick={() => { 
-                  setIsMenuOpen(false); 
-                  if (openPollingModal) {
-                    openPollingModal();
-                  } else {
-                    navigate('/most-polling');
-                  }
-                }} 
-                className={menuItemClass}
-              >
-                Most Polling
-              </button>
-              
-              <button onClick={() => { setIsMenuOpen(false); navigate('/settings'); }} className={menuItemClass}>
-                Setting
-              </button>
+              {/* Menu Dropdown: Tampil di Mobile */}
+              {isMenuOpen && (
+                <div className="sm:hidden absolute right-0 mt-3 w-40 bg-white dark:bg-[#1e1e1e] border border-gray-200 dark:border-slate-800 rounded-xl shadow-xl flex flex-col py-2 overflow-hidden animate-fadeIn">
+                  <button 
+                    onClick={() => { 
+                      setIsMenuOpen(false); 
+                      if (onOpenNewPost) onOpenNewPost(); 
+                    }} 
+                    className={menuItemClass}
+                  >
+                    Make a Post
+                  </button>
+                  
+                  <button onClick={() => { setIsMenuOpen(false); navigate('/profile'); }} className={menuItemClass}>
+                    Profile
+                  </button>
+                  
+                  <button onClick={() => { 
+                    setIsMenuOpen(false); 
+                    if (openHistory) 
+                      openHistory(); 
+                    else 
+                      navigate('/search');
+                    }}
+                    className={menuItemClass}
+                  >
+                    History
+                  </button>
+                  
+                  <button onClick={() => { 
+                      setIsMenuOpen(false); 
+                      if (openNotifications) {
+                        openNotifications();
+                      } else {
+                        navigate('/notifications');
+                      }
+                    }} 
+                    className={menuItemClass}
+                  >
+                    Notifikasi
+                  </button>
+                  
+                  <button 
+                    onClick={() => { 
+                      setIsMenuOpen(false); 
+                      if (openPollingModal) {
+                        openPollingModal();
+                      } else {
+                        navigate('/most-polling');
+                      }
+                    }} 
+                    className={menuItemClass}
+                  >
+                    Most Polling
+                  </button>
+                  
+                  <button onClick={() => { setIsMenuOpen(false); navigate('/settings'); }} className={menuItemClass}>
+                    Setting
+                  </button>
 
-              <div className="h-px bg-gray-200 dark:bg-slate-800 my-2 mx-3"></div>
-              
-              <button 
-                onClick={handleLogout}
-                className="w-full text-left px-4 py-2.5 text-sm font-bold text-red-600 hover:bg-red-50 dark:hover:bg-neutral-800 cursor-pointer transition-colors"
-              >
-                Keluar
-              </button>
-            </div>
+                  <div className="h-px bg-gray-200 dark:bg-slate-800 my-2 mx-3"></div>
+                  
+                  <button 
+                    onClick={handleLogout}
+                    className="w-full text-left px-4 py-2.5 text-sm font-bold text-red-600 hover:bg-red-50 dark:hover:bg-neutral-800 cursor-pointer transition-colors"
+                  >
+                    Keluar
+                  </button>
+                </div>
+              )}
+            </>
+          ) : (
+            // Jika user adalah guest
+            <button 
+              onClick={() => navigate('/login')}
+              className="flex items-center justify-center bg-[#a50034] dark:bg-black dark:border-2 dark:border-[#f1ece1] text-white px-4 sm:px-6 py-1.5 sm:py-2 rounded-full font-bold shadow-md cursor-pointer hover:bg-[#801427] dark:hover:bg-[#f1ece1] dark:hover:text-black transition active:scale-95 text-xs sm:text-base"
+            >
+              Login / Sign Up
+            </button>
           )}
         </div>
 
