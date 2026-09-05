@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
-export default function Navbar({ user, openNotifications, onOpenNewPost }) {
+export default function Navbar({ user, openNotifications, onOpenNewPost, openPollingModal }) {
   const [search_params] = useSearchParams();
   const navigate = useNavigate();
   const inputRef = useRef(null);
@@ -170,11 +170,23 @@ export default function Navbar({ user, openNotifications, onOpenNewPost }) {
                   } else {
                     navigate('/notifications');
                   }
-                  }} className={menuItemClass}>
+                }} 
+                className={menuItemClass}
+              >
                 Notifikasi
               </button>
               
-              <button onClick={() => { setIsMenuOpen(false); navigate('/most-polling'); }} className={menuItemClass}>
+              <button 
+                onClick={() => { 
+                  setIsMenuOpen(false); 
+                  if (openPollingModal) {
+                    openPollingModal();
+                  } else {
+                    navigate('/most-polling');
+                  }
+                }} 
+                className={menuItemClass}
+              >
                 Most Polling
               </button>
               

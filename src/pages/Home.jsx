@@ -15,6 +15,7 @@ export default function Home({ user, onLogout, onNavigate }) {
   const [loading, setLoading] = useState(true);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [isPostModalOpen, setIsPostModalOpen] = useState(false);
+  const [isPollingModalOpen, setIsPollingModalOpen] = useState(false);
 
   const [isdark, setIsdark] = useState(false);
 
@@ -100,6 +101,7 @@ export default function Home({ user, onLogout, onNavigate }) {
           openProfile={() => onNavigate ? onNavigate("profile") : navigate("/profile")} 
           openNotifications={() => setIsNotificationOpen(true)}
           onOpenNewPost={() => setIsPostModalOpen(true)}
+          openPollingModal={() => setIsPollingModalOpen(true)}
         />
       </header>
 
@@ -134,12 +136,37 @@ export default function Home({ user, onLogout, onNavigate }) {
           )}
         </main>
 
-        {/* SIDEBAR KANAN: Mentok Kanan */}
+        {/* SIDEBAR KANAN: Mentok Kanan di Desktop */}
         <aside className="hidden lg:block w-full sticky top-24 self-start z-10">
           <Most_Polling />
         </aside>
 
       </div>
+
+      {/* Modal Popup Most Polling (Khusus Mobile dengan Backdrop Blur) */}
+      {isPollingModalOpen && (
+        <div 
+          onClick={() => setIsPollingModalOpen(false)}
+          className="lg:hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 animate-fadeIn"
+        >
+          <div 
+            onClick={(e) => e.stopPropagation()}
+            className="bg-white dark:bg-[#1e1e1e] w-full max-w-sm rounded-2xl p-4 shadow-2xl border border-gray-200 dark:border-neutral-800 max-h-[85vh] overflow-y-auto relative"
+          >
+            <div className="flex justify-between items-center mb-3 pb-2 border-b border-gray-100 dark:border-neutral-800">
+              <h2 className="font-bold text-base text-[#a50034] dark:text-[#f1ece1]">Most Polling</h2>
+              <button 
+                onClick={() => setIsPollingModalOpen(false)}
+                className="text-gray-400 hover:text-black dark:hover:text-white font-bold text-lg p-1 cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+
+            <Most_Polling />
+          </div>
+        </div>
+      )}
 
       {/* Global Modals */}
       <NewPost 
