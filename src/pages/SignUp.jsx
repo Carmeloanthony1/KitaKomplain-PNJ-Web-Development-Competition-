@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import "./SignUp.css"
 import { useNavigate } from 'react-router-dom'
-import { useStatus } from "../components/StatusContext";
+import { useStatus } from "../components/StatusContext"
 
 function SignUp({ switchToLogin })
 {
@@ -9,10 +9,10 @@ function SignUp({ switchToLogin })
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
-  const [loading, setLoading] = useState(false);
-  const { showStatus } = useStatus();
+  const [loading, setLoading] = useState(false)
+  const { showStatus } = useStatus()
 
-  const navigate = useNavigate() 
+  const navigate = useNavigate()
 
   const handleSubmit = async (event) => 
   {
@@ -26,7 +26,7 @@ function SignUp({ switchToLogin })
 
     setLoading(true)
     try {
-      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000'
       const response = await fetch(`${API_URL}/api/auth/sign_up`, {
         method: 'POST',
         headers: {
@@ -35,7 +35,7 @@ function SignUp({ switchToLogin })
         body: JSON.stringify({ username, email, password }),
       })
 
-      const data = await response.json();
+      const data = await response.json()
 
       if(!response.ok){
         throw new Error(data.message || 'Gagal melakukan sign up')
@@ -54,12 +54,12 @@ function SignUp({ switchToLogin })
     }
   }
 
-  return(
+  return (
     <div className="signup-whole-background">
       <div className="signup-left-background">
         <h1 className="signup-logo">
           Kita
-          <br />
+          <br/>
           Komplain
         </h1>
       </div>
