@@ -8,7 +8,7 @@ export default function Share_post({ post, onclose }) {
 
   if (!post) return null;
 
-  const shareUrl = `${window.location.origin}/search?tag=${encodeURIComponent(post.tag || "")}`;
+  const shareUrl = `${window.location.origin}/home?post_id=${post.id}`;
   const shareTitle = `Lihat postingan komplain #${post.tag || "isu"} di KitaKomplain:`;
   const shareText = `"${(post.description || "").slice(0, 80)}..."`;
 
@@ -16,7 +16,7 @@ export default function Share_post({ post, onclose }) {
     try {
       await navigator.clipboard.writeText(shareUrl);
       setCopied(true);
-      showStatus("Tautan berhasil disalin!", "success");
+      showStatus("Tautan postingan berhasil disalin!", "success");
       setTimeout(() => setCopied(false), 2000);
     } catch {
       showStatus("Gagal menyalin tautan", "error");
@@ -94,7 +94,6 @@ export default function Share_post({ post, onclose }) {
         onClick={(e) => e.stopPropagation()}
         className="relative max-w-sm w-full bg-white dark:bg-[#1e1e1e] border-2 border-[#a50034]/30 dark:border-[#f1ece1]/30 rounded-2xl p-5 shadow-2xl flex flex-col gap-4 text-center transition-colors"
       >
-        {/* Tombol Tutup */}
         <button
           type="button"
           onClick={handleClose}
@@ -104,7 +103,6 @@ export default function Share_post({ post, onclose }) {
           ✕
         </button>
 
-        {/* Header Modal */}
         <div className="flex flex-col items-center gap-1 mt-1">
           <span className="bg-[#a50034]/10 dark:bg-white/10 text-[#a50034] dark:text-[#f1ece1] text-[11px] font-bold px-3 py-0.5 rounded-full uppercase tracking-wider">
             Bagikan
@@ -114,7 +112,6 @@ export default function Share_post({ post, onclose }) {
           </h3>
         </div>
 
-        {/* Tombol Platform Sosial */}
         <div className="grid grid-cols-3 gap-2">
           {shareOptions.map((opt) => (
             <a
@@ -131,7 +128,6 @@ export default function Share_post({ post, onclose }) {
           ))}
         </div>
 
-        {/* Input Box Salin URL */}
         <div className="flex items-center gap-2 bg-gray-50 dark:bg-[#141414] border border-gray-200 dark:border-neutral-700 rounded-xl p-1.5">
           <input
             type="text"
@@ -148,7 +144,6 @@ export default function Share_post({ post, onclose }) {
           </button>
         </div>
 
-        {/* Opsi Native Share di Perangkat Mobile */}
         {"share" in navigator && (
           <button
             type="button"
