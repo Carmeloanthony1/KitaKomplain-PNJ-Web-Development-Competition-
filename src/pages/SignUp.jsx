@@ -9,18 +9,16 @@ function SignUp({ switchToLogin })
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
-  const [loading, setLoading] = useState(false); //awalnya ga loading karena memang belum loading
+  const [loading, setLoading] = useState(false);
   const { showStatus } = useStatus();
-  //Arrow operators: const func = (parameter) => {return value} 
 
   const navigate = useNavigate() 
-  
 
   const handleSubmit = async (event) => 
   {
-    event.preventDefault() //don't reload page after submit or link when clicked
+    event.preventDefault()
 
-    if (password !== confirmPassword) //12345 != "12345"
+    if (password !== confirmPassword)
     {
       showStatus('Passwords do not match!', 'error')
       return
@@ -28,7 +26,8 @@ function SignUp({ switchToLogin })
 
     setLoading(true)
     try {
-      const response = await fetch('http://localhost:5000/api/auth/sign_up', {
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      const response = await fetch(`${API_URL}/api/auth/sign_up`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -45,6 +44,8 @@ function SignUp({ switchToLogin })
       showStatus('Sign up berhasil! Silahkan login.', 'success')
       if(switchToLogin){
         switchToLogin()
+      } else {
+        navigate('/login')
       }
     } catch (error){
       showStatus(error.message || 'Gagal melakukan sign up', 'error')
@@ -53,85 +54,82 @@ function SignUp({ switchToLogin })
     }
   }
 
-  // return == masuk ke HTML/CSS
   return(
-    <div className = "signup-whole-background">
-
-      {/*Left side*/}
-      <div className = "signup-left-background">
-        <h1 className = "signup-logo">
+    <div className="signup-whole-background">
+      <div className="signup-left-background">
+        <h1 className="signup-logo">
           Kita
           <br />
           Komplain
         </h1>
       </div>
 
-      {/*Right side*/}
-      <div className = "signup-right-background">
-
-        <div className = "signup-card-background">
-
-          <h2 className = "signup-card-text">
+      <div className="signup-right-background">
+        <div className="signup-card-background">
+          <h2 className="signup-card-text">
             Sign Up
           </h2>
 
-          <form onSubmit = {handleSubmit} className = "signup-form">
-
+          <form onSubmit={handleSubmit} className="signup-form">
             <input
-              type = "text"
-              placeholder = "Username"
-              value = {username}
-              onChange = {(event) => setUsername(event.target.value)}
-              className = "signup-input" required
+              type="text"
+              placeholder="Username"
+              value={username}
+              onChange={(event) => setUsername(event.target.value)}
+              className="signup-input" 
+              required
             />
 
             <input
-              type = "email"
-              placeholder = "Email" /* to show gray text on box*/
-              value = {email}
-              onChange = {(event) => setEmail(event.target.value)}
-              className = "signup-input" required
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              className="signup-input" 
+              required
             />
 
             <input
-              type = "password"
-              placeholder = "Password"
-              value = {password}
-              onChange = {(event) => setPassword(event.target.value)}
-              className = "signup-input" required
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              className="signup-input" 
+              required
             />
 
             <input
-              type = "password"
-              placeholder = "Confirm Password"
-              value = {confirmPassword}
-              onChange = {(event) => setConfirmPassword(event.target.value)}
-              className = "signup-input" required
+              type="password"
+              placeholder="Confirm Password"
+              value={confirmPassword}
+              onChange={(event) => setConfirmPassword(event.target.value)}
+              className="signup-input" 
+              required
             />
 
-            <div className = "signup-button-container">
+            <div className="signup-button-container">
               <button
-                type = "submit"
-                className = "signup-button"
+                type="submit"
+                className="signup-button"
                 disabled={loading}
-              > {loading ? 'Memproses...' : 'Submit'}
+              > 
+                {loading ? 'Memproses...' : 'Submit'}
               </button>
             </div>
 
-            <p className = "signup-login">
+            <p className="signup-login">
               Already have an account?{' '}
-              <button type = "button"  onClick = {() => navigate('/Login')} 
-                      className = "signup-login-button">
+              <button 
+                type="button"  
+                onClick={() => navigate('/login')} 
+                className="signup-login-button"
+              >
                 Login
               </button>
             </p>  
-
           </form>
-
         </div>
-
       </div>
-
     </div>
   )
 }
