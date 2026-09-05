@@ -61,8 +61,7 @@ export default function Post({
   const { showConfirm } = useConfirm();
   const currentUserId = localStorage.getItem("user_id");
 
-  // === FITUR READ MORE (PER KELIPATAN KATA) ===
-  const CHUNK_SIZE = 100; // Jumlah kata awal & penambahan per klik
+  const CHUNK_SIZE = 100;
   const [visibleWordCount, setVisibleWordCount] = useState(CHUNK_SIZE);
 
   if (!post) return null;
@@ -84,15 +83,6 @@ export default function Post({
       tag_list = tag_mentah.split(",");
     }
   }
-
-  const [isdark, setIsdark] = useState(false);
-
-  useEffect(() => {
-    if (localStorage.getItem("theme") === "dark") {
-      document.documentElement.classList.add("dark");
-      setIsdark(true);
-    }
-  }, []);
 
   const fetchLikes = async () => {
     const { data, error } = await supabase
@@ -188,15 +178,13 @@ export default function Post({
       return;
     }
 
-    // Verification check
     const { data: userData } = await supabase
       .from("users")
       .select("is_verified")
       .eq("id", currentUserId)
       .single();
 
-    if (!userData?.is_verified)
-    {
+    if (!userData?.is_verified) {
       showStatus("Akun belum diverifikasi! Silakan verifikasi untuk like postingan.", "error");
       return;
     }
@@ -271,23 +259,19 @@ export default function Post({
     }
   };
 
-  const handleOpenVote = async () =>
-  {
-    if (!currentUserId)
-    {
+  const handleOpenVote = async () => {
+    if (!currentUserId) {
       showStatus("Silakan login terlebih dahulu!", "error");
       return;
     }
 
-    // Verification check
     const { data: userData } = await supabase
       .from("users")
       .select("is_verified")
       .eq("id", currentUserId)
       .single();
 
-    if (!userData?.is_verified)
-      {
+    if (!userData?.is_verified) {
       showStatus("Akun belum diverifikasi! Anda tidak dapat mengikuti voting ini.", "error");
       return;
     }
@@ -295,7 +279,6 @@ export default function Post({
     setIsVote_open(true);
   };
 
-  // === RENDER DESKRIPSI DENGAN READ MORE PER KATA ===
   const renderDescription = () => {
     const rawText = post.description || "";
     const words = rawText.trim().split(/\s+/);
@@ -303,7 +286,7 @@ export default function Post({
 
     if (totalWords <= CHUNK_SIZE) {
       return (
-        <p className="text-gray-900 dark:text-white text-sm sm:text-base leading-relaxed break-words px-0.5">
+        <p className="text-gray-900 dark:text-[#f1ece1] text-sm sm:text-base leading-relaxed break-words px-0.5">
           {rawText}
         </p>
       );
@@ -311,18 +294,17 @@ export default function Post({
 
     const hasMore = visibleWordCount < totalWords;
     const displayedWords = words.slice(0, visibleWordCount).join(" ");
-    const remainingWords = totalWords - visibleWordCount;
-    const nextChunk = Math.min(CHUNK_SIZE, remainingWords);
 
     return (
       <div className="flex flex-col items-start px-0.5">
-        <p className="text-gray-900 dark:text-white text-sm sm:text-base leading-relaxed break-words">
+        <p className="text-gray-900 dark:text-[#f1ece1] text-sm sm:text-base leading-relaxed break-words">
           {displayedWords}
           {hasMore && "..."}
         </p>
         
         {hasMore ? (
           <button
+            type="button"
             onClick={() => setVisibleWordCount((prev) => prev + CHUNK_SIZE)}
             className="mt-1 text-xs sm:text-sm font-bold text-[#a50034] dark:text-[#f1ece1] hover:underline cursor-pointer focus:outline-none"
           >
@@ -330,8 +312,9 @@ export default function Post({
           </button>
         ) : (
           <button
+            type="button"
             onClick={() => setVisibleWordCount(CHUNK_SIZE)}
-            className="mt-1 text-xs sm:text-sm font-bold text-gray-500 hover:text-[#a50034] dark:text-gray-400 dark:hover:text-[#f1ece1] hover:underline cursor-pointer focus:outline-none"
+            className="mt-1 text-xs sm:text-sm font-bold text-gray-500 dark:text-gray-400 hover:text-[#a50034] dark:hover:text-[#f1ece1] hover:underline cursor-pointer focus:outline-none"
           >
             Sembunyikan
           </button>
@@ -346,7 +329,7 @@ export default function Post({
         hideaction ? "bg-transparent p-0" : "bg-transparent px-1 py-2 sm:py-3"
       } flex flex-col items-center justify-center`}
     >
-      <div className="flex flex-col w-full p-2.5 sm:p-3.5 border-2 sm:border-4 border-[#a50034]/50 dark:border-[#f1ece1] rounded-xl sm:rounded-2xl bg-white dark:bg-[#1e1e1e] shadow-xs">
+      <div className="flex flex-col w-full p-2.5 sm:p-3.5 border-2 sm:border-4 border-[#a50034]/50 dark:border-[#f1ece1]/30 rounded-xl sm:rounded-2xl bg-white dark:bg-[#1e1e1e] shadow-xs transition-colors">
         <div className="flex items-center justify-between gap-3 w-full pb-2">
           <div className="flex items-center gap-2.5 min-w-0">
             {post.users?.avatar_url ? (
@@ -361,7 +344,7 @@ export default function Post({
             ) : (
               <div
                 onClick={() => !hideaction && onUserClick && onUserClick(post.user_id)}
-                className={`w-10 h-10 rounded-full flex justify-center bg-white text-[#a50034] border-2 border-[#a50034] dark:border-[#f1ece1] font-bold text-base items-center object-cover flex-shrink-0 ${
+                className={`w-10 h-10 rounded-full flex justify-center bg-white dark:bg-[#252525] text-[#a50034] dark:text-[#f1ece1] border-2 border-[#a50034] dark:border-[#f1ece1] font-bold text-base items-center object-cover flex-shrink-0 ${
                   hideaction ? "cursor-default" : "cursor-pointer hover:opacity-80 transition-opacity"
                 }`}
               >
@@ -373,7 +356,7 @@ export default function Post({
               <span
                 onClick={() => !hideaction && onUserClick && onUserClick(post.user_id)}
                 className={`font-bold text-sm sm:text-base text-gray-800 dark:text-[#f1ece1] truncate ${
-                  hideaction ? "cursor-default" : "cursor-pointer hover:text-[#a50034] dark:hover:text-[#a50034]/60 transition-colors"
+                  hideaction ? "cursor-default" : "cursor-pointer hover:text-[#a50034] dark:hover:text-[#f1ece1]/80 transition-colors"
                 }`}
               >
                 {username}
@@ -393,8 +376,8 @@ export default function Post({
                         onClick={() =>
                           !hideaction && navigate(`/search?tag=${encodeURIComponent(cleanTag)}`)
                         }
-                        className={`text-[#a50034] dark:text-[#f1ece1] bg-[#a50034]/10 dark:bg-transparent dark:border dark:border-[#f1ece1] px-1.5 py-0.2 rounded font-bold text-[11px] sm:text-xs transition-colors ${
-                          hideaction ? "cursor-default" : "hover:bg-[#a50034] dark:hover:bg-transparent hover:text-white cursor-pointer"
+                        className={`text-[#a50034] dark:text-[#f1ece1] bg-[#a50034]/10 dark:bg-white/10 dark:border dark:border-[#f1ece1]/40 px-1.5 py-0.2 rounded font-bold text-[11px] sm:text-xs transition-colors ${
+                          hideaction ? "cursor-default" : "hover:bg-[#a50034] hover:text-white dark:hover:bg-[#f1ece1] dark:hover:text-black cursor-pointer"
                         }`}
                       >
                         #{cleanTag}
@@ -409,8 +392,9 @@ export default function Post({
           {hideaction ? (
             onClose && (
               <button
+                type="button"
                 onClick={onClose}
-                className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 dark:bg-neutral-700 dark:hover:bg-neutral-600 text-gray-700 dark:text-neutral-200 font-bold transition-all cursor-pointer text-sm flex-shrink-0"
+                className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 dark:bg-neutral-800 dark:hover:bg-neutral-700 text-gray-700 dark:text-neutral-200 font-bold transition-all cursor-pointer text-sm flex-shrink-0"
                 title="Tutup Modal"
               >
                 ✕
@@ -419,31 +403,34 @@ export default function Post({
           ) : (
             <div className="relative flex-shrink-0">
               <button
+                type="button"
                 onClick={() => setIsmenu_open((prev) => !prev)}
-                className="text-xl font-bold px-2 py-0.5 text-gray-500 dark:text-[#f1ece1] dark:hover:bg-transparent dark:hover:text-white dark:hover:scale-105 hover:text-black hover:bg-gray-100 rounded-full transition-colors cursor-pointer"
+                className="text-xl font-bold px-2 py-0.5 text-gray-500 dark:text-[#f1ece1] hover:text-black hover:bg-gray-100 dark:hover:bg-neutral-800 dark:hover:text-white rounded-full transition-colors cursor-pointer"
               >
                 •••
               </button>
 
               {ismenu_open && (
-                <div className="absolute right-0 mt-1 w-44 bg-white border border-gray-200 rounded-xl shadow-lg z-20 py-1 text-sm">
+                <div className="absolute right-0 mt-1 w-44 bg-white dark:bg-[#252525] border border-gray-200 dark:border-neutral-700 rounded-xl shadow-lg z-20 py-1 text-sm">
                   {ismypost ? (
                     <>
                       <button
+                        type="button"
                         onClick={() => {
                           setIsmenu_open(false);
                           setIsedit_open(true);
                         }}
-                        className="w-full text-left px-4 py-2 hover:bg-gray-50 text-gray-700 flex items-center gap-2 cursor-pointer"
+                        className="w-full text-left px-4 py-2 hover:bg-gray-50 dark:hover:bg-neutral-800 text-gray-700 dark:text-[#f1ece1] flex items-center gap-2 cursor-pointer"
                       >
                         Edit
                       </button>
                       <button
+                        type="button"
                         onClick={() => {
                           setIsmenu_open(false);
                           handle_delete();
                         }}
-                        className="w-full text-left px-4 py-2 hover:bg-red-50 text-red-600 font-semibold flex items-center gap-2 cursor-pointer"
+                        className="w-full text-left px-4 py-2 hover:bg-red-50 dark:hover:bg-red-950/40 text-red-600 dark:text-red-400 font-semibold flex items-center gap-2 cursor-pointer"
                       >
                         Hapus
                       </button>
@@ -451,18 +438,20 @@ export default function Post({
                   ) : (
                     <>
                       <button
+                        type="button"
                         onClick={() => {
                           setIsmenu_open(false);
                           navigator.clipboard.writeText(window.location.href);
                           showStatus("Tautan berhasil disalin!", "success");
                         }}
-                        className="w-full text-left font-bold px-4 py-2 hover:bg-gray-50 text-gray-700 flex items-center gap-2 cursor-pointer"
+                        className="w-full text-left font-bold px-4 py-2 hover:bg-gray-50 dark:hover:bg-neutral-800 text-gray-700 dark:text-[#f1ece1] flex items-center gap-2 cursor-pointer"
                       >
                         Salin Tautan
                       </button>
                       <button
+                        type="button"
                         onClick={() => setIsmenu_open(false)}
-                        className="w-full text-left px-4 py-2 hover:bg-red-50 text-red-600 font-semibold flex items-center gap-2 cursor-pointer"
+                        className="w-full text-left px-4 py-2 hover:bg-red-50 dark:hover:bg-red-950/40 text-red-600 dark:text-red-400 font-semibold flex items-center gap-2 cursor-pointer"
                       >
                         Laporkan
                       </button>
@@ -475,7 +464,6 @@ export default function Post({
         </div>
 
         <div className="w-full flex flex-col gap-2 mt-1">
-          {/* 1. GAMBAR SEKARANG DI ATAS */}
           {post.image_url && (
             <div className="w-full rounded-lg overflow-hidden bg-neutral-100 dark:bg-neutral-800 my-1">
               <img
@@ -486,13 +474,13 @@ export default function Post({
             </div>
           )}
 
-          {/* 2. DESKRIPSI DI BAWAH GAMBAR */}
           {renderDescription()}
 
           <div className="flex justify-between items-center gap-2 pt-2 border-t border-gray-100 dark:border-neutral-800">
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-1.5">
                 <button
+                  type="button"
                   onClick={toggleLike}
                   disabled={hideaction}
                   className={`focus:outline-none p-1 -m-1 ${hideaction ? "cursor-default" : "cursor-pointer"}`}
@@ -505,7 +493,7 @@ export default function Post({
                     className={`w-7 h-7 sm:w-8 sm:h-8 ${
                       isLiked
                         ? "fill-[#a50034] stroke-[#a50034] dark:fill-[#a50034] dark:stroke-[#a50034]"
-                        : "fill-none stroke-[#a50034] dark:stroke-white"
+                        : "fill-none stroke-[#a50034] dark:stroke-[#f1ece1]"
                     }`}
                     viewBox="0 0 24 24"
                     strokeWidth="2"
@@ -533,11 +521,12 @@ export default function Post({
 
               <div className="flex items-center gap-1.5">
                 <button
+                  type="button"
                   onClick={handleToggleComment}
                   className="focus:outline-none cursor-pointer p-1 -m-1"
                 >
                   <svg
-                    className="w-7 h-7 sm:w-8 sm:h-8 fill-[#a50034] dark:fill-white transition-transform hover:scale-105 cursor-pointer"
+                    className="w-7 h-7 sm:w-8 sm:h-8 fill-[#a50034] dark:fill-[#f1ece1] transition-transform hover:scale-105 cursor-pointer"
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 640 640"
                   >
@@ -546,7 +535,7 @@ export default function Post({
                 </button>
 
                 {commentCount > 0 && (
-                  <span className="font-bold text-xs sm:text-sm text-[#a50034] dark:text-white">
+                  <span className="font-bold text-xs sm:text-sm text-[#a50034] dark:text-[#f1ece1]">
                     {commentCount}
                   </span>
                 )}
@@ -554,11 +543,12 @@ export default function Post({
 
               <div className="flex items-center">
                 <button
+                  type="button"
                   onClick={handle_share}
                   className="focus:outline-none cursor-pointer p-1 -m-1"
                 >
                   <svg
-                    className="w-7 h-7 sm:w-8 sm:h-8 stroke-[#a50034] dark:stroke-white fill-none hover:scale-105 transition-transform cursor-pointer"
+                    className="w-7 h-7 sm:w-8 sm:h-8 stroke-[#a50034] dark:stroke-[#f1ece1] fill-none hover:scale-105 transition-transform cursor-pointer"
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
                   >
@@ -581,7 +571,8 @@ export default function Post({
                     e.stopPropagation();
                     handleOpenVote();
                   }}
-                  className="bg-red-50 p-2 leading-relaxed rounded-lg text-black border-2 border-[#a50034] dark:border-[#f1ece1] font-semibold cursor-pointer">
+                  className="bg-red-50 hover:bg-red-100 dark:bg-transparent dark:hover:bg-white/10 p-2 leading-relaxed rounded-lg text-black dark:text-[#f1ece1] border-2 border-[#a50034] dark:border-[#f1ece1] font-semibold cursor-pointer transition-colors"
+                >
                   Vote
                 </button>
 
@@ -589,7 +580,11 @@ export default function Post({
                   <VoteModal
                     post={post}
                     onClose={() => setIsVote_open(false)}
-                    onVoteSuccess={onUpdate} 
+                    onVoteSuccess={() => {
+                      if (onUpdate) {
+                        onUpdate(post);
+                      }
+                    }}
                   />
                 )}
               </>
@@ -599,12 +594,12 @@ export default function Post({
           {focused_comment && (
             <div
               ref={focused_comment_ref}
-              className="mt-2 bg-rose-50 border-2 border-[#a50034] rounded-xl p-3 shadow-xs scroll-mt-10"
+              className="mt-2 bg-rose-50 dark:bg-[#252525] border-2 border-[#a50034] dark:border-[#f1ece1]/40 rounded-xl p-3 shadow-xs scroll-mt-10"
             >
-              <span className="text-[10px] font-bold text-[#a50034] uppercase tracking-wider block mb-0.5">
+              <span className="text-[10px] font-bold text-[#a50034] dark:text-[#f1ece1] uppercase tracking-wider block mb-0.5">
                 Komentar Pilihan Anda
               </span>
-              <p className="text-xs sm:text-sm font-semibold text-gray-800">
+              <p className="text-xs sm:text-sm font-semibold text-gray-800 dark:text-gray-200">
                 "{focused_comment.content}"
               </p>
             </div>
@@ -647,15 +642,16 @@ export default function Post({
           >
             <div
               onClick={(e) => e.stopPropagation()}
-              className="bg-white p-4 sm:p-5 rounded-t-2xl sm:rounded-2xl max-w-sm w-full shadow-2xl border sm:border-2 border-[#a50034]/30 animate-fadeIn"
+              className="bg-white dark:bg-[#1e1e1e] p-4 sm:p-5 rounded-t-2xl sm:rounded-2xl max-w-sm w-full shadow-2xl border sm:border-2 border-[#a50034]/30 dark:border-[#f1ece1]/30 animate-fadeIn"
             >
               <div className="flex justify-between items-center mb-3">
-                <h3 className="font-bold text-base sm:text-lg text-gray-800">
+                <h3 className="font-bold text-base sm:text-lg text-gray-800 dark:text-[#f1ece1]">
                   Menyukai postingan ini
                 </h3>
                 <button
+                  type="button"
                   onClick={() => setShowLikers(false)}
-                  className="text-gray-400 hover:text-[#a50034] font-bold text-lg sm:text-xl cursor-pointer p-1"
+                  className="text-gray-400 hover:text-[#a50034] dark:hover:text-[#f1ece1] font-bold text-lg sm:text-xl cursor-pointer p-1"
                 >
                   ✕
                 </button>
@@ -668,14 +664,14 @@ export default function Post({
                       setShowLikers(false);
                       if (onUserClick) onUserClick(likeItem.user_id);
                     }}
-                    className="flex items-center gap-2.5 sm:gap-3 cursor-pointer hover:bg-rose-50/60 p-1.5 sm:p-2 rounded-xl transition-colors"
+                    className="flex items-center gap-2.5 sm:gap-3 cursor-pointer hover:bg-rose-50/60 dark:hover:bg-neutral-800/80 p-1.5 sm:p-2 rounded-xl transition-colors"
                   >
                     <img
                       src={likeItem.users?.avatar_url || "/default-avatar.png"}
                       alt="avatar"
-                      className="w-8 h-8 sm:w-9 sm:h-9 rounded-full object-cover border border-[#a50034]"
+                      className="w-8 h-8 sm:w-9 sm:h-9 rounded-full object-cover border border-[#a50034] dark:border-[#f1ece1]"
                     />
-                    <span className="font-semibold text-xs sm:text-sm text-gray-800">
+                    <span className="font-semibold text-xs sm:text-sm text-gray-800 dark:text-[#f1ece1]">
                       {likeItem.users?.username || "Pengguna"}
                     </span>
                   </div>
