@@ -11,7 +11,10 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors());
+app.use(cors({
+    origin: true,
+    credentials: true
+}));
 app.use(express.json());
 
 const supabase = createClient(
@@ -48,7 +51,6 @@ const verifytoken = (req, res, next) => {
     }
 };
 
-// Bagian signup
 app.post('/api/auth/sign_up', async (req, res) => {
     const { username, email, password } = req.body;
 
@@ -102,7 +104,6 @@ app.post('/api/auth/sign_up', async (req, res) => {
     }
 });
 
-// Bagian Login
 app.post('/api/auth/login', async (req, res) => {
     const { identifier, email, password } = req.body;
     const loginKey = identifier || email;
@@ -155,7 +156,6 @@ app.post('/api/auth/login', async (req, res) => {
     }
 });
 
-// Endpoint untuk Tag
 app.get('/api/tags', async (req, res) => {
     try {
         const { query } = req.query;
@@ -183,7 +183,6 @@ app.get('/api/tags', async (req, res) => {
     }
 });
 
-// Endpoint Fetch Posts
 app.get('/api/posts', async (req, res) => {
     try {
         const { query } = req.query;
@@ -221,7 +220,6 @@ app.get('/api/posts', async (req, res) => {
     }
 });
 
-// Endpoint Buat Post Baru
 app.post('/api/posts', verifytoken, async (req, res) => {
     const { description, image_url, tag } = req.body;
     const userId = req.user.id;
@@ -261,7 +259,6 @@ app.post('/api/posts', verifytoken, async (req, res) => {
     }
 });
 
-// Endpoint Fetch Reports
 app.get('/api/reports', verifytoken, async (req, res) => {
     try {
         const { data: reports, error } = await supabase
@@ -291,7 +288,6 @@ app.get('/api/reports', verifytoken, async (req, res) => {
     }
 });
 
-// Endpoint Update Status Report (Khusus Admin)
 app.patch('/api/reports/:id/status', verifytoken, async (req, res) => {
     const { id } = req.params;
     const { status } = req.body;
@@ -319,7 +315,6 @@ app.patch('/api/reports/:id/status', verifytoken, async (req, res) => {
     }
 });
 
-// Endpoint Create Report Problem
 app.post('/api/reports', verifytoken, async (req, res) => {
     const { category, problemType, problem_type, details } = req.body;
     const selectedProblemType = problemType || problem_type || "Technical";
@@ -393,6 +388,10 @@ app.post('/api/reports', verifytoken, async (req, res) => {
     }
 });
 
-app.listen(PORT, () => {
-    console.log(`Server berjalan di http://localhost:${PORT}`);
-});
+export default app;
+
+if (process.env.NODE_ENV !== "production") {
+    app.listen(PORT, () => {
+        console.log(`Server berjalan di http://localhost:${PORT}`);
+    });
+}
