@@ -388,6 +388,77 @@ app.post('/api/reports', verifytoken, async (req, res) => {
     }
 });
 
+app.post('/api/auth/send-otp', verifytoken, async (req, res) => {
+    const userId = req.user.id;
+    const email = req.user.email; 
+
+    try {
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+        const { error: dbError } = await supabase
+            .from('users')
+            .update({ otp_code: otp })
+            .eq('id', userId);
+
+        if (dbError) throw dbError;
+
+        const mailOptions = {
+            from: `"KitaKomplain" <${process.env.EMAIL_USER}>`,
+            to: email,
+            subject: "Kode Verifikasi Akun KitaKomplain",
+            html: `
+                <div style="font-family: Arial, sans-serif; text-align: center; padding: 20px;">
+                    <h2>Verifikasi Akun Anda</h2>
+                    <p>Masukkan kode 6 digit berikut untuk memverifikasi akun Anda:</p>
+                    <h1 style="background-color: #f7f7f7; padding: 15px; letter-spacing: 5px; color: #a50034; border-radius: 10px;">
+                        ${otp}
+                    </h1>
+                    <p style="color: #888; font-size: 12px;">Kode ini bersifat rahasia. Jangan berikan kepada siapapun.</p>
+                </div>
+            `,
+        };
+
+        await transporter.sendMail(mailOptions);
+        return res.status(200).json({ message: "OTP berhasil dikirim" });
+    } catch (error) {
+        console.error("Gagal mengirim OTP:", error.message);
+        return res.status(500).json({ message: "Gagal mengirim OTP" });
+    }
+});
+
+app.post('/api/auth/verify-otp', verifytoken, async (req, res) => {
+    const userId = req.user.id;
+    const { otp } = req.body;
+
+    if (!otp) {
+        return res.status(400).json({ message: "Kode OTP wajib diisi!" });
+    }
+
+    try {
+        const { data: user, error: fetchError } = await supabase
+            .from('users')
+            .select('otp_code')
+            .eq('id', userId)
+            .single();
+
+        if (fetchError || !user) throw new Error("User tidak ditemukan");
+
+        if (user.otp_code === otp) {
+            await supabase
+                .from('users')
+                .update({ is_verified: true, otp_code: null })
+                .eq('id', userId);
+
+            return res.status(200).json({ message: "Verifikasi berhasil" });
+        } else {
+            return res.status(400).json({ message: "Kode OTP salah" });
+        }
+    } catch (error) {
+        console.error("Error verify OTP:", error.message);
+        return res.status(500).json({ message: error.message });
+    }
+});
+
 export default app;
 
 if (process.env.NODE_ENV !== "production") {

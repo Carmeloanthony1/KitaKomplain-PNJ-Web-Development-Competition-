@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import Focuspost from "../components/FocusPost";
 import { useStatus } from "../components/StatusContext";
+import VerifyAccount from "../components/Verify";
 
 export default function Profile() {
   const navigate = useNavigate();
@@ -16,6 +17,10 @@ export default function Profile() {
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
 
+  const [isVerifyOpen, setIsVerifyOpen] = useState(false);
+  const [isVerified, setIsVerified] = useState(false);
+
+  // State Data
   const [posts, setPosts] = useState([]);
   const [user_comment, setUser_comment] = useState([]);
   const [pollsCount, setPollsCount] = useState(0);
@@ -75,26 +80,32 @@ export default function Profile() {
 
       const { data, error: userError } = await supabase
         .from("users")
-        .select("username, bio, avatar_url, is_anonim_mode, created_at")
+        .select("username, bio, avatar_url, is_anonim_mode, created_at, is_verified")
         .eq("id", userId)
         .maybeSingle();
 
+      // Handle error or missing user data first
       if (userError || !data) {
+        if (userError) console.error("Gagal mengambil data user: ", userError.message);
+        
         localStorage.removeItem("user_id");
         localStorage.removeItem("token");
         localStorage.removeItem("user");
         showStatus("Akun tidak ditemukan atau telah dihapus.", "error");
         navigate("/login");
-        return;
+        return; // Stop execution here
       }
 
+      // Data is safe, set the states exactly once
       setUsername(data.username || "");
       setBio(data.bio || "Belum ada deskripsi");
       setAvatarUrl(data.avatar_url || "");
       setIsAnonimMode(data.is_anonim_mode || false);
       setTempUsername(data.username || "");
       setTempBio(data.bio || "");
+      setIsVerified(data.is_verified || false);
 
+      // Fetch Posts
       const { data: userPosts, error: postError } = await supabase
         .from("posts")
         .select(`id, description, image_url, tag, is_anonim_mode, created_at, user_id, users (username, avatar_url)`)
@@ -107,6 +118,7 @@ export default function Profile() {
         setPosts(userPosts);
       }
 
+      // Fetch Comments
       const { data: commentsData, error: commentError } = await supabase
         .from("comments")
         .select(`
@@ -351,58 +363,71 @@ export default function Profile() {
               )}
             </div>
 
-            {/* Nama & Edit Icon */}
-            <div className="flex flex-col items-center sm:items-start gap-1 w-full">
-              <div className="flex items-center justify-center sm:justify-start gap-2 max-w-full">
-                {isEditingName ? (
-                  <input
-                    type="text"
-                    value={tempUsername}
-                    onChange={(e) => setTempUsername(e.target.value)}
-                    onBlur={handleSaveName}
-                    onKeyDown={(e) => e.key === "Enter" && handleSaveName()}
-                    autoFocus
-                    className="text-lg sm:text-xl font-bold border-b border-[#a50034] dark:border-[#f1ece1] outline-none bg-transparent text-gray-900 dark:text-[#f1ece1] text-center sm:text-left"
-                  />
-                ) : (
-                  <h2 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-[#f1ece1] truncate text-center sm:text-left">
-                    {username || "User"}
-                  </h2>
-                )}
+            {/* Info Nama & Switch Mode Anonim */}
+            <div className="flex flex-wrap items-center justify-between gap-4 w-full">
+              <div className="flex flex-col gap-1 w-full sm:w-auto">
+                <div className="flex items-center justify-center sm:justify-start gap-2">
+                  {isEditingName ? (
+                    <input
+                      type="text"
+                      value={tempUsername}
+                      onChange={(e) => setTempUsername(e.target.value)}
+                      onBlur={handleSaveName}
+                      onKeyDown={(e) => e.key === "Enter" && handleSaveName()}
+                      autoFocus
+                      className="text-2xl font-bold border-b-2 border-[#a50034] dark:border-[#f1ece1] outline-none bg-transparent text-gray-900 dark:text-[#f1ece1] text-center sm:text-left"
+                    />
+                  ) : (
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-[#f1ece1] flex items-center gap-1.5 justify-center sm:justify-start">
+                      {username || "User"}
+                      
+                      {isVerified && (
+                        <svg className="w-5 h-5 sm:w-6 sm:h-6 fill-blue-500 flex-shrink-0" viewBox="0 0 24 24">
+                          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+                        </svg>
+                      )}
+                    </h2>
+                  )}
 
-                <button
-                  onClick={() => setIsEditingName((prev) => !prev)}
-                  className="text-gray-400 hover:text-gray-600 dark:hover:text-[#f1ece1] transition cursor-pointer p-0.5 flex-shrink-0"
-                >
-                  <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
-                    <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
-                  </svg>
-                </button>
+                  <button
+                    onClick={() => setIsEditingName((prev) => !prev)}
+                    className="text-gray-500 hover:text-gray-700 dark:text-[#f1ece1] transition cursor-pointer flex-shrink-0"
+                  >
+                    <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                      <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+                    </svg>
+                  </button>
+                </div>
+
+                {!isVerified && (
+                  <p
+                    onClick={() => setIsVerifyOpen(true)} 
+                    className="text-xs text-rose-600 dark:text-rose-400 font-medium cursor-pointer hover:underline text-center sm:text-left mt-1"
+                  >
+                    Verify your account?
+                  </p>
+                )}
               </div>
 
-              <p className="text-xs text-rose-600 dark:text-rose-400 font-medium cursor-pointer hover:underline text-center sm:text-left">
-                Verify your account?
-              </p>
-            </div>
-
-            {/* Toggle Switch Mode Anonim */}
-            <div className="mt-3 flex items-center justify-center sm:justify-start gap-2.5 bg-gray-100 dark:bg-[#1a1a1a] px-3.5 py-1.5 rounded-full border border-gray-200 dark:border-neutral-800">
-              <span className="text-xs font-semibold text-gray-700 dark:text-[#f1ece1]">
-                Mode Anonim
-              </span>
-              <button
-                type="button"
-                onClick={handleToggleAnonim}
-                className={`relative inline-flex h-5 w-10 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                  isAnonimMode ? "bg-[#a50034] dark:bg-[#a50034]" : "bg-gray-300 dark:bg-neutral-600"
-                }`}
-              >
-                <span
-                  className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
-                    isAnonimMode ? "translate-x-5" : "translate-x-0"
+              {/* Toggle Switch Mode Anonim */}
+              <div className="flex items-center gap-2.5 bg-gray-100 dark:bg-[#1a1a1a] px-3.5 py-1.5 rounded-full border border-gray-200 dark:border-neutral-800 sm:ml-auto">
+                <span className="text-xs font-semibold text-gray-700 dark:text-[#f1ece1]">
+                  Mode Anonim
+                </span>
+                <button
+                  type="button"
+                  onClick={handleToggleAnonim}
+                  className={`relative inline-flex items-center h-5 w-10 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                    isAnonimMode ? "bg-[#a50034] dark:bg-[#a50034]" : "bg-gray-300 dark:bg-neutral-600"
                   }`}
-                />
-              </button>
+                >
+                  <span
+                    className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                      isAnonimMode ? "translate-x-5" : "translate-x-0"
+                    }`}
+                  />
+                </button>
+              </div>
             </div>
 
             {/* Statistik Posts / Comments / Polls */}
@@ -604,6 +629,12 @@ export default function Profile() {
         isOpen={isfocusopen}
         onClose={() => setIsfocusopen(false)}
         onVoteSuccess={refreshpage}
+      />
+
+      <VerifyAccount 
+        isOpen={isVerifyOpen} 
+        onClose={() => setIsVerifyOpen(false)} 
+        onSuccess={() => setIsVerified(true)} 
       />
     </div>
   );

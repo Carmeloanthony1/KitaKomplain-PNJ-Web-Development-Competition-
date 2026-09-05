@@ -11,11 +11,11 @@ export default function CommentSection({
   isFocused = false,
   hideaction = false 
 }) {
-  const { showStatus } = useStatus();
   const [commentList, setCommentList] = useState(comments);
   const [inputText, setInputText] = useState("");
   const [visibleCount, setVisibleCount] = useState(3);
   const [loading, setLoading] = useState(false);
+  const { showStatus } = useStatus();
 
   useEffect(() => {
     if (JSON.stringify(comments) !== JSON.stringify(commentList)) {
@@ -38,6 +38,21 @@ export default function CommentSection({
 
     setLoading(true);
 
+    // Verification check
+    const { data: userData } = await supabase
+      .from("users")
+      .select("is_verified")
+      .eq("id", currentUserId)
+      .single();
+
+    if (!userData?.is_verified)
+    {
+      showStatus("Akun belum diverifikasi! Silakan verifikasi untuk berkomentar.");
+      setLoading(false);
+      return;
+    }
+
+    // Comment to supabase
     const { error: commentError } = await supabase.from("comments").insert([
       {
         post_id: postId,
