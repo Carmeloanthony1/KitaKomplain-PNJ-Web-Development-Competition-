@@ -32,7 +32,7 @@ export default function CommentSection({
     const currentUserId = localStorage.getItem("user_id");
 
     if (!currentUserId) {
-      showStatus("Silakan login untuk memberikan komentar!", "error");
+      showStatus("Silahkan login/sign up untuk memberikan komentar!", "error");
       return;
     }
 

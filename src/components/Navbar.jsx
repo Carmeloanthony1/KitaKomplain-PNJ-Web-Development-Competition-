@@ -214,6 +214,13 @@ export default function Navbar({ user, openNotifications, onOpenNewPost, openPol
                   
                   <button onClick={() => { 
                     setIsMenuOpen(false); 
+
+                    if (!currentUserId) 
+                    {
+                      showStatus("Silahkan login/sign up terlebih dahulu untuk melihat history.", "error");
+                      return;
+                    }
+
                     if (openHistory) 
                       openHistory(); 
                     else 
@@ -224,17 +231,24 @@ export default function Navbar({ user, openNotifications, onOpenNewPost, openPol
                     History
                   </button>
                   
-                  <button onClick={() => { 
-                      setIsMenuOpen(false); 
-                      if (openNotifications) {
-                        openNotifications();
-                      } else {
-                        navigate('/notifications');
-                      }
+                  <button onClick={() => 
+                  { 
+                    setIsMenuOpen(false);
+
+                    if (!currentUserId) 
+                    {
+                      showStatus("Silahkan login/sign up terlebih dahulu untuk melihat notifications.", "error");
+                      return;
+                    }
+
+                    if (openNotifications)
+                      openNotifications();
+                    else
+                      navigate('/notifications');
                     }} 
                     className={menuItemClass}
                   >
-                    Notifikasi
+                    Notifications
                   </button>
                   
                   <button 

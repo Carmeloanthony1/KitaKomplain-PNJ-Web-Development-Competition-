@@ -9,10 +9,12 @@ import Most_Polling from "../components/Most_Polling";
 import Notification from "../components/Notification";
 import { NewPost } from "../components/newpost";
 import History from "../components/History";
+import { useStatus } from "../components/StatusContext";
 
 export default function Home({ user, onLogout, onNavigate }) {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
+  const { showStatus } = useStatus();
 
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -24,6 +26,38 @@ export default function Home({ user, onLogout, onNavigate }) {
   const [isPostModalOpen, setIsPostModalOpen] = useState(false);
   const [isPollingModalOpen, setIsPollingModalOpen] = useState(false);
   const [isdark, setIsdark] = useState(false);
+
+  const currentUserId = user?.id || localStorage.getItem("user_id");
+
+  // Fungsi pengaman notification
+  const handleOpenNotification = () => 
+  {
+    if (!currentUserId) {
+      showStatus("Silahkan login/sign up terlebih dahulu untuk melihat notifikasi.", "error");
+      return;
+    }
+    setIsNotificationOpen(true);
+  };
+
+  // Fungsi pengaman history
+  const handleOpenHistory = () =>
+  {
+    if (!currentUserId) {
+      showStatus("Silahkan login/sign up terlebih dahulu untuk melihat history.", "error");
+      return;
+    }
+    setIsHistoryOpen(true);
+  };
+
+  // Fungsi pengaman post modal
+  const handleOpenPostModal = () => 
+  {
+    if (!currentUserId) {
+      showStatus("Silahkan login/sign up terlebih dahulu untuk membuat postingan.", "error");
+      return;
+    }
+    setIsPostModalOpen(true);
+  };
 
   const toggle_darkmode = () => {
     const isdarkState = document.documentElement.classList.toggle("dark");
@@ -127,9 +161,9 @@ export default function Home({ user, onLogout, onNavigate }) {
   };
 
   const handleUserClick = (targetUserId) => {
-    const currentUserId = user?.id || localStorage.getItem("user_id");
+    const targetCurrentId = user?.id || localStorage.getItem("user_id");
 
-    if (targetUserId === currentUserId) {
+    if (targetUserId === targetCurrentId) {
       if (onNavigate) onNavigate("profile");
       else navigate("/profile");
     } else {
@@ -160,10 +194,17 @@ export default function Home({ user, onLogout, onNavigate }) {
       <header className="fixed top-0 left-0 right-0 z-30 bg-white dark:bg-[#1e1e1e] border-b border-gray-200 dark:border-gray-800">
         <Navbar 
           user={user} 
-          openProfile={() => (onNavigate ? onNavigate("profile") : navigate("/profile"))} 
-          openNotifications={() => setIsNotificationOpen(true)}
-          openHistory={() => setIsHistoryOpen(true)}
-          onOpenNewPost={() => setIsPostModalOpen(true)}
+          openProfile={() => {
+            if (!currentUserId)
+            {
+              showStatus("Silahkan login/sign up untuk melihat profil.", "error");
+              return;
+            }
+            onNavigate ? onNavigate("profile") : navigate("/profile");
+          }} 
+          openNotifications={handleOpenNotification}
+          openHistory={handleOpenHistory}
+          onOpenNewPost={handleOpenPostModal}
           openPollingModal={() => setIsPollingModalOpen(true)}
         />
       </header>
@@ -172,9 +213,9 @@ export default function Home({ user, onLogout, onNavigate }) {
         <aside className="hidden md:block w-full sticky top-24 self-start z-10">
           <Sidebar_Kiri 
             onNavigate={onNavigate}
-            openNotifications={() => setIsNotificationOpen(true)}
-            openHistory={() => setIsHistoryOpen(true)}
-            openPostModal={() => setIsPostModalOpen(true)}
+            openNotifications={handleOpenNotification}
+            openHistory={handleOpenHistory}
+            openPostModal={handleOpenPostModal}
           />
         </aside>
 
