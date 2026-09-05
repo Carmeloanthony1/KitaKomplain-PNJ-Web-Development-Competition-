@@ -4,7 +4,6 @@ import { useStatus } from "./StatusContext";
 
 // --- KOMPONEN UNTUK ITEM BALASAN (SUB-COMMENT) ---
 function ReplyItem({ reply, onReplyClick, hideaction = false }) {
-  const { showStatus } = useStatus();
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
   const { showStatus } = useStatus();
@@ -170,7 +169,6 @@ function ReplyItem({ reply, onReplyClick, hideaction = false }) {
 
 // --- KOMPONEN UTAMA COMMENT DETAIL ---
 export default function Comment_detail({ comment, postId, hideaction = false }) {
-  const { showStatus } = useStatus();
   const [isCommentLiked, setIsCommentLiked] = useState(false);
   const [commentLikeCount, setCommentLikeCount] = useState(0);
   const [isComment_getcomment, setIsComment_getcomment] = useState(false);

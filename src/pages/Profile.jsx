@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import Focuspost from "../components/FocusPost";
 import { useStatus } from "../components/StatusContext";
+import VerifyAccount from "../components/Verify";
 
 export default function Profile() {
   const navigate = useNavigate();
@@ -16,6 +17,9 @@ export default function Profile() {
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [isanonim_mode, setIsanonim_mode] = useState(false);
+
+  const [isVerifyOpen, setIsVerifyOpen] = useState(false);
+  const [isVerified, setIsVerified] = useState(false);
 
   // State Data
   const [posts, setPosts] = useState([]);
@@ -80,7 +84,7 @@ export default function Profile() {
       // 1. Fetch Profile User (Termasuk is_anonim_mode)
       const { data, error: userError } = await supabase
         .from("users")
-        .select("username, bio, avatar_url, is_anonim_mode, created_at")
+        .select("username, bio, avatar_url, is_anonim_mode, created_at, is_verified")
         .eq("id", userId)
         .single();
 
@@ -93,7 +97,8 @@ export default function Profile() {
         setIsAnonimMode(data.is_anonim_mode || false); // Set Status Mode Anonim
         setTempUsername(data.username || "");
         setTempBio(data.bio || "");
-        setIsanonim_mode(data.is_anonim_mode || false); // <-- Diset langsung di sini
+        setIsanonim_mode(data.is_anonim_mode || false);
+        setIsVerified(data.is_verified || false);
       }
 
       // 2. Fetch Post User
@@ -388,9 +393,14 @@ export default function Profile() {
                   )}
                 </div>
 
-                <p className="text-xs text-blue-600 dark:text-[#a50034] font-medium cursor-pointer hover:underline">
-                  Verify your account?
+                {!isVerified && (
+                <p
+                  onClick={() => setIsVerifyOpen(true)} 
+                  className="text-xs text-blue-600 dark:text-[#a50034] font-medium cursor-pointer hover:underline"
+                  >
+                    Verify your account?
                 </p>
+                )}
               </div>
 
               {/* TOGGLE SWITCH MODE ANONIM */}
@@ -614,6 +624,12 @@ export default function Profile() {
         isOpen={isfocusopen} 
         onClose={() => setIsfocusopen(false)}
         onVoteSuccess={refreshpage}
+      />
+
+      <VerifyAccount 
+        isOpen={isVerifyOpen} 
+        onClose={() => setIsVerifyOpen(false)} 
+        onSuccess={() => setIsVerified(true)} 
       />
     </div>
   );
