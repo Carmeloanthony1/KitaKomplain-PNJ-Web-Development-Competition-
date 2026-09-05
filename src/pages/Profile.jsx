@@ -71,7 +71,7 @@ export default function Profile() {
 
   useEffect(() => {
     if (!userId) {
-      setLoading(false);
+      navigate("/login");
       return;
     }
 
@@ -82,20 +82,30 @@ export default function Profile() {
         .from("users")
         .select("username, bio, avatar_url, is_anonim_mode, created_at, is_verified")
         .eq("id", userId)
-        .single();
+        .maybeSingle();
 
-      if (userError) {
-        console.error("Gagal mengambil data user: ", userError.message);
-      } else if (data) {
-        setUsername(data.username || "");
-        setBio(data.bio || "Belum ada deskripsi");
-        setAvatarUrl(data.avatar_url || "");
-        setIsAnonimMode(data.is_anonim_mode || false);
-        setTempUsername(data.username || "");
-        setTempBio(data.bio || "");
-        setIsVerified(data.is_verified || false);
+      // Handle error or missing user data first
+      if (userError || !data) {
+        if (userError) console.error("Gagal mengambil data user: ", userError.message);
+        
+        localStorage.removeItem("user_id");
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        showStatus("Akun tidak ditemukan atau telah dihapus.", "error");
+        navigate("/login");
+        return; // Stop execution here
       }
 
+      // Data is safe, set the states exactly once
+      setUsername(data.username || "");
+      setBio(data.bio || "Belum ada deskripsi");
+      setAvatarUrl(data.avatar_url || "");
+      setIsAnonimMode(data.is_anonim_mode || false);
+      setTempUsername(data.username || "");
+      setTempBio(data.bio || "");
+      setIsVerified(data.is_verified || false);
+
+      // Fetch Posts
       const { data: userPosts, error: postError } = await supabase
         .from("posts")
         .select(`id, description, image_url, tag, is_anonim_mode, created_at, user_id, users (username, avatar_url)`)
@@ -108,6 +118,7 @@ export default function Profile() {
         setPosts(userPosts);
       }
 
+      // Fetch Comments
       const { data: commentsData, error: commentError } = await supabase
         .from("comments")
         .select(`
@@ -126,8 +137,9 @@ export default function Profile() {
       await refreshpage();
       setLoading(false);
     }
+
     fetchUserData();
-  }, [userId, refreshpage]);
+  }, [userId, navigate, refreshpage, showStatus]);
 
   const handleToggleAnonim = async () => {
     const nextStatus = !isAnonimMode;
