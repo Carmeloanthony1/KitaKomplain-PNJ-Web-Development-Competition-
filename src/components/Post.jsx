@@ -576,7 +576,11 @@ export default function Post({
             {!hideaction && !hideVoteButton && (
               <>
                 <button
-                  onClick={handleOpenVote}
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleOpenVote();
+                  }}
                   className="bg-red-50 p-2 leading-relaxed rounded-lg text-black border-2 border-[#a50034] dark:border-[#f1ece1] font-semibold cursor-pointer">
                   Vote
                 </button>
@@ -584,7 +588,9 @@ export default function Post({
                 {isVote_open && (
                   <VoteModal
                     post={post}
-                    onClose={handleOpenVote} />
+                    onClose={() => setIsVote_open(false)}
+                    onVoteSuccess={onUpdate} 
+                  />
                 )}
               </>
             )}
