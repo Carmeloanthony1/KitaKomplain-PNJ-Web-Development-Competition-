@@ -9,13 +9,10 @@ export default function Notification({ isOpen, setIsOpen }) {
     const [notifications, setNotifications] = useState([]);
     const currentUserId = localStorage.getItem("user_id");
 
-    useEffect(() =>
-    {
-        // Only fetch when the panel is open and user is logged in
+    useEffect(() => {
         if (!isOpen || !currentUserId) return;
 
-        const fetchNotifications = async () =>
-        {
+        const fetchNotifications = async () => {
             const { data, error } = await supabase
                 .from("notifications")
                 .select(`
@@ -29,16 +26,11 @@ export default function Notification({ isOpen, setIsOpen }) {
                 .eq("user_id", currentUserId)
                 .order("created_at", { ascending: false });
 
-            if (!error && data) 
-            {
-                // Format the Supabase data to match your UI structure
-                const formattedNotifications = data.map((n) =>
-                {
-                    // Simple time formatting (ex: "12 Aug")
+            if (!error && data) {
+                const formattedNotifications = data.map((n) => {
                     const date = new Date(n.created_at);
                     const timeString = `${date.getDate()} ${date.toLocaleString('default', { month: 'short' })}`;
 
-                    // Determine the message text based on the notification type
                     let messageText = "interacted with your post.";
                     let showUsername = true; 
                     let systemAvatar = null;
@@ -47,14 +39,12 @@ export default function Notification({ isOpen, setIsOpen }) {
                         messageText = "liked your post.";
                     else if (n.type === 'comment')
                         messageText = "commented on your post.";
-                    else if (n.type === 'rank_top_5')
-                    {
+                    else if (n.type === 'rank_top_5') {
                         messageText = "Your post is trending! It made it to the Most Polling Top 5!";
                         showUsername = false;
                         systemAvatar = "🏆";
                     }
-                    else if (n.type.startsWith('milestone'))
-                    {
+                    else if (n.type.startsWith('milestone')) {
                         const voteCount = n.type.split('_')[1];
                         messageText = `Your post reached ${voteCount} polls!`;
                         showUsername = false;
@@ -80,12 +70,9 @@ export default function Notification({ isOpen, setIsOpen }) {
         fetchNotifications();
     }, [isOpen, currentUserId]);
 
-    const handleNotificationClick = async (notification) =>
-    {
-        // Update UI
+    const handleNotificationClick = async (notification) => {
         setNotifications((prev) => prev.map((item) => item.id === notification.id ? { ...item, read: true } : item));
 
-        // Update database
         await supabase
             .from("notifications")
             .update({ is_read: true })
@@ -94,20 +81,18 @@ export default function Notification({ isOpen, setIsOpen }) {
 
     return (
         <>
-            {isOpen &&
-                (
-                    <div
-                        className="notification-overlay"
-                        onClick={() => setIsOpen(false)}
-                    />
-                )
-            }
+            {isOpen && (
+                <div
+                    className="notification-overlay"
+                    onClick={() => setIsOpen(false)}
+                />
+            )}
 
             <div className={`notification-panel ${isOpen ? "notification-panel-open" : ""}`}>
                 <div className="notification-header">
                     <h1>Notifications</h1>
                     <button className="notification-close" onClick={() => setIsOpen(false)}>
-                        x
+                        ✕
                     </button>
                 </div>
 
@@ -125,7 +110,6 @@ export default function Notification({ isOpen, setIsOpen }) {
                                     className="notification-avatar"
                                     style={{ backgroundColor: notification.isSystemAvatar ? "transparent" : "" }}
                                 >
-                                    {/* Properly checking for system emojis so it doesn't break the image tag */}
                                     {notification.isSystemAvatar ? (
                                         notification.avatar
                                     ) : notification.avatar !== "👤" ? (
@@ -137,7 +121,6 @@ export default function Notification({ isOpen, setIsOpen }) {
 
                                 <div className="notification-content">
                                     <p>
-                                        {/* Conditionally render the username */}
                                         {notification.showUsername && (
                                             <><strong>{notification.username}</strong>{" "}</>
                                         )}
