@@ -1,12 +1,19 @@
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient";
+import { useStatus } from "./StatusContext";
+import Focuspost from "./FocusPost";
 import "./Notification.css";
+
 
 export default function Notification({ isOpen, setIsOpen }) {
     const navigate = useNavigate();
+    const { showStatus } = useStatus();
 
     const [notifications, setNotifications] = useState([]);
+    const [selectedPost, setSelectedPost] = useState(null);
+    const [isFocusOpen, setIsFocusOpen] = useState(false);
+
     const currentUserId = localStorage.getItem("user_id");
 
     useEffect(() => {
@@ -53,6 +60,7 @@ export default function Notification({ isOpen, setIsOpen }) {
 
                     return {
                         id: n.id,
+                        post_id: n.post_id,
                         username: n.users?.username || "Someone",
                         avatar: systemAvatar || n.users?.avatar_url || "👤",
                         isSystemAvatar: !!systemAvatar,
@@ -70,13 +78,42 @@ export default function Notification({ isOpen, setIsOpen }) {
         fetchNotifications();
     }, [isOpen, currentUserId]);
 
-    const handleNotificationClick = async (notification) => {
+    const handleNotificationClick = async (notification) => 
+    {
+        // Sudah dibaca di UI
         setNotifications((prev) => prev.map((item) => item.id === notification.id ? { ...item, read: true } : item));
 
-        await supabase
-            .from("notifications")
-            .update({ is_read: true })
-            .eq("id", notification.id);
+        // Update status read di database
+        if (!notification.read) 
+        {
+            supabase
+                .from("notifications")
+                .update({ is_read: true })
+                .eq("id", notification.id)
+                .then(); // Eksekusi berjalan di background
+        }
+
+        // Ambil data postingan dan buka FocusPost
+        if (notification.post_id) 
+        {
+            const { data: postData, error } = await supabase
+                .from("posts")
+                .select(`
+                    id, description, image_url, tag, is_anonim_mode, created_at, user_id, 
+                    users (username, avatar_url)
+                `)
+                .eq("id", notification.post_id)
+                .single();
+
+            if (error || !postData) 
+                showStatus("Postingan tidak ditemukan atau telah dihapus.", "error");
+            else
+            {
+                setSelectedPost(postData);
+                setIsFocusOpen(true);
+                setIsOpen(false);
+            }
+        }
     };
 
     return (
@@ -133,6 +170,12 @@ export default function Notification({ isOpen, setIsOpen }) {
                     )}
                 </div>
             </div>
+
+            <Focuspost 
+                post={selectedPost} 
+                isOpen={isFocusOpen} 
+                onClose={() => setIsFocusOpen(false)} 
+            />
         </>
     );
 }
