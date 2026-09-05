@@ -216,6 +216,7 @@ export default function Most_Polling({ onUserClick, onPostClick }) {
         isOpen={isFocusOpen} 
         onClose={() => setIsFocusOpen(false)} 
         onVoteSuccess={() => fetch_mypolling(true)}
+        isFromPolling={true}
       />
 
     </>
