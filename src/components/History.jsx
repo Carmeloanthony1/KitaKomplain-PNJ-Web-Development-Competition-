@@ -97,7 +97,6 @@ export default function History({ isOpen, setIsOpen }) {
                                     <p>
                                         <strong>#{tag}</strong>
                                     </p>
-                                    <span>Pencarian sebelumnya</span>
                                 </div>
                             </div>
                         ))
