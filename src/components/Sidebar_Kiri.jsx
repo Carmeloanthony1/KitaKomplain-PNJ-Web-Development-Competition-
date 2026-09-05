@@ -17,7 +17,7 @@ export default function Sidebar_kiri({ onNavigate, openNotifications, openPostMo
     
     if (!currentUserId)
     {
-      showStatus("Silahkan login/sign up terlebih dahulu untuk membuat postingan.", "error");
+      showStatus("Silahkan login/sign up terlebih dahulu untuk membuat postingan!", "error");
       return;
     }
 
