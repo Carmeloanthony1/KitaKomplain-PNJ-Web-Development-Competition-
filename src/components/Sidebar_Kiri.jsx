@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import { useStatus } from "./StatusContext";
 
-export default function Sidebar_kiri({ onNavigate, openNotifications, openPostModal }) {
+export default function Sidebar_kiri({ onNavigate, openNotifications, openPostModal, openHistory }) {
   const [search, setSearch] = useState("");
   const navigate = useNavigate();
 
@@ -69,7 +69,7 @@ export default function Sidebar_kiri({ onNavigate, openNotifications, openPostMo
           </button>
         
           <button 
-            onClick={() => navigate('/History')}
+            onClick={openHistory}
             className="flex items-center text-3xl font-bold cursor-pointer gap-4 text-[#a50034] dark:text-[#f1ece1] hover:opacity-80 transition"
           >
             <svg className="w-12 h-12 fill-[#a50034] dark:fill-[#f1ece1] flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">

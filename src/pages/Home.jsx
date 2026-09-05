@@ -7,6 +7,7 @@ import Post from "../components/Post";
 import Most_Polling from "../components/Most_Polling";
 import Notification from "../components/Notification";
 import { NewPost } from "../components/newpost";
+import History from "../components/History";
 
 export default function Home({ user, onLogout, onNavigate }) {
   const navigate = useNavigate();
@@ -14,6 +15,7 @@ export default function Home({ user, onLogout, onNavigate }) {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [isPostModalOpen, setIsPostModalOpen] = useState(false);
   const [isPollingModalOpen, setIsPollingModalOpen] = useState(false);
 
@@ -100,6 +102,7 @@ export default function Home({ user, onLogout, onNavigate }) {
           user={user} 
           openProfile={() => onNavigate ? onNavigate("profile") : navigate("/profile")} 
           openNotifications={() => setIsNotificationOpen(true)}
+          openHistory={() => setIsHistoryOpen(true)}
           onOpenNewPost={() => setIsPostModalOpen(true)}
           openPollingModal={() => setIsPollingModalOpen(true)}
         />
@@ -113,6 +116,7 @@ export default function Home({ user, onLogout, onNavigate }) {
           <Sidebar_Kiri 
             onNavigate={onNavigate}
             openNotifications={() => setIsNotificationOpen(true)}
+            openHistory={() => setIsHistoryOpen(true)}
             openPostModal={() => setIsPostModalOpen(true)}
           />
         </aside>
@@ -178,6 +182,11 @@ export default function Home({ user, onLogout, onNavigate }) {
       <Notification
         isOpen={isNotificationOpen}
         setIsOpen={setIsNotificationOpen}
+      />
+
+      <History 
+        isOpen={isHistoryOpen} 
+        setIsOpen={setIsHistoryOpen} 
       />
     </div>
   );

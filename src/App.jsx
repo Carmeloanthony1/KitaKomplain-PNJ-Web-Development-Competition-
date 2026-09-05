@@ -5,7 +5,7 @@ import Profile from "./pages/Profile";
 import PublicProfile from "./components/public_profile";
 import Settings from "./pages/Settings";
 import ReportProblem from "./pages/ReportProblem";
-import History from "./pages/History";
+import History from "./components/History";
 import Status from "./components/Status";
 import Notification from "./components/Notification";
 import Search_page from "./pages/Search_page";
@@ -46,7 +46,6 @@ export default function App() {
     if (page === "profile") navigate("/profile");
     else if (page === "home") navigate("/home");
     else if (page === "settings") navigate("/settings");
-    else if (page === "history") navigate("/history");
     else if (page === "report") navigate("/report");
   };
 
@@ -111,10 +110,6 @@ export default function App() {
           <Route
             path="/vote/:postId"
             element={<VotePage />} 
-          />
-          <Route
-            path="/History"
-            element={user ? <History user={user} onNavigate={handleNavigate} /> : <Navigate to="/login" />}
           />
           <Route
             path="/report"
