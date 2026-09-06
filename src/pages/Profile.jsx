@@ -216,7 +216,7 @@ export default function Profile() {
     } catch (error) {
       showStatus("Gagal upload foto profile", "error");
       console.error(error.message);
-    } finally {
+    } finally { 
       setUploading(false);
     }
   };
@@ -295,17 +295,17 @@ export default function Profile() {
   }
 
   return (
-    <div className="min-h-screen w-full bg-white dark:bg-[#121212] text-gray-900 dark:text-[#f1ece1] pb-16">
-      <div className="max-w-md md:max-w-xl mx-auto flex flex-col items-center">
+    <div className="min-h-screen w-full bg-[#f4f5f8] dark:bg-[#0d0e11] text-gray-900 dark:text-[#f1ece1] pb-16 transition-colors duration-200">
+      <div className="max-w-md md:max-w-xl mx-auto flex flex-col items-center bg-white dark:bg-[#16181c] md:border border-gray-200 dark:border-neutral-800/80 md:shadow-lg md:rounded-3xl md:my-6 overflow-x-hidden relative">
         
-        {/* Top App Bar */}
-        <header className="w-full flex items-center justify-between py-3.5 px-4 border-b border-gray-100 dark:border-neutral-800">
+        {/* Top Header Bar Transparan Menimpa Banner */}
+        <header className="w-full flex items-center justify-between py-3.5 px-4 border-b border-black/5 dark:border-white/10 bg-transparent z-10">
           <button
             type="button"
             onClick={() => window.history.back()}
-            className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-neutral-800 transition cursor-pointer"
+            className="p-1.5 rounded-full bg-white/50 dark:bg-black/30 hover:bg-white/80 dark:hover:bg-black/50 transition cursor-pointer backdrop-blur-xs"
           >
-            <svg className="w-6 h-6 stroke-current" fill="none" strokeWidth="2" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 stroke-current" fill="none" strokeWidth="2.2" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
             </svg>
           </button>
@@ -314,40 +314,43 @@ export default function Profile() {
             {username || "Profile"}
           </h1>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={() => showStatus("Fitur notifikasi aktif", "success")}
-              className="p-1 hover:bg-gray-100 dark:hover:bg-neutral-800 rounded-full transition cursor-pointer"
-            >
-              <svg className="w-5 h-5 fill-none stroke-current" strokeWidth="2" viewBox="0 0 24 24">
+              className="p-1.5 rounded-full bg-white/50 dark:bg-black/30 hover:bg-white/80 dark:hover:bg-black/50 transition cursor-pointer backdrop-blur-xs"
+            > 
+              <svg className="w-4 h-4 fill-none stroke-current" strokeWidth="2.2" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
               </svg>
             </button>
+            {/*copy profile*/}
             <button
               type="button"
               onClick={() => {
                 navigator.clipboard.writeText(window.location.href);
                 showStatus("Tautan profil disalin!", "success");
               }}
-              className="p-1 hover:bg-gray-100 dark:hover:bg-neutral-800 rounded-full transition cursor-pointer"
+              className="p-1.5 rounded-full bg-white/50 dark:bg-black/30 hover:bg-white/80 dark:hover:bg-black/50 transition cursor-pointer backdrop-blur-xs"
             >
-              <svg className="w-5 h-5 fill-none stroke-current" strokeWidth="2" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" />
+              <svg className="w-4 h-4 fill-none stroke-current" strokeWidth="2.2" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186b2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" />
               </svg>
             </button>
           </div>
         </header>
 
-        {/* Background Banner Lebih Jelas & Tinggi */}
-        <div className="w-full h-44 sm:h-52 bg-gradient-to-b from-[#ece5d8] to-[#dfd7c7] dark:from-[#2a2e34] dark:to-[#1e2126] border-b border-gray-200 dark:border-neutral-800"></div>
+        {/* Background Banner dengan rounded-t-3xl agar menyatu bersih */}
+        <div className="w-full h-44 sm:h-52 -mt-[57px] bg-gradient-to-br from-slate-200 via-slate-100 to-gray-300 dark:from-[#23272e] dark:via-[#1c1f24] dark:to-[#14161a] border-b border-gray-300/80 dark:border-neutral-800 relative z-0 md:rounded-t-3xl overflow-hidden">
+          <div className="absolute inset-0 bg-radial from-transparent to-black/[0.03] dark:to-black/30 pointer-events-none" />
+        </div>
 
         {/* Area Profil Utama */}
-        <div className="w-full flex flex-col items-center px-4">
+        <div className="w-full flex flex-col items-center px-4 relative z-10">
           
-          {/* Avatar Bulat Lebih Besar */}
+          {/* Avatar Bulat */}
           <div className="-mt-16 sm:-mt-20 relative flex flex-col items-center">
-            <label className="relative cursor-pointer group rounded-full overflow-hidden block w-28 h-28 sm:w-32 sm:h-32 border-4 border-white dark:border-[#121212] shadow-lg bg-gray-100 dark:bg-neutral-800">
+            <label className="relative cursor-pointer group rounded-full overflow-hidden block w-28 h-28 sm:w-32 sm:h-32 border-4 border-white dark:border-[#16181c] shadow-md bg-gray-100 dark:bg-neutral-800 ring-1 ring-black/5 dark:ring-white/10">
               {avatarUrl ? (
                 <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
               ) : (
@@ -374,7 +377,7 @@ export default function Profile() {
             )}
           </div>
 
-          {/* Username + Tombol Edit & Verify Link */}
+          {/* Username + Tombol Edit & Verify */}
           <div className="mt-2.5 flex items-center justify-center gap-1.5">
             {isEditingName ? (
               <input
@@ -413,7 +416,7 @@ export default function Profile() {
             </button>
           </div>
 
-          {/* Baris Statistik (Posts, Comments, Polls) */}
+          {/* Baris Statistik */}
           <div className="w-full flex items-center justify-center gap-9 sm:gap-12 my-3.5">
             <div className="flex flex-col items-center">
               <span className="text-lg sm:text-xl font-bold">{posts.length}</span>
@@ -429,7 +432,7 @@ export default function Profile() {
             </div>
           </div>
 
-          {/* Tombol Aksi: Edit Bio (Kecil di HP) & Mode Anonim di Tengah Bawah */}
+          {/* Tombol Aksi: Edit Bio & Mode Anonim */}
           <div className="w-full flex flex-col items-center gap-2 my-1">
             <button
               type="button"
@@ -439,7 +442,7 @@ export default function Profile() {
               Edit Bio
             </button>
 
-            <div className="flex items-center gap-2 bg-gray-100 dark:bg-neutral-800 px-3.5 py-1 rounded-full border border-gray-200 dark:border-neutral-700">
+            <div className="flex items-center gap-2 bg-gray-100 dark:bg-neutral-800/90 px-3.5 py-1 rounded-full border border-gray-300 dark:border-neutral-700">
               <span className="text-[11px] font-semibold text-gray-700 dark:text-neutral-200 select-none">
                 Mode Anonim
               </span>
@@ -494,7 +497,7 @@ export default function Profile() {
           </div>
 
           {/* Tab Navigasi Ikon */}
-          <div className="w-full flex border-b border-gray-200 dark:border-neutral-800 mt-2">
+          <div className="w-full flex border-b border-gray-200 dark:border-neutral-800 mt-2 mb-4">
             {[
               {
                 id: "posts",
@@ -515,8 +518,8 @@ export default function Profile() {
               {
                 id: "polling",
                 icon: (
-                  <svg className="w-5 h-5 fill-none stroke-current" strokeWidth="2" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                  <svg className="w-5 h-5" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+                    <path d="M584 352C597.3 352 608 362.7 608 376L608 480C608 515.3 579.3 544 544 544L96 544C60.7 544 32 515.3 32 480L32 376C32 362.7 42.7 352 56 352C69.3 352 80 362.7 80 376L80 480C80 488.8 87.2 496 96 496L544 496C552.8 496 560 488.8 560 480L560 376C560 362.7 570.7 352 584 352zM448 96C483.3 96 512 124.7 512 160L512 384C512 419.3 483.3 448 448 448L192 448C156.7 448 128 419.3 128 384L128 160C128 124.7 156.7 96 192 96L448 96zM410.9 180.6C400.2 172.8 385.2 175.2 377.4 185.9L291.8 303.6L265.3 276.2C256.1 266.7 240.9 266.4 231.4 275.6C221.9 284.8 221.6 300 230.8 309.5L277.2 357.5C282.1 362.6 289 365.3 296.1 364.8C303.2 364.3 309.7 360.7 313.9 355L416.2 214.1C424 203.4 421.6 188.4 410.9 180.6z"/>
                   </svg>
                 ),
               },
@@ -528,7 +531,7 @@ export default function Profile() {
                 className={`flex-1 py-3 flex justify-center items-center cursor-pointer transition relative ${
                   activeTab === tab.id
                     ? "text-black dark:text-white"
-                    : "text-gray-400 hover:text-gray-600 dark:hover:text-neutral-300"
+                    : "text-gray-400 hover:text-gray-600 dark:hover:text-neutral-400"
                 }`}
               >
                 {tab.icon}
@@ -539,21 +542,21 @@ export default function Profile() {
             ))}
           </div>
 
-          {/* Konten Grid Galeri 3 Kolom */}
-          <div className="w-full mt-1">
+          {/* Konten Grid Galeri */}
+          <div className="w-full px-3 sm:px-4 pb-6">
             {activeTab === "posts" &&
               (posts.length === 0 ? (
                 <p className="text-gray-400 text-xs text-center py-12">Belum ada post.</p>
               ) : (
-                <div className="grid grid-cols-3 gap-0.5 sm:gap-1">
+                <div className="grid grid-cols-3 gap-2 sm:gap-2.5">
                   {posts.map((item) => (
                     <div
                       key={item.id}
                       onClick={() => handlePost_click(item)}
-                      className="aspect-[3/4] bg-gray-100 dark:bg-neutral-800 border border-gray-900 overflow-hidden cursor-pointer relative group"
+                      className="aspect-[3/4] bg-gray-100 dark:bg-[#1f2228] border border-gray-200/80 dark:border-neutral-800/80 rounded-xl overflow-hidden cursor-pointer relative group shadow-2xs hover:shadow-md transition-all duration-200"
                     >
                       {item.is_anonim_mode && (
-                        <div className="absolute top-1.5 left-1.5 z-10 bg-black/70 text-white text-[8px] font-bold px-1 py-0.5 rounded">
+                        <div className="absolute top-1.5 left-1.5 z-10 bg-black/70 text-white text-[8px] font-bold px-1.5 py-0.5 rounded shadow">
                           Anonim
                         </div>
                       )}
@@ -564,7 +567,7 @@ export default function Profile() {
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                         />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center p-2 text-center bg-neutral-900">
+                        <div className="w-full h-full flex items-center justify-center p-2 text-center bg-gray-900">
                           <p className="text-[#fe2c55] font-bold text-xs line-clamp-2">
                             #{item.tag}
                           </p>
@@ -579,18 +582,18 @@ export default function Profile() {
               (user_comment.length === 0 ? (
                 <p className="text-gray-400 text-xs text-center py-12">Belum ada komentar.</p>
               ) : (
-                <div className="flex flex-col gap-2 py-2">
+                <div className="flex flex-col gap-2.5">
                   {user_comment.map((item) => (
                     <div
                       key={item.id}
                       onClick={() => handleComment_click(item)}
-                      className="p-3 bg-gray-50 dark:bg-neutral-900 rounded-lg border border-gray-100 dark:border-neutral-800 cursor-pointer"
+                      className="p-3.5 bg-gray-50/80 dark:bg-[#1e2127] rounded-xl border border-gray-200/90 dark:border-neutral-800 cursor-pointer hover:border-gray-300 dark:hover:border-neutral-700 transition shadow-2xs"
                     >
-                      <div className="flex justify-between text-[10px] text-gray-400 mb-1">
+                      <div className="flex justify-between text-[10px] text-gray-500 dark:text-neutral-400 mb-1">
                         <span>Post: <strong className="text-neutral-700 dark:text-neutral-200">#{item.posts?.tag || "isu"}</strong></span>
                         <span>{new Date(item.created_at).toLocaleDateString("id-ID")}</span>
                       </div>
-                      <p className="text-xs font-medium text-gray-800 dark:text-neutral-200">
+                      <p className="text-xs font-medium text-gray-800 dark:text-neutral-200 leading-relaxed">
                         "{item.content}"
                       </p>
                     </div>
@@ -602,17 +605,17 @@ export default function Profile() {
               (user_vote.length === 0 ? (
                 <p className="text-gray-400 text-xs text-center py-12">Belum ada kontribusi polling.</p>
               ) : (
-                <div className="flex flex-col gap-2 py-2">
+                <div className="flex flex-col gap-2.5">
                   {user_vote.map((item) => (
                     <div
                       key={item.id}
                       onClick={() => handle_voteclick(item)}
-                      className="p-3 bg-gray-50 dark:bg-neutral-900 rounded-lg border border-gray-100 dark:border-neutral-800 cursor-pointer"
+                      className="p-3.5 bg-gray-50/80 dark:bg-[#1e2127] rounded-xl border border-gray-200/90 dark:border-neutral-800 cursor-pointer hover:border-gray-300 dark:hover:border-neutral-700 transition shadow-2xs"
                     >
-                      <div className="flex justify-between text-[10px] text-gray-400 mb-1">
+                      <div className="flex justify-between text-[10px] text-gray-500 dark:text-neutral-400 mb-1">
                         <span>Tag: <strong className="text-neutral-700 dark:text-neutral-200">#{item.posts?.tag || "isu"}</strong></span>
-                        <span className={`font-bold uppercase text-[9px] px-1.5 py-0.5 rounded ${
-                          item.vote_type === "up" ? "text-emerald-500 bg-emerald-950/20" : "text-rose-500 bg-rose-950/20"
+                        <span className={`font-bold uppercase text-[9px] px-2 py-0.5 rounded-full ${
+                          item.vote_type === "up" ? "text-emerald-600 bg-emerald-100 dark:bg-emerald-950/30" : "text-rose-600 bg-rose-100 dark:bg-rose-950/30"
                         }`}>
                           {item.vote_type === "up" ? "Setuju" : "Tidak Setuju"}
                         </span>

@@ -178,7 +178,7 @@ export default function Home({ user, onLogout, onNavigate }) {
           />
         </aside>
 
-        <main className="w-full max-w-2xl flex flex-col items-center justify-center min-w-0 mx-auto">
+        <main className="w-full max-w-2xl lg:max-w-3xl flex flex-col items-center justify-center min-w-0 mx-auto">          
           {posts.length === 0 ? (
             <div className="text-center text-gray-500 dark:text-gray-400 py-10">
               Belum ada postingan.

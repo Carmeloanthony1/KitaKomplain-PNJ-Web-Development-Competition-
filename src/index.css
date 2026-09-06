@@ -7,7 +7,13 @@ html,
 body,
 #root {
   min-height: 100vh;
-  /* JANGAN PAKAI overflow-y: auto DI SINI! Biarkan browser yang handle window scroll */
+  background-color: #ffffff;
+}
+
+html.dark,
+html.dark body,
+html.dark #root {
+  background-color: #0d0e11;
 }
 
 body {
