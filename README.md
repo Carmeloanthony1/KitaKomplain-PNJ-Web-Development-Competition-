@@ -1,12 +1,8 @@
 <div align="center">
 
- 
-
   # [KitaKomplain]
 
   ### [Kesal? Komplain dulu aja kiteee!!]
-
- 
 
   [![Live Demo](https://img.shields.io/badge/🚀_Live_Demo-Visit_Site-success?style=for-the-badge)](https://[URL_DEMO])
 
@@ -14,15 +10,9 @@
 
   [![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](LICENSE)
 
- 
-
   **Submission for ITECHNO CUP 2026 - Web Development**
 
- 
-
   **By [KitaKomplain]**
-
- 
 
 </div>
 
@@ -76,9 +66,6 @@
 
 [ KitaKomplain di sini menjadi sebuah program yang menjembatani aspirasi masyarakat dan pemerintah, melalui melalui sebuah mekanisme sosial media yang familiar, namun diarahkan secara spesifik untuk pelaporan dan advokasi infrastruktur 
 Alurnya sederhana:
-
-Alurnya sederhana:
-
 1. Warga membuat sebuah postingan komplain mengenai infrastruktur, jalan, atau fasilitas publik yang rusak/tidak memadai di daerahnya, lengkap dengan fitur polling/vote.
 2. Semakin banyak dukungan (vote) yang diterima sebuah postingan, semakin besar indikasi bahwa masalah tersebut memang dirasakan dan disetujui oleh banyak warga sebagai isu prioritas bukan sekadar keluhan individu.
 3. Postingan dengan dukungan tinggi mendapat exposure lebih besar di platform, sehingga isu-isu di daerah tertinggal secara infrastruktur bisa lebih mudah terlihat dan didorong untuk ditindaklanjuti.
@@ -90,7 +77,7 @@ Alurnya sederhana:
 - 🎯 **Tujuan Utama**: [ Menjembatani user untuk menyampaikan aspirasinya/Keluh kesah mengenai infrastruktur/lingkungan/fasilitas umum dari pemerintah yang dimana selaras dengan SDG 7 (Affordable and Clean Energy), SDG 8 (Decent Work and Economic Growth), SDG 9 (Industry, Innovation, and Infrastructure
 ) dan SDG 11 (Sustainable Cities And Communities) ]
 
-- 📊 **Target Pengguna**: [ Masyarakat dengan penuh keluh kesah ]
+- 📊 **Target Pengguna**: [ Masyarakat dengan penuh keluh kesah untuk menyampaikan aspirasinya kepada pemerintah ]
 
 - 💡 **Value Proposition**: [ Belum ada aplikasi yang benar-benar menawarkan aspirasi masyarakat secara transparan & fitur autentikasinya credential yang sulit di palsukan]
 
@@ -111,14 +98,15 @@ Alurnya sederhana:
 
 ### Fitur Tambahan
 
-- **Pembuatan postingan dan Membuat tag dengan topik sesuai** - [Penjelasan singkat]
+- **Pembuatan postingan dan Membuat tag dengan topik sesuai** - [User dapat membuat tag untuk memberikan filter algoritma postingan yang sesuai dengan keinginan user ]
 
-- **Board yang di khususkan untuk melihat postingan dengan voting terbanyak** - [Penjelasan singkat]
+- **Board yang di khususkan untuk melihat postingan dengan voting terbanyak** - [ Memberi tahu user tentang post dengan most pollling terbanyak, semakin tinggi polling umumnya memberikan prioritas ataupun urgensi yang lebih tinggi agar mendapat perhatian lebih dari pemerintah]
 
-- **Dark mode website** - [Penjelasan singkat]
+- **Dark mode website** - [ User dapat mengubah tampilan UI yang lebih menarik agar user bisa lebih nyaman dengan design yang user inginkan]
 
-- **[Fitur D]** - [Penjelasan singkat]
+- **[Anonim Mode]** - [ Apabila user ingin melakukan jelajah ataupun post dengan status anonim dapat di aktifkan melalui pengaturan, fitur ini membantu user untuk dapat menjelajah sambil menjaga privasinya]
 
+- **[Report Problem]** - [ User dapat melaporkan sebuah masalah melalui fitur report a problem, user dapat melaporkan post ataupun aktivitas user yang melakukan pelanggaran etika]
 ---
 
 ## 📸 Demo & Screenshot
@@ -127,25 +115,32 @@ Alurnya sederhana:
 
 🔗 **[Kunjungi Website](https://kita-komplain-pnj-web-development-c.vercel.app/profile)**
 
+
 ### Screenshot Aplikasi
 
 <div align="center">
 
-  <img src="[URL_SCREENSHOT_1]" alt="Homepage" width="800"/>
+  <img src="src/assets/Screenshoot-Homepage.png" alt="Homepage" width="800"/>
 
   <p><em>Homepage - Tampilan utama aplikasi</em></p>
 
  
 
-  <img src="[URL_SCREENSHOT_2]" alt="Dashboard" width="800"/>
-
-  <p><em>Dashboard - Panel kontrol pengguna</em></p>
+  <img src="src/assets/Screenshot-AdminPanel.png" alt="Dashboard" width="800"/>
+  
+  <p><em>Dashboard Admin - Panel kontrol pengguna</em></p>
 
  
 
-  <img src="[URL_SCREENSHOT_3]" alt="Feature" width="800"/>
+  <img src="src/assets/Screenshot-AdminPanel2.png" alt="Dashboard Admin 2" width="800"/>
 
-  <p><em>[Nama Fitur] - [Deskripsi screenshot]</em></p>
+  <p><em>Dashboard Admin - Tampilan pengelolaan data</em></p>
+
+ 
+
+  <img src="src/assets/Screenshot-AdminPanel3.png" alt="Dashboard Admin 3" width="800"/>
+
+  <p><em>Dashboard Admin - Tampilan pengelolaan laporan</em></p>
 
 </div>
 
@@ -181,8 +176,6 @@ Auth         : JWT
 Deployment   : Vercel
 CI/CD        : Vercel 
 Testing      : Vitest
-Monitoring   : [Sentry / LogRocket / dll]
-
 ```
 
 ### Alasan Pemilihan Teknologi
@@ -244,23 +237,26 @@ KitaKomplain-PNJ-Web-Development-Competition-
 │   │   ├── ConfirmModal.jsx
 │   │   ├── edit_post.jsx
 │   │   ├── FocusPost.jsx
+│   │   ├── History.css
+│   │   ├── History.jsx
 │   │   ├── Most_Polling.jsx
 │   │   ├── Navbar.jsx
-│   │   ├── Notification.jsx
-│   │   ├── Notification.css
+│   │   ├── Navbar_Admin.jsx
 │   │   ├── newpost.jsx
-│   │   ├── Other_profile.jsx
+│   │   ├── Notification.css
+│   │   ├── Notification.jsx
 │   │   ├── Post.jsx
+│   │   ├── Protected_Route.jsx
 │   │   ├── public_profile.jsx
+│   │   ├── Report_Panel.jsx
 │   │   ├── Share_post.jsx
 │   │   ├── Sidebar_Kiri.jsx
 │   │   ├── Status.jsx
 │   │   ├── StatusContext.jsx
 │   │   ├── Verify.jsx
-│   │   ├── Vote.jsx
-│   │   └── edit_post.jsx
+│   │   └── Vote.jsx
 │   ├── pages/
-│   │   ├── History.jsx
+│   │   ├── Admin_Dashboard.jsx
 │   │   ├── Home.jsx
 │   │   ├── Login.jsx
 │   │   ├── Login.css
@@ -271,6 +267,8 @@ KitaKomplain-PNJ-Web-Development-Competition-
 │   │   ├── Settings.jsx
 │   │   ├── SignUp.jsx
 │   │   └── SignUp.css
+│   ├── temp_files/
+│   │   └── Other_profile.jsx
 │   ├── App.css
 │   ├── App.jsx
 │   ├── index.css
@@ -394,11 +392,11 @@ npm run lint
 
 #### Untuk Admin
 
-1. **Akses Admin Panel**: [Jelaskan cara mengakses]
+1. **Akses Admin Panel**: [Jelaskan cara men]
 
-2. **[Fungsi Admin 1]**: [Jelaskan cara menggunakan]
+2. **[Delete Account]**: [Jelaskan cara menggunakan]
 
-3. **[Fungsi Admin 2]**: [Jelaskan cara menggunakan]
+3. **[Delete Post]**: [Jelaskan cara menggunakan]
 
 ---
 
