@@ -188,7 +188,7 @@ export default function Post({
       .single();
 
     if (!userData?.is_verified) {
-      showStatus("Akun belum diverifikasi! Silahkan verifikasi untuk like postingan.", "error");
+      showStatus("Akun belum diverifikasi! Silahkan verifikasi untuk like postingan!", "error");
       return;
     }
 
@@ -264,7 +264,7 @@ export default function Post({
 
   const handleOpenVote = async () => {
     if (!currentUserId) {
-      showStatus("Silahkan login/sign up terlebih dahulu untuk membuat post!", "error");
+      showStatus("Silahkan login/sign up terlebih dahulu untuk voting!", "error");
       return;
     }
 

@@ -33,7 +33,7 @@ export default function Home({ user, onLogout, onNavigate }) {
   const handleOpenNotification = () => 
   {
     if (!currentUserId) {
-      showStatus("Silahkan login/sign up terlebih dahulu untuk melihat notifikasi.", "error");
+      showStatus("Silahkan login/sign up terlebih dahulu untuk melihat notifikasi!", "error");
       return;
     }
     setIsNotificationOpen(true);
@@ -43,7 +43,7 @@ export default function Home({ user, onLogout, onNavigate }) {
   const handleOpenHistory = () =>
   {
     if (!currentUserId) {
-      showStatus("Silahkan login/sign up terlebih dahulu untuk melihat history.", "error");
+      showStatus("Silahkan login/sign up terlebih dahulu untuk melihat history!", "error");
       return;
     }
     setIsHistoryOpen(true);
@@ -53,7 +53,7 @@ export default function Home({ user, onLogout, onNavigate }) {
   const handleOpenPostModal = () => 
   {
     if (!currentUserId) {
-      showStatus("Silahkan login/sign up terlebih dahulu untuk membuat postingan.", "error");
+      showStatus("Silahkan login/sign up terlebih dahulu untuk membuat postingan!", "error");
       return;
     }
     setIsPostModalOpen(true);
@@ -197,7 +197,7 @@ export default function Home({ user, onLogout, onNavigate }) {
           openProfile={() => {
             if (!currentUserId)
             {
-              showStatus("Silahkan login/sign up untuk melihat profil.", "error");
+              showStatus("Silahkan login/sign up untuk melihat profil!", "error");
               return;
             }
             onNavigate ? onNavigate("profile") : navigate("/profile");
