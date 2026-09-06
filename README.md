@@ -1,18 +1,23 @@
 <div align="center">
 
-  # [KitaKomplain]
+  <img src="https://readme-typing-svg.demolab.com?font=Plus+Jakarta+Sans&weight=800&size=52&duration=1&pause=1000&color=A50034&center=true&vCenter=true&width=500&height=70&lines=KitaKomplain" alt="KitaKomplain" />
 
-  ### [Kesal? Komplain dulu aja kiteee!!]
+  ## Daripada dipendem, komplainin aja dulu!
+  <p>
+    <a href="https://[URL_DEMO]">
+      <img src="https://img.shields.io/badge/🚀_Live_Demo-Visit_Site-success?style=for-the-badge" alt="Live Demo" />
+    </a>
+  </p>
+  <p>
+    <a href="https://github.com/Carmeloanthony1/KitaKomplain-PNJ-Web-Development-Competition-">
+      <img src="https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github" alt="GitHub" />
+    </a>
+  </p>
 
-  [![Live Demo](https://img.shields.io/badge/🚀_Live_Demo-Visit_Site-success?style=for-the-badge)](https://[URL_DEMO])
-
-  [![GitHub]([https://github.com/Carmeloanthony1/KitaKomplain-PNJ-Web-Development-Competition-])]
-
-  [![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](LICENSE)
-
-  **Submission for ITECHNO CUP 2026 - Web Development**
-
-  **By [KitaKomplain]**
+  <p>
+    <strong>Submission for ITECHNO CUP 2026 - Web Development</strong><br/>
+    <strong>By KitaKomplain</strong>
+  </p>
 
 </div>
 
