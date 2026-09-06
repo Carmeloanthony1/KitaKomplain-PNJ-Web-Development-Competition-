@@ -289,7 +289,7 @@ export default function Navbar({ user, openNotifications, onOpenNewPost, openPol
             // Jika user adalah guest
             <button 
               onClick={() => navigate('/login')}
-              className="flex items-center justify-center bg-[#a50034] dark:bg-black dark:border-2 dark:border-[#f1ece1] text-white px-4 sm:px-6 py-1.5 sm:py-2 rounded-full font-bold shadow-md cursor-pointer hover:bg-[#801427] dark:hover:bg-[#f1ece1] dark:hover:text-black transition active:scale-95 text-xs sm:text-base"
+              className="flex items-center justify-center bg-[#a50034] dark:bg-black dark:border-2 dark:border-[#f1ece1] text-white px-1 sm:px-6 py-1 sm:py-2 rounded-full font-bold shadow-md cursor-pointer hover:bg-[#801427] dark:hover:bg-[#f1ece1] dark:hover:text-black transition active:scale-95 text-[9px] sm:text-base"
             >
               Login / Sign Up
             </button>
