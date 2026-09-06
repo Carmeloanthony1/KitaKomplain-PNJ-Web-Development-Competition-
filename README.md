@@ -60,28 +60,26 @@
 
 ### Latar Belakang
 
-[ Indonesia saat ini masih memiliki salah satu tantangan terbesar yakni pemerataan Infrastruktur dan transparansi alokasi dana pembangunan. Berdasarkan Jurnal Ilmu Administrasi Negara (2022) menyoroti bahwa salah satu "lubang terbesar dalam demokrasi infrastruktur kita adalah minimnya transparansi pengelolaan dana daerah dan kurangnya wadah bagi masyarakat untuk melacak keluhan mereka secara terbuka" ]
+Indonesia saat ini masih memiliki salah satu tantangan terbesar yakni pemerataan Infrastruktur dan transparansi alokasi dana pembangunan. Berdasarkan Jurnal Ilmu Administrasi Negara (2022) menyoroti bahwa salah satu "lubang terbesar dalam demokrasi infrastruktur kita adalah minimnya transparansi pengelolaan dana daerah dan kurangnya wadah bagi masyarakat untuk melacak keluhan mereka secara terbuka"
 
 ### Solusi yang Ditawarkan
 
-[ KitaKomplain di sini menjadi sebuah program yang menjembatani aspirasi masyarakat dan pemerintah, melalui melalui sebuah mekanisme sosial media yang familiar, namun diarahkan secara spesifik untuk pelaporan dan advokasi infrastruktur 
+KitaKomplain di sini menjadi sebuah program yang menjembatani aspirasi masyarakat dan pemerintah, melalui melalui sebuah mekanisme sosial media yang familiar, namun diarahkan secara spesifik untuk pelaporan dan advokasi infrastruktur 
 Alurnya sederhana:
 1. Warga membuat sebuah postingan komplain mengenai infrastruktur, jalan, atau fasilitas publik yang rusak/tidak memadai di daerahnya, lengkap dengan fitur polling/vote.
 2. Semakin banyak dukungan (vote) yang diterima sebuah postingan, semakin besar indikasi bahwa masalah tersebut memang dirasakan dan disetujui oleh banyak warga sebagai isu prioritas bukan sekadar keluhan individu.
 3. Postingan dengan dukungan tinggi mendapat exposure lebih besar di platform, sehingga isu-isu di daerah tertinggal secara infrastruktur bisa lebih mudah terlihat dan didorong untuk ditindaklanjuti.
-
-]
-
+   
 ### Tujuan Proyek
 
-- 🎯 **Tujuan Utama**: [ Menjembatani user untuk menyampaikan aspirasinya/Keluh kesah mengenai infrastruktur/lingkungan/fasilitas umum dari pemerintah yang dimana selaras dengan SDG 7 (Affordable and Clean Energy), SDG 8 (Decent Work and Economic Growth), SDG 9 (Industry, Innovation, and Infrastructure
-) dan SDG 11 (Sustainable Cities And Communities) ]
+- 🎯 **Tujuan Utama**: Menjembatani user untuk menyampaikan aspirasinya/Keluh kesah mengenai infrastruktur/lingkungan/fasilitas umum dari pemerintah yang dimana selaras dengan SDG 7 (Affordable and Clean Energy), SDG 8 (Decent Work and Economic Growth), SDG 9 (Industry, Innovation, and Infrastructure
+) dan SDG 11 (Sustainable Cities And Communities)
 
-- 📊 **Target Pengguna**: [ Masyarakat dengan penuh keluh kesah untuk menyampaikan aspirasinya kepada pemerintah ]
+- 📊 **Target Pengguna**: Masyarakat dengan penuh keluh kesah untuk menyampaikan aspirasinya kepada pemerintah
 
-- 💡 **Value Proposition**: [ Belum ada aplikasi yang benar-benar menawarkan aspirasi masyarakat secara transparan & fitur autentikasinya credential yang sulit di palsukan]
+- 💡 **Value Proposition**: Belum ada aplikasi yang benar-benar menawarkan aspirasi masyarakat secara transparan & fitur autentikasinya credential yang sulit di palsukan
 
----
+
 
 ## ✨ Fitur Unggulan
 
@@ -276,11 +274,7 @@ Testing      : Vitest
 ## 🏗️ Arsitektur Sistem
 ### System Architecture
 
-```
-
-[Tambahkan diagram arsitektur sistem - bisa menggunakan Mermaid atau gambar]
-
-```
+<img width="1000" alt="Supabase Profile Management-2026-09-06-073740" src="https://github.com/user-attachments/assets/629ad1b1-adcc-4e61-8bbf-5b0229ec2518" />
 
 ### Database Schema
 
