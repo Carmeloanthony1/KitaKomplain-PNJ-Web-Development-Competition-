@@ -92,29 +92,26 @@ Indonesia masih menghadapi tantangan besar dalam pemerataan infrastruktur serta 
 
 ## ✨ Fitur Unggulan
 
-### Fitur Utama
+### 🚀 Fitur Utama
 
-| Fitur    | Deskripsi    | Keunggulan    | 
-|----------|--------------|---------------|
+| Fitur | Deskripsi | Keunggulan / Value |
+| :--- | :--- | :--- |
+| **Post Komplain** | Mengunggah keluhan terkait masalah lingkungan sekitar maupun insiden fasilitas publik. | Laporan diteruskan ke pihak berwenang untuk ditindaklanjuti secara akuntabel. |
+| **Feed & Interaksi Sosial** | Diskusi interaktif dan pertukaran pandangan antar pengguna melalui kolom komentar. | Membangun *sense of community* dan kepedulian bersama terhadap isu-isu di Indonesia. |
+| **Polling / Vote System** | Memberikan dukungan (*upvote*) atau penolakan terhadap suatu komplain sesuai urgensinya. | Menilai urgensi masalah secara kolektif agar isu paling relevan mendapat perhatian lebih cepat. |
 
-| **[ Post Komplain ]** | [User dapat mengunggah sebuah komplenan berupa keluhan lingkungan sekitar maupun insiden] [Fitur ini penting karena keluhan yang di unggah akan di berikan kepada pihak pemerintah untuk di tindak lebih lanjut] |
+### 🛠️ Fitur Tambahan
 
-| **[ Feed & Interaksi Sosial (Comment) ]** | [Fitur ini berfungsi agar sesama pengguna dapat berinteraksi maupun berbagi pandangan mengenai unggahan yang tertera] | [ Membangun sense of community antar user mengenai masalah-masalah yang terdapat di Indonesia ] |
+| Fitur | Deskripsi | Keunggulan / Value |
+| :--- | :--- | :--- |
+| **Custom Tag & Topik** | Membuat tag topik yang relevan saat memposting komplain. | Memudahkan personalisasi *feed* dan pemfilteran algoritma sesuai preferensi pengguna. |
+| **Top Voted Leaderboard** | Halaman khusus untuk menampilkan daftar postingan dengan *voting* terbanyak. | Memperjelas skala prioritas laporan masyarakat yang paling mendesak bagi pemerintah. |
+| **Dark Mode Website** | Pengalihan tema antarmuka antara *Light Mode* dan *Dark Mode*. | Meningkatkan kenyamanan visual pengguna sesuai dengan preferensi tampilan masing-masing. |
+| **Anonim Mode** | Jelajah dan membuat postingan tanpa menampilkan identitas publik. | Menjaga privasi dan keamanan identitas pengguna saat menyampaikan isu sensitif. |
+| **Report Problem** | Pelaporan postingan atau aktivitas pengguna yang melanggar ketentuan dan etika platform. | Menjaga ekosistem komunitas tetap kondusif, aman, dan bebas dari *spam* atau *abuse*. |
+| **Help Desk** | Pusat bantuan dan layanan dukungan pengguna untuk menangani kendala teknis serta pertanyaan seputar penggunaan aplikasi. | Memberikan solusi cepat bagi pengguna yang mengalami masalah sistem dan meningkatkan *user experience*. |
 
-| **[ Polling/Vote System ]** | [Fitur ini memungkinkan pengguna memberikan dukungan atau penolakan terhadap suatu komplain berdasarkan tingkat urgensi dan relevansi masalah yang diangkat.] | [Membantu menilai masalah user secara kolektif sehingga masalah yang paling relevan dan ramai dapat lebih cepat mendapat perhatian.] |
-
-### Fitur Tambahan
-
-- **Pembuatan postingan dan Membuat tag dengan topik sesuai** - [User dapat membuat tag untuk memberikan filter algoritma postingan yang sesuai dengan keinginan user ]
-
-- **Board yang di khususkan untuk melihat postingan dengan voting terbanyak** - [ Memberi tahu user tentang post dengan most pollling terbanyak, semakin tinggi polling umumnya memberikan prioritas ataupun urgensi yang lebih tinggi agar mendapat perhatian lebih dari pemerintah]
-
-- **Dark mode website** - [ User dapat mengubah tampilan UI yang lebih menarik agar user bisa lebih nyaman dengan design yang user inginkan]
-
-- **[Anonim Mode]** - [ Apabila user ingin melakukan jelajah ataupun post dengan status anonim dapat di aktifkan melalui pengaturan, fitur ini membantu user untuk dapat menjelajah sambil menjaga privasinya]
-
-- **[Report Problem]** - [ User dapat melaporkan sebuah masalah melalui fitur report a problem, user dapat melaporkan post ataupun aktivitas user yang melakukan pelanggaran etika]
----
+--- 
 
 ## 📸 Demo & Screenshot
 
