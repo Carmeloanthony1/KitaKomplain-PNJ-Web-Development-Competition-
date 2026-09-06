@@ -121,28 +121,70 @@ Aplikasi **KitaKomplain** telah di-deploy dan dapat diakses secara langsung mela
 
 <div align="center">
 
-
-</div>
-
 ### Screenshot Aplikasi
 
-
-<Laptop>
-<p> Home page </p>
-<img width="1922" height="1082" alt="image" src="https://github.com/user-attachments/assets/3b4740c3-8f4a-4cdb-9103-cb0dcf9c0886" />
-
-<img width="1922" height="1082" alt="image" src="https://github.com/user-attachments/assets/f1f6775e-f9ec-4fe1-baf1-eca4fe7d5e84" />
-
-<p>history</p>
-<img width="1922" height="1055" alt="image" src="https://github.com/user-attachments/assets/60c37156-e6b6-49aa-b7d0-a9b085bdee64" />
-
-<img width="1922" height="1055" alt="image" src="https://github.com/user-attachments/assets/d46f942a-4163-41f7-818b-13c2ab573544" />
-
-<p>notification</p>
-
-<img width="1922" height="1082" alt="image" src="https://github.com/user-attachments/assets/47091ae9-255e-422b-b6d1-bc6280937981" />
-
-
+<table>
+  <tr>
+    <td align="center"><b>Light Mode</b></td>
+    <td align="center"><b>Dark Mode</b></td>
+  </tr>
+  <!-- Home Page -->
+  <tr>
+    <td colspan="2" align="center"><b>Home Page</b></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="https://github.com/user-attachments/assets/3b4740c3-8f4a-4cdb-9103-cb0dcf9c0886" alt="Home Light" /></td>
+    <td width="50%"><img src="https://github.com/user-attachments/assets/f1f6775e-f9ec-4fe1-baf1-eca4fe7d5e84" alt="Home Dark" /></td>
+  </tr>
+  <!-- History -->
+  <tr>
+    <td colspan="2" align="center"><b>History</b></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="https://github.com/user-attachments/assets/60c37156-e6b6-49aa-b7d0-a9b085bdee64" alt="History Light" /></td>
+    <td width="50%"><img src="https://github.com/user-attachments/assets/d46f942a-4163-41f7-818b-13c2ab573544" alt="History Dark" /></td>
+  </tr>
+  <!-- Notification -->
+  <tr>
+    <td colspan="2" align="center"><b>Notification</b></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="https://github.com/user-attachments/assets/47091ae9-255e-422b-b6d1-bc6280937981" alt="Notification Light" /></td>
+    <td width="50%"><img src="https://github.com/user-attachments/assets/7f2c6720-3a51-495f-9676-48bcd4229ced" alt="Notification Dark" /></td>
+  </tr>
+  <!-- New Post -->
+  <tr>
+    <td colspan="2" align="center"><b>New Post</b></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="https://github.com/user-attachments/assets/2bff2f78-fd1a-4c83-872e-afbce3448cd6" alt="New Post Light" /></td>
+    <td width="50%"><img src="https://github.com/user-attachments/assets/a87d3a94-f752-4ada-9514-78e45ec91123" alt="New Post Dark" /></td>
+  </tr>
+  <!-- Profile -->
+  <tr>
+    <td colspan="2" align="center"><b>Profile</b></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="https://github.com/user-attachments/assets/fbdec093-cb0e-4ebc-8d80-00096dcf76d4" alt="Profile Light" /></td>
+    <td width="50%"><img src="https://github.com/user-attachments/assets/866f8c00-8380-499c-a0b0-08d1073ddc0e" alt="Profile Dark" /></td>
+  </tr>
+  <!-- Live Search Bar -->
+  <tr>
+    <td colspan="2" align="center"><b>Live Search Bar</b></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="https://github.com/user-attachments/assets/1827db6a-7c20-4256-8b82-6e1578fb6b1c" alt="Live Search Light" /></td>
+    <td width="50%"><img src="https://github.com/user-attachments/assets/978adc84-9a38-442f-8c0a-a4b8685d64c0" alt="Live Search Dark" /></td>
+  </tr>
+  <!-- Setting -->
+  <tr>
+    <td colspan="2" align="center"><b>Setting</b></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="https://github.com/user-attachments/assets/6c334af9-f084-4950-bdd2-d4370d8c2737" alt="Setting Light" /></td>
+    <td width="50%"><img src="https://github.com/user-attachments/assets/25da201f-31ac-4dba-a09a-7fb87d0d866f" alt="Setting Dark" /></td>
+  </tr>
+</table>
 
 </div>
 
