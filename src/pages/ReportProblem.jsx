@@ -53,9 +53,12 @@ export default function ReportProblem() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-[#292828] text-[#f1ece1] flex items-center justify-center p-4">
-      <div className="w-full max-w-md bg-[#1e1e1e] border-2 border-[#a50034] rounded-3xl p-6 sm:p-8 shadow-2xl">
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-[#f1ece1] text-center mb-6">
+    /* Background Page: Light Mode pakai gradient hangat (#f1ece1 ke #ffc1b3), Dark Mode pakai #292828 */
+    <div className="min-h-screen w-full bg-gradient-to-r from-[#f1ece1] to-[#ffc1b3] dark:from-[#292828] dark:to-[#292828] text-gray-900 dark:text-[#f1ece1] flex items-center justify-center p-4 transition-colors duration-200">
+      
+      {/* Card Wrapper: Light Mode (#fffbf4), Dark Mode (#1e1e1e) */}
+      <div className="w-full max-w-md bg-[#fffbf4] dark:bg-[#1e1e1e] border-2 border-[#a50034] rounded-3xl p-6 sm:p-8 shadow-2xl transition-colors duration-200">
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-[#a50034] dark:text-[#f1ece1] text-center mb-6">
           Report a Problem
         </h1>
 
@@ -70,7 +73,7 @@ export default function ReportProblem() {
               value={category}
               onChange={(event) => setCategory(event.target.value)}
               placeholder="Masukkan judul/kategori..."
-              className="w-full h-12 px-4 bg-[#121212] border border-gray-800 rounded-xl text-sm text-[#f1ece1] placeholder-gray-500 outline-none focus:border-[#a50034] focus:ring-1 focus:ring-[#a50034] transition-all"
+              className="w-full h-12 px-4 bg-white dark:bg-[#121212] border border-gray-300 dark:border-gray-800 rounded-xl text-sm text-gray-900 dark:text-[#f1ece1] placeholder-gray-400 dark:placeholder-gray-500 outline-none focus:border-[#a50034] focus:ring-1 focus:ring-[#a50034] transition-all"
               required
             />
           </div>
@@ -84,12 +87,12 @@ export default function ReportProblem() {
               <select
                 value={problemType}
                 onChange={(event) => setProblemType(event.target.value)}
-                className="w-full h-12 px-4 bg-[#121212] border border-gray-800 rounded-xl text-sm text-[#f1ece1] outline-none focus:border-[#a50034] focus:ring-1 focus:ring-[#a50034] transition-all appearance-none cursor-pointer pr-10"
+                className="w-full h-12 px-4 bg-white dark:bg-[#121212] border border-gray-300 dark:border-gray-800 rounded-xl text-sm text-gray-900 dark:text-[#f1ece1] outline-none focus:border-[#a50034] focus:ring-1 focus:ring-[#a50034] transition-all appearance-none cursor-pointer pr-10"
               >
-                <option value="Technical">Technical</option>
-                <option value="Bug">Bug</option>
-                <option value="Recommendation">Recommendation</option>
-                <option value="Question">Question</option>
+                <option value="Technical" className="bg-white dark:bg-[#121212] text-gray-900 dark:text-[#f1ece1]">Technical</option>
+                <option value="Bug" className="bg-white dark:bg-[#121212] text-gray-900 dark:text-[#f1ece1]">Bug</option>
+                <option value="Recommendation" className="bg-white dark:bg-[#121212] text-gray-900 dark:text-[#f1ece1]">Recommendation</option>
+                <option value="Question" className="bg-white dark:bg-[#121212] text-gray-900 dark:text-[#f1ece1]">Question</option>
               </select>
               <div className="absolute right-4 pointer-events-none text-gray-400">
                 <svg className="w-4 h-4 fill-current" viewBox="0 0 20 20">
@@ -109,7 +112,7 @@ export default function ReportProblem() {
               value={details}
               onChange={(event) => setDetails(event.target.value)}
               placeholder="Jelaskan detail masalah kamu..."
-              className="w-full p-4 bg-[#121212] border border-gray-800 rounded-xl text-sm text-[#f1ece1] placeholder-gray-500 outline-none focus:border-[#a50034] focus:ring-1 focus:ring-[#a50034] transition-all resize-none"
+              className="w-full p-4 bg-white dark:bg-[#121212] border border-gray-300 dark:border-gray-800 rounded-xl text-sm text-gray-900 dark:text-[#f1ece1] placeholder-gray-400 dark:placeholder-gray-500 outline-none focus:border-[#a50034] focus:ring-1 focus:ring-[#a50034] transition-all resize-none"
               required
             />
           </div>
@@ -126,9 +129,9 @@ export default function ReportProblem() {
 
         {/* Info Ticket jika berhasil dikirim */}
         {lastToken && (
-          <div className="mt-5 p-3 bg-[#121212] border border-emerald-500/30 rounded-xl text-center">
-            <p className="text-xs text-gray-400">Nomor Ticket Kamu:</p>
-            <p className="text-sm font-mono font-bold text-emerald-400 mt-0.5">
+          <div className="mt-5 p-3 bg-emerald-50 dark:bg-[#121212] border border-emerald-500/30 rounded-xl text-center transition-colors">
+            <p className="text-xs text-gray-600 dark:text-gray-400">Nomor Ticket Kamu:</p>
+            <p className="text-sm font-mono font-bold text-emerald-600 dark:text-emerald-400 mt-0.5">
               #{lastToken}
             </p>
           </div>
