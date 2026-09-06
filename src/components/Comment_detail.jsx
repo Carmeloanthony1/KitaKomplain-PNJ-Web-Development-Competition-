@@ -35,7 +35,7 @@ function ReplyItem({ reply, onReplyClick, hideaction = false }) {
     if (hideaction) return; // 🔒 MATIKAN FUNGSI LIKE BALASAN PAS ADMIN
 
     if (!currentUserId) {
-      showStatus("Silakan login untuk menyukai balasan!", "error");
+      showStatus("Silahkan login/sign up untuk menyukai balasan!", "error");
       return;
     }
 
@@ -214,11 +214,12 @@ export default function Comment_detail({ comment, postId, hideaction = false }) 
     if (hideaction) return; // 🔒 MATIKAN FUNGSI LIKE KOMENTAR PAS ADMIN
 
     if (!currentUserId) {
-      showStatus("Silakan login terlebih dahulu!", "error");
+      showStatus("Silahkan login/sign up terlebih dahulu!", "error");
       return;
     }
 
-    // Verification check
+    // Verification Check
+    /*
     const { data: userData } = await supabase
       .from("users")
       .select("is_verified")
@@ -230,6 +231,7 @@ export default function Comment_detail({ comment, postId, hideaction = false }) 
       showStatus("Akun belum diverifikasi! Tindakan ini tidak diizinkan.");
       return;
     }
+    */
 
     const prevIsLiked = isCommentLiked;
     const prevCount = commentLikeCount;
@@ -275,7 +277,7 @@ export default function Comment_detail({ comment, postId, hideaction = false }) 
     if (!reply_text.trim()) return;
 
     if (!currentUserId) {
-      showStatus("Silakan login terlebih dahulu!", "error");
+      showStatus("Silahkan login/sign up terlebih dahulu!", "error");
       return;
     }
 

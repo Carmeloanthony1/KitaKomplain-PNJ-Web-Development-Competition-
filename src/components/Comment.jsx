@@ -32,13 +32,14 @@ export default function CommentSection({
     const currentUserId = localStorage.getItem("user_id");
 
     if (!currentUserId) {
-      showStatus("Silakan login untuk memberikan komentar!", "error");
+      showStatus("Silahkan login/sign up untuk memberikan komentar!", "error");
       return;
     }
 
     setLoading(true);
 
     // Verification check
+    /*
     const { data: userData } = await supabase
       .from("users")
       .select("is_verified")
@@ -51,6 +52,7 @@ export default function CommentSection({
       setLoading(false);
       return;
     }
+    */
 
     // Comment to supabase
     const { error: commentError } = await supabase.from("comments").insert([

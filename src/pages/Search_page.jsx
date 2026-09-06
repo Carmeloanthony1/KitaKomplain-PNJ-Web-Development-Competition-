@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
+import { createPortal } from "react-dom";
 import { supabase } from "../supabaseClient";
 import Navbar from "../components/Navbar";
 import Post from "../components/Post";
 
-export default function SearchPage({ user, onNavigate }) {
+export default function SearchPage({ user, onNavigate }) 
+{
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const queryTag = searchParams.get("tag") || "";
@@ -15,9 +17,12 @@ export default function SearchPage({ user, onNavigate }) {
   const CHUNK_SIZE = 40;
   const [visibleWordsMap, setVisibleWordsMap] = useState({});
 
-  useEffect(() => {
-    async function fetchSearchPosts() {
-      if (!queryTag) {
+  useEffect(() => 
+  {
+    async function fetchSearchPosts() 
+    {
+      if (!queryTag) 
+      {
         setPosts([]);
         setLoading(false);
         return;
@@ -42,25 +47,27 @@ export default function SearchPage({ user, onNavigate }) {
         .ilike("tag", `%${queryTag}%`)
         .order("created_at", { ascending: false });
 
-      if (error) {
+      if (error)
         console.error("Gagal melakukan pencarian:", error.message);
-      } else {
+      else
         setPosts(data || []);
-      }
+
       setLoading(false);
     }
 
     fetchSearchPosts();
   }, [queryTag]);
 
-  const renderDescription = (post) => {
+  const renderDescription = (post) => 
+  {
     const rawText = post.description || "";
     const words = rawText.trim().split(/\s+/);
     const totalWords = words.length;
 
     const currentVisible = visibleWordsMap[post.id] || CHUNK_SIZE;
 
-    if (totalWords <= CHUNK_SIZE) {
+    if (totalWords <= CHUNK_SIZE) 
+    {
       return (
         <p className="text-gray-800 dark:text-neutral-200 text-sm leading-relaxed sm:pl-[52px] break-words whitespace-pre-line">
           {rawText}
@@ -81,7 +88,8 @@ export default function SearchPage({ user, onNavigate }) {
         {hasMore ? (
           <button
             type="button"
-            onClick={(e) => {
+            onClick={(e) => 
+            {
               e.stopPropagation();
               setVisibleWordsMap((prev) => ({
                 ...prev,
@@ -95,7 +103,8 @@ export default function SearchPage({ user, onNavigate }) {
         ) : (
           <button
             type="button"
-            onClick={(e) => {
+            onClick={(e) => 
+            {
               e.stopPropagation();
               setVisibleWordsMap((prev) => ({
                 ...prev,
@@ -206,19 +215,29 @@ export default function SearchPage({ user, onNavigate }) {
         )}
       </main>
 
-      {/* Modal Popup Focus Post */}
-      {focused_post && (
+      {focused_post && createPortal(
         <div
           onClick={() => setFocused_post(null)}
-          className="fixed inset-0 z-[99999] bg-black/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6 overflow-y-auto animate-fadeIn"
+          className="fixed inset-0 z-[99999] flex items-start justify-center overflow-y-auto bg-black/80 backdrop-blur-sm p-4 sm:p-8 cursor-pointer animate-fadeIn"
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-2xl bg-transparent relative my-auto"
+            className="w-full max-w-3xl relative flex flex-col my-auto cursor-default"
           >
+            {/* Tombol Tutup (X) Mengambang */}
+            <div className="sticky top-0 z-[99999] flex justify-end w-full mb-2 pr-1">
+              <button 
+                onClick={() => setFocused_post(null)} 
+                className="bg-black/50 hover:bg-red-600 text-white rounded-md w-8 h-8 flex items-center justify-center transition-colors cursor-pointer shadow-lg backdrop-blur-md"
+              >
+                ✕
+              </button>
+            </div>
+
             <Post
               post={focused_post}
-              hideaction={true}
+              hideaction={false}
+              hideVoteButton={false}
               onClose={() => setFocused_post(null)}
               onUserClick={(userId) => {
                 setFocused_post(null);
@@ -237,7 +256,8 @@ export default function SearchPage({ user, onNavigate }) {
               }}
             />
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

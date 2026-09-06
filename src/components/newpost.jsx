@@ -44,7 +44,7 @@ export function NewPost({ isOpen, onClose, onPostCreated }) {
     }
 
     if (!userId) {
-      showStatus("Silakan login terlebih dahulu!", "error"); 
+      showStatus("Silahkan login/sign up terlebih dahulu!", "error"); 
       return;
     }
 

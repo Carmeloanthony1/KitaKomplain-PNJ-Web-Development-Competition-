@@ -7,6 +7,7 @@ import Edit_post from "./edit_post";
 import { useNavigate } from "react-router-dom";
 import VoteModal from "./Vote";
 import { useConfirm } from "./ConfirmContext";
+import Report_post from "./ReportPost";
 import { useStatus } from "./StatusContext";
 
 const buildCommentTree = (comments = []) => {
@@ -60,6 +61,8 @@ export default function Post({
   const [isVote_open, setIsVote_open] = useState(false);
   const { showConfirm } = useConfirm();
   const currentUserId = localStorage.getItem("user_id");
+
+  const [isreport_open, setIsreport_open] = useState(false);
 
   const CHUNK_SIZE = 100;
   const [visibleWordCount, setVisibleWordCount] = useState(CHUNK_SIZE);
@@ -174,7 +177,7 @@ export default function Post({
     if (hideaction) return;
 
     if (!currentUserId) {
-      showStatus("Silakan login untuk memberikan like!", "error");
+      showStatus("Silahkan login/sign up untuk memberikan like!", "error");
       return;
     }
 
@@ -185,7 +188,7 @@ export default function Post({
       .single();
 
     if (!userData?.is_verified) {
-      showStatus("Akun belum diverifikasi! Silakan verifikasi untuk like postingan.", "error");
+      showStatus("Akun belum diverifikasi! Silahkan verifikasi untuk like postingan!", "error");
       return;
     }
 
@@ -261,7 +264,7 @@ export default function Post({
 
   const handleOpenVote = async () => {
     if (!currentUserId) {
-      showStatus("Silakan login terlebih dahulu!", "error");
+      showStatus("Silahkan login/sign up terlebih dahulu untuk voting!", "error");
       return;
     }
 
@@ -301,7 +304,7 @@ export default function Post({
           {displayedWords}
           {hasMore && "..."}
         </p>
-        
+
         {hasMore ? (
           <button
             type="button"
@@ -325,9 +328,8 @@ export default function Post({
 
   return (
     <div
-      className={`w-full ${
-        hideaction ? "bg-transparent p-0" : "bg-transparent px-1 py-2 sm:py-3"
-      } flex flex-col items-center justify-center`}
+      className={`w-full ${hideaction ? "bg-transparent p-0" : "bg-transparent px-1 py-2 sm:py-3"
+        } flex flex-col items-center justify-center`}
     >
       <div className="flex flex-col w-full p-2.5 sm:p-3.5 border-2 sm:border-4 border-[#a50034]/50 dark:border-[#f1ece1]/30 rounded-xl sm:rounded-2xl bg-white dark:bg-[#1e1e1e] shadow-xs transition-colors">
         <div className="flex items-center justify-between gap-3 w-full pb-2">
@@ -337,16 +339,14 @@ export default function Post({
                 src={avatar}
                 alt={username}
                 onClick={() => !hideaction && onUserClick && onUserClick(post.user_id)}
-                className={`w-10 h-10 rounded-full object-cover flex-shrink-0 border-2 border-[#a50034] dark:border-[#f1ece1] ${
-                  hideaction ? "cursor-default" : "cursor-pointer hover:opacity-80 transition-opacity"
-                }`}
+                className={`w-10 h-10 rounded-full object-cover flex-shrink-0 border-2 border-[#a50034] dark:border-[#f1ece1] ${hideaction ? "cursor-default" : "cursor-pointer hover:opacity-80 transition-opacity"
+                  }`}
               />
             ) : (
               <div
                 onClick={() => !hideaction && onUserClick && onUserClick(post.user_id)}
-                className={`w-10 h-10 rounded-full flex justify-center bg-white dark:bg-[#252525] text-[#a50034] dark:text-[#f1ece1] border-2 border-[#a50034] dark:border-[#f1ece1] font-bold text-base items-center object-cover flex-shrink-0 ${
-                  hideaction ? "cursor-default" : "cursor-pointer hover:opacity-80 transition-opacity"
-                }`}
+                className={`w-10 h-10 rounded-full flex justify-center bg-white dark:bg-[#252525] text-[#a50034] dark:text-[#f1ece1] border-2 border-[#a50034] dark:border-[#f1ece1] font-bold text-base items-center object-cover flex-shrink-0 ${hideaction ? "cursor-default" : "cursor-pointer hover:opacity-80 transition-opacity"
+                  }`}
               >
                 {(username || "U")[0].toLowerCase()}
               </div>
@@ -355,9 +355,8 @@ export default function Post({
             <div className="flex flex-col min-w-0">
               <span
                 onClick={() => !hideaction && onUserClick && onUserClick(post.user_id)}
-                className={`font-bold text-sm sm:text-base text-gray-800 dark:text-[#f1ece1] truncate ${
-                  hideaction ? "cursor-default" : "cursor-pointer hover:text-[#a50034] dark:hover:text-[#f1ece1]/80 transition-colors"
-                }`}
+                className={`font-bold text-sm sm:text-base text-gray-800 dark:text-[#f1ece1] truncate ${hideaction ? "cursor-default" : "cursor-pointer hover:text-[#a50034] dark:hover:text-[#f1ece1]/80 transition-colors"
+                  }`}
               >
                 {username}
               </span>
@@ -376,9 +375,8 @@ export default function Post({
                         onClick={() =>
                           !hideaction && navigate(`/search?tag=${encodeURIComponent(cleanTag)}`)
                         }
-                        className={`text-[#a50034] dark:text-[#f1ece1] bg-[#a50034]/10 dark:bg-white/10 dark:border dark:border-[#f1ece1]/40 px-1.5 py-0.2 rounded font-bold text-[11px] sm:text-xs transition-colors ${
-                          hideaction ? "cursor-default" : "hover:bg-[#a50034] hover:text-white dark:hover:bg-[#f1ece1] dark:hover:text-black cursor-pointer"
-                        }`}
+                        className={`text-[#a50034] dark:text-[#f1ece1] bg-[#a50034]/10 dark:bg-white/10 dark:border dark:border-[#f1ece1]/40 px-1.5 py-0.2 rounded font-bold text-[11px] sm:text-xs transition-colors ${hideaction ? "cursor-default" : "hover:bg-[#a50034] hover:text-white dark:hover:bg-[#f1ece1] dark:hover:text-black cursor-pointer"
+                          }`}
                       >
                         #{cleanTag}
                       </span>
@@ -448,9 +446,13 @@ export default function Post({
                       >
                         Salin Tautan
                       </button>
+                      =
                       <button
                         type="button"
-                        onClick={() => setIsmenu_open(false)}
+                        onClick={() => {
+                          setIsmenu_open(false);
+                          setIsreport_open(true);
+                        }}
                         className="w-full text-left px-4 py-2 hover:bg-red-50 dark:hover:bg-red-950/40 text-red-600 dark:text-red-400 font-semibold flex items-center gap-2 cursor-pointer"
                       >
                         Laporkan
@@ -490,11 +492,10 @@ export default function Post({
                       transform: isPop ? "scale(1.25)" : "scale(1)",
                       transition: "transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
                     }}
-                    className={`w-7 h-7 sm:w-8 sm:h-8 ${
-                      isLiked
-                        ? "fill-[#a50034] stroke-[#a50034] dark:fill-[#a50034] dark:stroke-[#a50034]"
-                        : "fill-none stroke-[#a50034] dark:stroke-[#f1ece1]"
-                    }`}
+                    className={`w-7 h-7 sm:w-8 sm:h-8 ${isLiked
+                      ? "fill-[#a50034] stroke-[#a50034] dark:fill-[#a50034] dark:stroke-[#a50034]"
+                      : "fill-none stroke-[#a50034] dark:stroke-[#f1ece1]"
+                      }`}
                     viewBox="0 0 24 24"
                     strokeWidth="2"
                     strokeLinecap="round"
@@ -507,12 +508,11 @@ export default function Post({
                 {likes.length > 0 && (
                   <span
                     onClick={() => !hideaction && setShowLikers(true)}
-                    className={`font-bold text-xs sm:text-sm ${
-                      hideaction
-                        ? "cursor-default text-[#a50034] dark:text-[#f1ece1]"
-                        : "cursor-pointer hover:underline transition-colors " +
-                          (isLiked ? "text-[#a50034] dark:text-[#a50034]" : "text-[#a50034] dark:text-[#f1ece1]")
-                    }`}
+                    className={`font-bold text-xs sm:text-sm ${hideaction
+                      ? "cursor-default text-[#a50034] dark:text-[#f1ece1]"
+                      : "cursor-pointer hover:underline transition-colors " +
+                      (isLiked ? "text-[#a50034] dark:text-[#a50034]" : "text-[#a50034] dark:text-[#f1ece1]")
+                      }`}
                   >
                     {likes.length}
                   </span>
@@ -623,6 +623,16 @@ export default function Post({
         <Share_post post={post} onclose={() => setIsshare_open(false)} />
       )}
 
+      {!hideaction && isreport_open && (
+        <Report_post
+          post={post}
+          currentUserId={currentUserId}
+          onClose={() => setIsreport_open(false)}
+          onReported={() => {
+            showStatus("Laporan berhasil dikirim, tengz udah bantu jaga komunitas!", "success");
+          }}
+        />
+      )}
       {!hideaction && isedit_open && (
         <Edit_post
           post={post}

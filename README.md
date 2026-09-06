@@ -1,28 +1,23 @@
 <div align="center">
 
- 
+  <img src="https://readme-typing-svg.demolab.com?font=Plus+Jakarta+Sans&weight=800&size=52&duration=1&pause=1000&color=A50034&center=true&vCenter=true&width=500&height=70&lines=KitaKomplain" alt="KitaKomplain" />
 
-  # [KitaKomplain]
+  ## Daripada dipendem, komplainin aja dulu!
+  <p>
+    <a href="https://[URL_DEMO]">
+      <img src="https://img.shields.io/badge/🚀_Live_Demo-Visit_Site-success?style=for-the-badge" alt="Live Demo" />
+    </a>
+  </p>
+  <p>
+    <a href="https://github.com/Carmeloanthony1/KitaKomplain-PNJ-Web-Development-Competition-">
+      <img src="https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github" alt="GitHub" />
+    </a>
+  </p>
 
-  ### [Kesal? Komplain dulu aja kiteee!!]
-
- 
-
-  [![Live Demo](https://img.shields.io/badge/🚀_Live_Demo-Visit_Site-success?style=for-the-badge)](https://[URL_DEMO])
-
-  [![GitHub]([https://github.com/Carmeloanthony1/KitaKomplain-PNJ-Web-Development-Competition-])]
-
-  [![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](LICENSE)
-
- 
-
-  **Submission for ITECHNO CUP 2026 - Web Development**
-
- 
-
-  **By [KitaKomplain]**
-
- 
+  <p>
+    <strong>Submission for ITECHNO CUP 2026 - Web Development</strong><br/>
+    <strong>By KitaKomplain</strong>
+  </p>
 
 </div>
 
@@ -54,15 +49,17 @@
 
 ---
 
-## 👥 Tim Developer
+<div align="center">
 
-| Nama  | Peran     | GitHub  |
+### 👥 Developer Team
 
-| **[Carmelo Anthony]** | Project Lead & Full Stack Developer | [GitHub](https://github.com/[retry30]) |
+| Nama | Peran | GitHub |
+| :--- | :--- | :---: |
+| **Carmelo Anthony** | Project Lead & Full Stack Developer | [![GitHub](https://img.shields.io/badge/Carmeloanthony1-181717?style=flat-square&logo=github)](https://github.com/Carmeloanthony1) |
+| **Marvel Valenxius Gunawan** | Full Stack Developer | [![GitHub](https://img.shields.io/badge/marvelvg-181717?style=flat-square&logo=github)](https://github.com/marvelvg) |
+| **Kentdji Orlando** | Full Stack Developer | [![GitHub](https://img.shields.io/badge/Gordnum-181717?style=flat-square&logo=github)](https://github.com/Gordnum) |
 
-| **[Marvel Valenxius Gunawan]** | Full Stack Developer | [GitHub](https://github.com/[marvelvg]) |
-
-| **[Kentdji Orlando]** | Full Stack Developer | [GitHub](https://github.com/[Gordnum]) |
+</div>
 
 ---
 
@@ -70,90 +67,155 @@
 
 ### Latar Belakang
 
-[ Indonesia saat ini masih memiliki salah satu tantangan terbesar yakni pemerataan Infrastruktur dan transparansi alokasi dana pembangunan. Berdasarkan Jurnal Ilmu Administrasi Negara (2022) menyoroti bahwa salah satu "lubang terbesar dalam demokrasi infrastruktur kita adalah minimnya transparansi pengelolaan dana daerah dan kurangnya wadah bagi masyarakat untuk melacak keluhan mereka secara terbuka" ]
+Indonesia masih menghadapi tantangan besar dalam pemerataan infrastruktur serta transparansi alokasi dana pembangunan. Berdasarkan *Jurnal Ilmu Administrasi Negara* (2022), salah satu tantangan utama dalam demokrasi infrastruktur adalah **minimnya transparansi pengelolaan dana daerah dan terbatasnya wadah publik untuk melacak tindak lanjut keluhan secara terbuka**.
 
 ### Solusi yang Ditawarkan
 
-[ KitaKomplain di sini menjadi sebuah program yang menjembatani aspirasi masyarakat dan pemerintah, melalui melalui sebuah mekanisme sosial media yang familiar, namun diarahkan secara spesifik untuk pelaporan dan advokasi infrastruktur 
-Alurnya sederhana:
+**KitaKomplain** hadir sebagai jembatan interaktif antara aspirasi masyarakat dan pemerintah melalui antarmuka berbasis media sosial yang familiar, namun difokuskan secara spesifik untuk pelaporan dan advokasi infrastruktur.
 
-Alurnya sederhana:
-
-1. Warga membuat sebuah postingan komplain mengenai infrastruktur, jalan, atau fasilitas publik yang rusak/tidak memadai di daerahnya, lengkap dengan fitur polling/vote.
-2. Semakin banyak dukungan (vote) yang diterima sebuah postingan, semakin besar indikasi bahwa masalah tersebut memang dirasakan dan disetujui oleh banyak warga sebagai isu prioritas bukan sekadar keluhan individu.
-3. Postingan dengan dukungan tinggi mendapat exposure lebih besar di platform, sehingga isu-isu di daerah tertinggal secara infrastruktur bisa lebih mudah terlihat dan didorong untuk ditindaklanjuti.
-
-]
-
-### Tujuan Proyek
-
-- 🎯 **Tujuan Utama**: [ Menjembatani user untuk menyampaikan aspirasinya/Keluh kesah mengenai infrastruktur/lingkungan/fasilitas umum dari pemerintah yang dimana selaras dengan SDG 7 (Affordable and Clean Energy), SDG 8 (Decent Work and Economic Growth), SDG 9 (Industry, Innovation, and Infrastructure
-) dan SDG 11 (Sustainable Cities And Communities) ]
-
-- 📊 **Target Pengguna**: [ Masyarakat dengan penuh keluh kesah ]
-
-- 💡 **Value Proposition**: [ Belum ada aplikasi yang benar-benar menawarkan aspirasi masyarakat secara transparan & fitur autentikasinya credential yang sulit di palsukan]
+**Alur Kerja Utama:**
+1. **Pelaporan Terstruktur:** Warga mengunggah laporan keluhan terkait fasilitas publik atau infrastruktur rusak yang dilengkapi sistem *polling/voting*.
+2. **Validasi Kolektif (*Crowdsourced Validation*):** Semakin banyak *vote* yang diperoleh, semakin kuat indikasi bahwa masalah tersebut merupakan isu prioritas bersama, bukan sekadar keluhan individu.
+3. **Prioritasi Transparan:** Laporan dengan dukungan tertinggi akan mendapatkan *exposure* lebih besar di *feed* platform, mendorong transparansi dan percepatan tindak lanjut dari pihak berwenang.
 
 ---
+
+### 🎯 Tujuan Proyek
+
+**Tujuan Utama:** Menjembatani masyarakat dalam menyampaikan aspirasi dan keluhan terkait infrastruktur, lingkungan, serta fasilitas umum secara transparan, yang selaras dengan pencapaian **SDG 9** (*Industry, Innovation, and Infrastructure*) dan **SDG 11** (*Sustainable Cities and Communities*).
+**Target Pengguna:** Masyarakat umum yang membutuhkan wadah terbuka dan terintegrasi untuk menyampaikan aspirasi serta keluhan fasilitas publik secara akuntabel kepada pemerintah.
+**Value Proposition:**
+  * **Transparansi Publik:** Menyediakan ruang aspirasi masyarakat secara terbuka dan dapat dipantau secara *real-time*.
+  * **Otentikasi Kredibel:** Menggunakan sistem otentikasi berbasis *credential* yang terverifikasi dan sulit dipalsukan demi menjaga keabsahan setiap laporan serta mencegah *spam*.
+  * **Validasi Berbasis Data (*Vote System*):** Menyaring keluhan prioritas berdasarkan dukungan kolektif masyarakat agar masalah paling mendesak dapat ditindaklanjuti lebih cepat.
+
 
 ## ✨ Fitur Unggulan
 
-### Fitur Utama
+### 🚀 Fitur Utama
 
-| Fitur    | Deskripsi    | Keunggulan    | 
-|----------|--------------|---------------|
+| Fitur | Deskripsi | Keunggulan / Value |
+| :--- | :--- | :--- |
+| **Post Komplain** | Mengunggah keluhan terkait masalah lingkungan sekitar maupun insiden fasilitas publik. | Laporan diteruskan ke pihak berwenang untuk ditindaklanjuti secara akuntabel. |
+| **Feed & Interaksi Sosial** | Diskusi interaktif dan pertukaran pandangan antar pengguna melalui kolom komentar. | Membangun *sense of community* dan kepedulian bersama terhadap isu-isu di Indonesia. |
+| **Polling / Vote System** | Memberikan dukungan (*upvote*) atau penolakan terhadap suatu komplain sesuai urgensinya. | Menilai urgensi masalah secara kolektif agar isu paling relevan mendapat perhatian lebih cepat. |
 
-| **[ Post Komplain ]** | [User dapat mengunggah sebuah komplenan berupa keluhan lingkungan sekitar maupun insiden] [Fitur ini penting karena keluhan yang di unggah akan di berikan kepada pihak pemerintah untuk di tindak lebih lanjut] |
+### 🛠️ Fitur Tambahan
 
-| **[ Feed & Interaksi Sosial (Comment) ]** | [Fitur ini berfungsi agar sesama pengguna dapat berinteraksi maupun berbagi pandangan mengenai unggahan yang tertera] | [ Membangun sense of community antar user mengenai masalah-masalah yang terdapat di Indonesia ] |
+| Fitur | Deskripsi | Keunggulan / Value |
+| :--- | :--- | :--- |
+| **Custom Tag & Topik** | Membuat tag topik yang relevan saat memposting komplain. | Memudahkan personalisasi *feed* dan pemfilteran algoritma sesuai preferensi pengguna. |
+| **Top Voted Leaderboard** | Halaman khusus untuk menampilkan daftar postingan dengan *voting* terbanyak. | Memperjelas skala prioritas laporan masyarakat yang paling mendesak bagi pemerintah. |
+| **Dark Mode Website** | Pengalihan tema antarmuka antara *Light Mode* dan *Dark Mode*. | Meningkatkan kenyamanan visual pengguna sesuai dengan preferensi tampilan masing-masing. |
+| **Anonim Mode** | Jelajah dan membuat postingan tanpa menampilkan identitas publik. | Menjaga privasi dan keamanan identitas pengguna saat menyampaikan isu sensitif. |
+| **Report Problem** | Pelaporan postingan atau aktivitas pengguna yang melanggar ketentuan dan etika platform. | Menjaga ekosistem komunitas tetap kondusif, aman, dan bebas dari *spam* atau *abuse*. |
+| **Help Desk** | Pusat bantuan dan layanan dukungan pengguna untuk menangani kendala teknis serta pertanyaan seputar penggunaan aplikasi. | Memberikan solusi cepat bagi pengguna yang mengalami masalah sistem dan meningkatkan *user experience*. |
 
-| **[ Polling/Vote System ]** | [Fitur ini memungkinkan pengguna memberikan dukungan atau penolakan terhadap suatu komplain berdasarkan tingkat urgensi dan relevansi masalah yang diangkat.] | [Membantu menilai masalah user secara kolektif sehingga masalah yang paling relevan dan ramai dapat lebih cepat mendapat perhatian.] |
-
-### Fitur Tambahan
-
-- **Pembuatan postingan dan Membuat tag dengan topik sesuai** - [Penjelasan singkat]
-
-- **Board yang di khususkan untuk melihat postingan dengan voting terbanyak** - [Penjelasan singkat]
-
-- **Dark mode website** - [Penjelasan singkat]
-
-- **[Fitur D]** - [Penjelasan singkat]
-
----
+--- 
 
 ## 📸 Demo & Screenshot
 
 ### Live Demo
 
-🔗 **[Kunjungi Website](https://[URL_DEMO])**
+🔗 **[Kunjungi Website](https://kita-komplain-pnj-web-development-c.vercel.app/profile)**
+
 
 ### Screenshot Aplikasi
 
 <div align="center">
 
-  <img src="[URL_SCREENSHOT_1]" alt="Homepage" width="800"/>
+<!-- General Used Panel (Untuk User) -->
+  <img src="src/assets/Screenshoot-Homepage.png" alt="Homepage" width="800"/>
 
   <p><em>Homepage - Tampilan utama aplikasi</em></p>
 
- 
+<!-- History -->
+  <img src="src/assets/Screenshot-History.png" alt="History" width="800"/>
 
-  <img src="[URL_SCREENSHOT_2]" alt="Dashboard" width="800"/>
+  <p><em>History - Riwayat aktivitas pengguna</em></p>
 
-  <p><em>Dashboard - Panel kontrol pengguna</em></p>
+<!-- Notification -->
+  <img src="src/assets/Screenshot-Notification.png" alt="Notification" width="800"/>
 
- 
+  <p><em>Notification - Daftar notifikasi pengguna</em></p>
 
-  <img src="[URL_SCREENSHOT_3]" alt="Feature" width="800"/>
+<!-- New Post -->
+  <img src="src/assets/Screenshot-NewPost.png" alt="New Post" width="800"/>
 
-  <p><em>[Nama Fitur] - [Deskripsi screenshot]</em></p>
+  <p><em>New Post - Membuat postingan baru</em></p>
+
+<!-- Profile -->
+  <img src="src/assets/Screenshot-Profile.png" alt="Profile" width="800"/>
+
+  <p><em>Profile - Halaman profil pengguna</em></p>
+
+<!-- Setting -->
+  <img src="src/assets/Screenshot-Setting.png" alt="Setting" width="800"/>
+
+  <p><em>Setting - Pengaturan akun dan aplikasi</em></p>
+
+<!-- Most Polling -->
+  <img src="src/assets/Screenshot-MostPolling.png" alt="Most Polling" width="800"/>
+
+  <p><em>Most Polling - Daftar polling terpopuler</em></p>
+
+
+<!-- Admin Panel -->
+  <img src="src/assets/Screenshot-AdminPanel.png" alt="Dashboard Admin" width="800"/>
+
+  <p><em>Dashboard Admin - Panel kontrol pengguna</em></p>
+
+  <img src="src/assets/Screenshot-AdminPanel2.png" alt="Dashboard Admin 2" width="800"/>
+
+  <p><em>Dashboard Admin - Tampilan pengelolaan data</em></p>
+
+  <img src="src/assets/Screenshot-AdminPanel3.png" alt="Dashboard Admin 3" width="800"/>
+
+  <p><em>Dashboard Admin - Tampilan pengelolaan laporan</em></p>
+
+<!-- Konfigurasi Dark Mode -->
+<!-- DarkMode Setting Toggle -->
+  <img src="src/assets/Screenshot-DarkModeSettingToggle.png" alt="Dark Mode Setting Toggle" width="800"/>
+
+  <p><em>Dark Mode Setting - Toggle pengaturan mode gelap</em></p>
+
+<!-- DARK Mode Home -->
+  <img src="src/assets/Screenshot-DarkModeHome.png" alt="Dark Mode Home" width="800"/>
+
+  <p><em>Dark Mode Home - Tampilan homepage dalam mode gelap</em></p>
+
+<!-- DARK MODE PROFILE -->
+
+  <img src="src/assets/Screenshot-DarkModeProfile.png" alt="Dark Mode Profile" width="800"/>
+
+  <p><em>Dark Mode Profile - Tampilan profil dalam mode gelap</em></p>
+
+<!-- Dark Mode New Post -->
+  <img src="src/assets/Screenshot-DarkModeNewPost.png" alt="Dark Mode New Post" width="800"/>
+
+  <p><em>Dark Mode New Post - Form postingan dalam mode gelap</em></p>
+
+<!-- Dark Mode Notification -->
+  <img src="src/assets/Screenshot-DarkModeNotif.png" alt="Dark Mode Notification" width="800"/>
+
+  <p><em>Dark Mode Notification - Notifikasi dalam mode gelap</em></p>
+
+<!-- DARK MODE History-->
+  <img src="src/assets/Screenshot-DarkModeHistory.png" alt="Dark Mode History" width="800"/>
+
+  <p><em>Dark Mode History - Riwayat aktivitas dalam mode gelap</em></p>
+
+<!-- DARK MODE Report -->
+  <img src="src/assets/Screenshot-ReportDarkMode.png" alt="Dark Mode Report Problem" width="800"/>
+
+  <p><em>Dark Mode Report Problem - Laporan masalah dalam mode gelap</em></p>
+
+<!-- Dark Mode Most Polling -->
+  <img src="src/assets/Screenshot-DarModeMostPolling.png" alt="Dark Mode Most Polling" width="800"/>
+
+  <p><em>Dark Mode Most Polling - Daftar polling terpopuler dalam mode gelap</em></p>
 
 </div>
-
-### Video Demo
-
-📹 **[Link Video Demo](https://[URL_VIDEO])** _(opsional)_
-
----
 
 ## 🛠️ Teknologi
 
@@ -185,10 +247,8 @@ Auth         : JWT
 ```
 
 Deployment   : Vercel
-CI/CD        : Vercel / dll
-Testing      : [Jest / Vitest / Playwright / dll]
-Monitoring   : [Sentry / LogRocket / dll]
-
+CI/CD        : Vercel 
+Testing      : Vitest
 ```
 
 ### Alasan Pemilihan Teknologi
@@ -220,19 +280,11 @@ Monitoring   : [Sentry / LogRocket / dll]
 ## 🏗️ Arsitektur Sistem
 ### System Architecture
 
-```
-
-[Tambahkan diagram arsitektur sistem - bisa menggunakan Mermaid atau gambar]
-
-```
+<img width="1000" alt="Supabase Profile Management-2026-09-06-073740" src="https://github.com/user-attachments/assets/629ad1b1-adcc-4e61-8bbf-5b0229ec2518" />
 
 ### Database Schema
 
-```
-
-[Tambahkan diagram ERD atau schema database]
-
-```
+<img src="src/assets/ERD_KitaKomplen.webp" alt="ERD KitaKomplain" height="800" width="800" />
 
 ### Folder Structure
 ```
@@ -254,23 +306,26 @@ KitaKomplain-PNJ-Web-Development-Competition-
 │   │   ├── ConfirmModal.jsx
 │   │   ├── edit_post.jsx
 │   │   ├── FocusPost.jsx
+│   │   ├── History.css
+│   │   ├── History.jsx
 │   │   ├── Most_Polling.jsx
 │   │   ├── Navbar.jsx
-│   │   ├── Notification.jsx
-│   │   ├── Notification.css
+│   │   ├── Navbar_Admin.jsx
 │   │   ├── newpost.jsx
-│   │   ├── Other_profile.jsx
+│   │   ├── Notification.css
+│   │   ├── Notification.jsx
 │   │   ├── Post.jsx
+│   │   ├── Protected_Route.jsx
 │   │   ├── public_profile.jsx
+│   │   ├── Report_Panel.jsx
 │   │   ├── Share_post.jsx
 │   │   ├── Sidebar_Kiri.jsx
 │   │   ├── Status.jsx
 │   │   ├── StatusContext.jsx
 │   │   ├── Verify.jsx
-│   │   ├── Vote.jsx
-│   │   └── edit_post.jsx
+│   │   └── Vote.jsx
 │   ├── pages/
-│   │   ├── History.jsx
+│   │   ├── Admin_Dashboard.jsx
 │   │   ├── Home.jsx
 │   │   ├── Login.jsx
 │   │   ├── Login.css
@@ -281,6 +336,8 @@ KitaKomplain-PNJ-Web-Development-Competition-
 │   │   ├── Settings.jsx
 │   │   ├── SignUp.jsx
 │   │   └── SignUp.css
+│   ├── temp_files/
+│   │   └── Other_profile.jsx
 │   ├── App.css
 │   ├── App.jsx
 │   ├── index.css
@@ -337,7 +394,7 @@ pnpm install
 
 Buat file `.env` di root directory lalu masuk ke folder backend:
 
-```env.example
+``` env.example
 
 PORT=
 SUPABASE_URL=
@@ -404,11 +461,15 @@ npm run lint
 
 #### Untuk Admin
 
-1. **Akses Admin Panel**: [Jelaskan cara mengakses]
+1. **Akses Admin Panel**: Admin diberikan hak akses melalui Supabase (role/permission di-set di sana). Untuk masuk ke panel admin, tinggal ganti routes menjadi `/admin` dari root domain.
+   
+   Contoh: `[namaDomain]/home` → `[namaDomain]/admin`
 
-2. **[Fungsi Admin 1]**: [Jelaskan cara menggunakan]
+2. **Delete Account**: Admin dapat menghapus akun user yang dianggap melanggar ketentuan atau atas dasar laporan yang masuk. Aksi ini bersifat permanen dan akan menghapus seluruh data terkait akun tersebut.
 
-3. **[Fungsi Admin 2]**: [Jelaskan cara menggunakan]
+3. **Delete Post**: Admin dapat menghapus post/postingan user secara langsung dari admin panel, misalnya jika konten melanggar aturan komunitas.
+
+4. **Baca Laporan User**: Admin juga dapat melihat dan meninjau laporan yang dikirimkan oleh user untuk menentukan tindakan lebih lanjut (delete post/account, dsb).
 
 ---
 
@@ -471,11 +532,9 @@ const response = await fetch('/api/auth/login', {
 
 ``` 
 
-📖 **[Dokumentasi API Lengkap](./docs/API.md)** _(opsional)_
-
 ---
 
-## 🧪 Testing
+## 🧪 Testing 
 
 ### Running Tests
 
@@ -496,17 +555,6 @@ npm run test:e2e
 # Test coverage
 
 npm run test:coverage
-
-```
-
-### Test Coverage
-
-```
-
-Statements   : XX%
-Branches     : XX%
-Functions    : XX%
-Lines        : XX%
 
 ```
 

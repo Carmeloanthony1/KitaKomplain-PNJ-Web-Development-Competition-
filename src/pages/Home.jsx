@@ -4,15 +4,16 @@ import { supabase } from "../supabaseClient";
 import Navbar from "../components/Navbar";
 import Sidebar_Kiri from "../components/Sidebar_Kiri";
 import Post from "../components/Post";
-import Focuspost from "../components/FocusPost";
 import Most_Polling from "../components/Most_Polling";
 import Notification from "../components/Notification";
 import { NewPost } from "../components/newpost";
 import History from "../components/History";
+import { useStatus } from "../components/StatusContext";
 
 export default function Home({ user, onLogout, onNavigate }) {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
+  const { showStatus } = useStatus();
 
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -24,6 +25,35 @@ export default function Home({ user, onLogout, onNavigate }) {
   const [isPostModalOpen, setIsPostModalOpen] = useState(false);
   const [isPollingModalOpen, setIsPollingModalOpen] = useState(false);
   const [isdark, setIsdark] = useState(false);
+
+  const currentUserId = user?.id || localStorage.getItem("user_id");
+
+  // Fungsi pengaman notification
+  const handleOpenNotification = () => {
+    if (!currentUserId) {
+      showStatus("Silahkan login/sign up terlebih dahulu untuk melihat notifikasi!", "error");
+      return;
+    }
+    setIsNotificationOpen(true);
+  };
+
+  // Fungsi pengaman history
+  const handleOpenHistory = () => {
+    if (!currentUserId) {
+      showStatus("Silahkan login/sign up terlebih dahulu untuk melihat history!", "error");
+      return;
+    }
+    setIsHistoryOpen(true);
+  };
+
+  // Fungsi pengaman post modal
+  const handleOpenPostModal = () => {
+    if (!currentUserId) {
+      showStatus("Silahkan login/sign up terlebih dahulu untuk membuat postingan!", "error");
+      return;
+    }
+    setIsPostModalOpen(true);
+  };
 
   const toggle_darkmode = () => {
     const isdarkState = document.documentElement.classList.toggle("dark");
@@ -127,9 +157,9 @@ export default function Home({ user, onLogout, onNavigate }) {
   };
 
   const handleUserClick = (targetUserId) => {
-    const currentUserId = user?.id || localStorage.getItem("user_id");
+    const targetCurrentId = user?.id || localStorage.getItem("user_id");
 
-    if (targetUserId === currentUserId) {
+    if (targetUserId === targetCurrentId) {
       if (onNavigate) onNavigate("profile");
       else navigate("/profile");
     } else {
@@ -161,9 +191,9 @@ export default function Home({ user, onLogout, onNavigate }) {
         <Navbar 
           user={user} 
           openProfile={() => (onNavigate ? onNavigate("profile") : navigate("/profile"))} 
-          openNotifications={() => setIsNotificationOpen(true)}
-          openHistory={() => setIsHistoryOpen(true)}
-          onOpenNewPost={() => setIsPostModalOpen(true)}
+          openNotifications={handleOpenNotification}
+          openHistory={handleOpenHistory}
+          onOpenNewPost={handleOpenPostModal}
           openPollingModal={() => setIsPollingModalOpen(true)}
         />
       </header>
@@ -172,13 +202,13 @@ export default function Home({ user, onLogout, onNavigate }) {
         <aside className="hidden md:block w-full sticky top-24 self-start z-10">
           <Sidebar_Kiri 
             onNavigate={onNavigate}
-            openNotifications={() => setIsNotificationOpen(true)}
-            openHistory={() => setIsHistoryOpen(true)}
-            openPostModal={() => setIsPostModalOpen(true)}
+            openNotifications={handleOpenNotification}
+            openHistory={handleOpenHistory}
+            openPostModal={handleOpenPostModal}
           />
         </aside>
 
-        <main className="w-full max-w-2xl lg:max-w-3xl flex flex-col items-center justify-center min-w-0 mx-auto">          
+        <main className="w-full max-w-2xl lg:max-w-3xl flex flex-col items-center justify-center min-w-0 mx-auto">
           {posts.length === 0 ? (
             <div className="text-center text-gray-500 dark:text-gray-400 py-10">
               Belum ada postingan.

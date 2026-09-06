@@ -85,15 +85,15 @@ export default function App() {
           />
           <Route
             path="/search"
-            element={user ? <Search_page user={user} onNavigate={handleNavigate} /> : <Navigate to="/login" />}
+            element={<Search_page user={user} onNavigate={handleNavigate} />}
           />
           <Route
             path="/home"
-            element={user ? <Home user={user} onLogout={handleLogout} onNavigate={handleNavigate} /> : <Navigate to="/login" />}
+            element={<Home user={user} onLogout={handleLogout} onNavigate={handleNavigate} />}
           />
           <Route
             path="/profile"
-            element={user ? <Profile user={user} onNavigate={handleNavigate} /> : <Navigate to="/login" />}
+            element={<Profile user={user} onNavigate={handleNavigate} />}
           />
           <Route 
             path="/user/:id"
@@ -123,7 +123,7 @@ export default function App() {
 
           <Route
             path="/"
-            element={<Navigate to={user ? "/home" : "/login"} />}
+            element={<Navigate to="/home" />}
           />
         </Routes>
       </ConfirmProvider>

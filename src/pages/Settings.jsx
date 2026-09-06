@@ -71,7 +71,7 @@ export default function Settings({ user, onNavigate }) {
 
   const handleTogglePrivacy = async (key, dbColumn) => {
     if (!current_user_id) {
-      showStatus("Silakan login terlebih dahulu!", "error");
+      showStatus("Silahkan login/sign up terlebih dahulu!", "error");
       return;
     }
 

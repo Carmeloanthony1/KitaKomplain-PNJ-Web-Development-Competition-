@@ -11,11 +11,23 @@ export default function Sidebar_kiri({ onNavigate, openNotifications, openPostMo
 
   const handleNewPost = async () => {
     const currentUserId = localStorage.getItem("user_id");
+<<<<<<< HEAD
     if (!currentUserId) {
       showStatus("Silakan login terlebih dahulu!", "error");
       return;
     }
 
+=======
+    
+    if (!currentUserId)
+    {
+      showStatus("Silahkan login/sign up terlebih dahulu untuk membuat postingan!", "error");
+      return;
+    }
+
+    //Verification check
+    /*
+>>>>>>> c8ac70230e5349ff68c0a8859834aeceda7887f9
     const { data: userData, error } = await supabase
       .from("users")
       .select("is_verified")
@@ -26,6 +38,7 @@ export default function Sidebar_kiri({ onNavigate, openNotifications, openPostMo
       showStatus("Akun belum diverifikasi! Silakan verifikasi profil Anda untuk membuat postingan.", "error");
       return;
     }
+    */
 
     openPostModal();
   };

@@ -3,12 +3,12 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import Focuspost from "../components/FocusPost";
 import { useStatus } from "../components/StatusContext";
-import VerifyAccount from "../components/Verify";
 
-export default function Profile() {
+export default function Profile({user}) {
   const navigate = useNavigate();
   const { showStatus } = useStatus();
-  const userId = localStorage.getItem("user_id");
+
+  const userId = user?.id || localStorage.getItem("user_id");
 
   const [username, setUsername] = useState("");
   const [bio, setBio] = useState("");
@@ -16,9 +16,6 @@ export default function Profile() {
   const [isAnonimMode, setIsAnonimMode] = useState(false);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
-
-  const [isVerifyOpen, setIsVerifyOpen] = useState(false);
-  const [isVerified, setIsVerified] = useState(false);
 
   const [posts, setPosts] = useState([]);
   const [user_comment, setUser_comment] = useState([]);
@@ -70,6 +67,7 @@ export default function Profile() {
 
   useEffect(() => {
     if (!userId) {
+      setLoading(false);
       navigate("/login");
       return;
     }
@@ -99,7 +97,6 @@ export default function Profile() {
       setIsAnonimMode(data.is_anonim_mode || false);
       setTempUsername(data.username || "");
       setTempBio(data.bio || "");
-      setIsVerified(data.is_verified || false);
 
       const { data: userPosts, error: postError } = await supabase
         .from("posts")
@@ -216,7 +213,7 @@ export default function Profile() {
     } catch (error) {
       showStatus("Gagal upload foto profile", "error");
       console.error(error.message);
-    } finally { 
+    } fontally { 
       setUploading(false);
     }
   };
@@ -298,7 +295,7 @@ export default function Profile() {
     <div className="min-h-screen w-full bg-[#f4f5f8] dark:bg-[#0d0e11] text-gray-900 dark:text-[#f1ece1] pb-16 transition-colors duration-200">
       <div className="max-w-md md:max-w-xl mx-auto flex flex-col items-center bg-white dark:bg-[#16181c] md:border border-gray-200 dark:border-neutral-800/80 md:shadow-lg md:rounded-3xl md:my-6 overflow-x-hidden relative">
         
-        {/* Top Header Bar Transparan Menimpa Banner */}
+        {/* Top Header Bar */}
         <header className="w-full flex items-center justify-between py-3.5 px-4 border-b border-black/5 dark:border-white/10 bg-transparent z-10">
           <button
             type="button"
@@ -324,7 +321,6 @@ export default function Profile() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
               </svg>
             </button>
-            {/*copy profile*/}
             <button
               type="button"
               onClick={() => {
@@ -340,7 +336,7 @@ export default function Profile() {
           </div>
         </header>
 
-        {/* Background Banner dengan rounded-t-3xl agar menyatu bersih */}
+        {/* Background Banner */}
         <div className="w-full h-44 sm:h-52 -mt-[57px] bg-gradient-to-br from-slate-200 via-slate-100 to-gray-300 dark:from-[#23272e] dark:via-[#1c1f24] dark:to-[#14161a] border-b border-gray-300/80 dark:border-neutral-800 relative z-0 md:rounded-t-3xl overflow-hidden">
           <div className="absolute inset-0 bg-radial from-transparent to-black/[0.03] dark:to-black/30 pointer-events-none" />
         </div>
@@ -377,7 +373,7 @@ export default function Profile() {
             )}
           </div>
 
-          {/* Username + Tombol Edit & Verify */}
+          {/* Username */}
           <div className="mt-2.5 flex items-center justify-center gap-1.5">
             {isEditingName ? (
               <input
@@ -393,16 +389,6 @@ export default function Profile() {
               <h2 className="text-base sm:text-lg font-bold tracking-tight">
                 @{username || "user"}
               </h2>
-            )}
-
-            {!isVerified && (
-              <button
-                type="button"
-                onClick={() => setIsVerifyOpen(true)}
-                className="text-[11px] text-rose-600 font-semibold hover:underline cursor-pointer ml-1"
-              >
-                Verify?
-              </button>
             )}
 
             <button
@@ -432,7 +418,7 @@ export default function Profile() {
             </div>
           </div>
 
-          {/* Tombol Aksi: Edit Bio & Mode Anonim */}
+          {/* Tombol Aksi */}
           <div className="w-full flex flex-col items-center gap-2 my-1">
             <button
               type="button"
@@ -640,12 +626,6 @@ export default function Profile() {
         isOpen={isfocusopen}
         onClose={() => setIsfocusopen(false)}
         onVoteSuccess={refreshpage}
-      />
-
-      <VerifyAccount
-        isOpen={isVerifyOpen}
-        onClose={() => setIsVerifyOpen(false)}
-        onSuccess={() => setIsVerified(true)}
       />
     </div>
   );

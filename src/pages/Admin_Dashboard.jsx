@@ -5,6 +5,7 @@ import NavbarAdmin from "../components/Navbar_Admin";
 import User_profile from "../temp_files/Other_profile";
 import ReportPanel from "../components/Report_Panel";
 
+
 export default function AdminDashboard() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("moderation");

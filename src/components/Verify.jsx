@@ -1,23 +1,36 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { supabase } from "../supabaseClient";
 import { useStatus } from "./StatusContext";
 
-export default function VerifyAccount({ isOpen, onClose, onSuccess }) {
+export default function Verify({ isOpen, onClose, onSuccess }) 
+{
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
   const [userEmail, setUserEmail] = useState("");
   const { showStatus } = useStatus();
 
-  const currentUserId = localStorage.getItem("user_id");
-  const token = localStorage.getItem("token");
+  const hasSentOtp = useRef(false);
 
   const API_URL = import.meta.env.VITE_API_URL || "https://kitakomplainback.vercel.app";
 
-  useEffect(() => {
-    if (!isOpen || !currentUserId) return;
+  useEffect(() => 
+  {
+    const currentUserId = localStorage.getItem("user_id");
 
-    const initVerification = async () => {
+    if (!isOpen) 
+    {
+      hasSentOtp.current = false;
+      return;
+    }
+
+    if (!currentUserId || hasSentOtp.current) 
+        return;
+
+    hasSentOtp.current = true;
+
+    const initVerification = async () =>
+    {
       setOtp("");
       
       const { data, error } = await supabase
@@ -26,21 +39,24 @@ export default function VerifyAccount({ isOpen, onClose, onSuccess }) {
         .eq("id", currentUserId)
         .single();
       
-      if (data?.email) {
+      if (data?.email)
+    {
         setUserEmail(data.email);
         await sendOtpToBackend(true);
-      } else {
+      } else
         showStatus("Gagal mengambil data email user.", "error");
-      }
     };
 
     initVerification();
-  }, [isOpen, currentUserId]);
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
-  const sendOtpToBackend = async (isInitial = false) => {
-    try {
+  const sendOtpToBackend = async (isInitial = false) => 
+  {
+    try 
+    {
+      const token = localStorage.getItem("token"); // Ambil token terbaru
       const response = await fetch(`${API_URL}/api/auth/send-otp`, {
         method: "POST",
         headers: { 
@@ -55,23 +71,29 @@ export default function VerifyAccount({ isOpen, onClose, onSuccess }) {
       
       if (!isInitial)
         showStatus("Email verifikasi baru telah dikirim!", "success");
-    } catch (error) {
+    } 
+    catch (error) 
+    {
       console.error(error);
       showStatus(error.message || "Terjadi kesalahan saat mengirim OTP.", "error");
     }
   };
 
-  const handleVerify = async (e) => {
+  const handleVerify = async (e) => 
+  {
     e.preventDefault();
 
-    if (otp.length < 6) {
+    if (otp.length < 6) 
+    {
       showStatus("Masukkan 6 digit kode OTP yang valid.", "error");
       return;
     }
 
     setLoading(true);
 
-    try {
+    try 
+    {
+      const token = localStorage.getItem("token"); // Ambil token terbaru
       const response = await fetch(`${API_URL}/api/auth/verify-otp`, {
         method: "POST",
         headers: { 
@@ -87,11 +109,15 @@ export default function VerifyAccount({ isOpen, onClose, onSuccess }) {
 
       showStatus("Email berhasil diverifikasi!", "success");
       setOtp("");
+
       if (onSuccess) onSuccess();
-      onClose();
-    } catch (error) {
+    } 
+    catch (error) 
+    {
       showStatus(error.message || "Gagal memverifikasi akun.", "error");
-    } finally {
+    } 
+    finally 
+    {
       setLoading(false);
     }
   };

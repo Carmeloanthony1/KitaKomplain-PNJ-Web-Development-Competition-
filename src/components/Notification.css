@@ -118,9 +118,7 @@
   font-size: 14px;
 }
 
-/* =========================================
-   DARK MODE STYLES (.dark class on html)
-   ========================================= */
+/* Dark Mode */
 
 .dark .notification-panel {
   background-color: #1e1e1e;
