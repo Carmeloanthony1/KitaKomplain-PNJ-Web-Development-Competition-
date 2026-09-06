@@ -61,30 +61,33 @@
 
 </div>
 
+---
 
 ## 🎯 Tentang Proyek
 
 ### Latar Belakang
 
-Indonesia saat ini masih memiliki salah satu tantangan terbesar yakni pemerataan Infrastruktur dan transparansi alokasi dana pembangunan. Berdasarkan Jurnal Ilmu Administrasi Negara (2022) menyoroti bahwa salah satu "lubang terbesar dalam demokrasi infrastruktur kita adalah minimnya transparansi pengelolaan dana daerah dan kurangnya wadah bagi masyarakat untuk melacak keluhan mereka secara terbuka"
+Indonesia masih menghadapi tantangan besar dalam pemerataan infrastruktur serta transparansi alokasi dana pembangunan. Berdasarkan *Jurnal Ilmu Administrasi Negara* (2022), salah satu tantangan utama dalam demokrasi infrastruktur adalah **minimnya transparansi pengelolaan dana daerah dan terbatasnya wadah publik untuk melacak tindak lanjut keluhan secara terbuka**.
 
 ### Solusi yang Ditawarkan
 
-KitaKomplain di sini menjadi sebuah program yang menjembatani aspirasi masyarakat dan pemerintah, melalui melalui sebuah mekanisme sosial media yang familiar, namun diarahkan secara spesifik untuk pelaporan dan advokasi infrastruktur 
-Alurnya sederhana:
-1. Warga membuat sebuah postingan komplain mengenai infrastruktur, jalan, atau fasilitas publik yang rusak/tidak memadai di daerahnya, lengkap dengan fitur polling/vote.
-2. Semakin banyak dukungan (vote) yang diterima sebuah postingan, semakin besar indikasi bahwa masalah tersebut memang dirasakan dan disetujui oleh banyak warga sebagai isu prioritas bukan sekadar keluhan individu.
-3. Postingan dengan dukungan tinggi mendapat exposure lebih besar di platform, sehingga isu-isu di daerah tertinggal secara infrastruktur bisa lebih mudah terlihat dan didorong untuk ditindaklanjuti.
-   
-### Tujuan Proyek
+**KitaKomplain** hadir sebagai jembatan interaktif antara aspirasi masyarakat dan pemerintah melalui antarmuka berbasis media sosial yang familiar, namun difokuskan secara spesifik untuk pelaporan dan advokasi infrastruktur.
 
-- 🎯 **Tujuan Utama**: Menjembatani user untuk menyampaikan aspirasinya/Keluh kesah mengenai infrastruktur/lingkungan/fasilitas umum dari pemerintah yang dimana selaras dengan SDG 7 (Affordable and Clean Energy), SDG 8 (Decent Work and Economic Growth), SDG 9 (Industry, Innovation, and Infrastructure
-) dan SDG 11 (Sustainable Cities And Communities)
+**Alur Kerja Utama:**
+1. **Pelaporan Terstruktur:** Warga mengunggah laporan keluhan terkait fasilitas publik atau infrastruktur rusak yang dilengkapi sistem *polling/voting*.
+2. **Validasi Kolektif (*Crowdsourced Validation*):** Semakin banyak *vote* yang diperoleh, semakin kuat indikasi bahwa masalah tersebut merupakan isu prioritas bersama, bukan sekadar keluhan individu.
+3. **Prioritasi Transparan:** Laporan dengan dukungan tertinggi akan mendapatkan *exposure* lebih besar di *feed* platform, mendorong transparansi dan percepatan tindak lanjut dari pihak berwenang.
 
-- 📊 **Target Pengguna**: Masyarakat dengan penuh keluh kesah untuk menyampaikan aspirasinya kepada pemerintah
+---
 
-- 💡 **Value Proposition**: Belum ada aplikasi yang benar-benar menawarkan aspirasi masyarakat secara transparan & fitur autentikasinya credential yang sulit di palsukan
+### 🎯 Tujuan Proyek
 
+**Tujuan Utama:** Menjembatani masyarakat dalam menyampaikan aspirasi dan keluhan terkait infrastruktur, lingkungan, serta fasilitas umum secara transparan, yang selaras dengan pencapaian **SDG 9** (*Industry, Innovation, and Infrastructure*) dan **SDG 11** (*Sustainable Cities and Communities*).
+**Target Pengguna:** Masyarakat umum yang membutuhkan wadah terbuka dan terintegrasi untuk menyampaikan aspirasi serta keluhan fasilitas publik secara akuntabel kepada pemerintah.
+**Value Proposition:**
+  * **Transparansi Publik:** Menyediakan ruang aspirasi masyarakat secara terbuka dan dapat dipantau secara *real-time*.
+  * **Otentikasi Kredibel:** Menggunakan sistem otentikasi berbasis *credential* yang terverifikasi dan sulit dipalsukan demi menjaga keabsahan setiap laporan serta mencegah *spam*.
+  * **Validasi Berbasis Data (*Vote System*):** Menyaring keluhan prioritas berdasarkan dukungan kolektif masyarakat agar masalah paling mendesak dapat ditindaklanjuti lebih cepat.
 
 
 ## ✨ Fitur Unggulan
