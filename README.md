@@ -49,17 +49,18 @@
 
 ---
 
-## 👥 Tim Developer
+<div align="center">
 
-| Nama  | Peran     | GitHub  |
+### 👥 Developer Team
 
-| **[Carmelo Anthony]** | Project Lead & Full Stack Developer | [GitHub](https://github.com/[retry30]) |
+| Nama | Peran | GitHub |
+| :--- | :--- | :---: |
+| **Carmelo Anthony** | Project Lead & Full Stack Developer | [![GitHub](https://img.shields.io/badge/Carmeloanthony1-181717?style=flat-square&logo=github)](https://github.com/Carmeloanthony1) |
+| **Marvel Valenxius Gunawan** | Full Stack Developer | [![GitHub](https://img.shields.io/badge/marvelvg-181717?style=flat-square&logo=github)](https://github.com/marvelvg) |
+| **Kentdji Orlando** | Full Stack Developer | [![GitHub](https://img.shields.io/badge/Gordnum-181717?style=flat-square&logo=github)](https://github.com/Gordnum) |
 
-| **[Marvel Valenxius Gunawan]** | Full Stack Developer | [GitHub](https://github.com/[marvelvg]) |
+</div>
 
-| **[Kentdji Orlando]** | Full Stack Developer | [GitHub](https://github.com/[Gordnum]) |
-
----
 
 ## 🎯 Tentang Proyek
 
