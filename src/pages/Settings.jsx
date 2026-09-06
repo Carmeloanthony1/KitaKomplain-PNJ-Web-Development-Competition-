@@ -318,7 +318,6 @@ export default function Settings({ user, onNavigate }) {
             </div>
           </section>
 
-          {/* SECTION 4: HELP & SUPPORT */}
           <section className="pt-2 border-t border-gray-200 dark:border-neutral-800 text-center md:text-left">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 rounded-xl bg-gray-100/70 dark:bg-[#252525] border border-gray-200 dark:border-neutral-800">
               <div className="text-center sm:text-left">

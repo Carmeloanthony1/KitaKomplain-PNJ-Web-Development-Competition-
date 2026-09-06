@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient";
 import { useStatus } from "./StatusContext";
 
-// --- KOMPONEN UNTUK ITEM BALASAN (SUB-COMMENT) ---
+// KOmponen untuk reply comment
 function ReplyItem({ reply, onReplyClick, hideaction = false }) {
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
@@ -32,14 +32,14 @@ function ReplyItem({ reply, onReplyClick, hideaction = false }) {
   }, [reply?.id, currentUserId]);
 
   const toggleReplyLike = async () => {
-    if (hideaction) return; // 🔒 MATIKAN FUNGSI LIKE BALASAN PAS ADMIN
+    if (hideaction) return; // mematikan fungsi like dan balasan untuk admin
 
     if (!currentUserId) {
       showStatus("Silahkan login/sign up untuk menyukai balasan!", "error");
       return;
     }
 
-    // Verification check
+    // Verikasi 
     const { data: userData } = await supabase
       .from("users")
       .select("is_verified")
@@ -108,7 +108,7 @@ function ReplyItem({ reply, onReplyClick, hideaction = false }) {
         </p>
 
         <div className="flex items-center gap-3 mt-1 font-medium text-xs">
-          {/* LIKE BUTTON BALASAN (TETAP ADA, TAPI DISABLED) */}
+          {/* Like button */}
           <button
             onClick={toggleReplyLike}
             disabled={hideaction}
@@ -142,7 +142,7 @@ function ReplyItem({ reply, onReplyClick, hideaction = false }) {
             )}
           </button>
 
-          {/* TOMBOL BALAS (TETAP ADA, TAPI DISABLED) */}
+          {/* TOMBOL BALAS Komentar */}
           <button
             onClick={() => !hideaction && onReplyClick(replyUser)}
             disabled={hideaction}
@@ -167,7 +167,7 @@ function ReplyItem({ reply, onReplyClick, hideaction = false }) {
   );
 }
 
-// --- KOMPONEN UTAMA COMMENT DETAIL ---
+// komponen detail komen
 export default function Comment_detail({ comment, postId, hideaction = false }) {
   const [isCommentLiked, setIsCommentLiked] = useState(false);
   const [commentLikeCount, setCommentLikeCount] = useState(0);
@@ -211,27 +211,12 @@ export default function Comment_detail({ comment, postId, hideaction = false }) 
   }, [comment?.id, currentUserId]);
 
   const toggleMainCommentLike = async () => {
-    if (hideaction) return; // 🔒 MATIKAN FUNGSI LIKE KOMENTAR PAS ADMIN
+    if (hideaction) return; // MATIKAN FUNGSI LIKE KOMENTAR PAS ADMIN
 
     if (!currentUserId) {
       showStatus("Silahkan login/sign up terlebih dahulu!", "error");
       return;
     }
-
-    // Verification Check
-    /*
-    const { data: userData } = await supabase
-      .from("users")
-      .select("is_verified")
-      .eq("id", currentUserId)
-      .single();
-
-    if (!userData?.is_verified)
-    {
-      showStatus("Akun belum diverifikasi! Tindakan ini tidak diizinkan.");
-      return;
-    }
-    */
 
     const prevIsLiked = isCommentLiked;
     const prevCount = commentLikeCount;
@@ -266,14 +251,14 @@ export default function Comment_detail({ comment, postId, hideaction = false }) 
   };
 
   const handle_reply_click = (targetUser) => {
-    if (hideaction) return; // 🔒 MATIKAN KLIK BALAS PAS ADMIN
+    if (hideaction) return; // MATIKAN KLIK BALAS PAS ADMIN
     setIsComment_getcomment(true);
     setReply_text(`@${targetUser} `);
   };
 
   const handle_sendreply = async (e) => {
     e.preventDefault();
-    if (hideaction) return; // 🔒 MATIKAN KIRIM BALASAN PAS ADMIN
+    if (hideaction) return; // MATIKAN KIRIM BALASAN PAS ADMIN
     if (!reply_text.trim()) return;
 
     if (!currentUserId) {
@@ -354,7 +339,7 @@ export default function Comment_detail({ comment, postId, hideaction = false }) 
           </p>
 
           <div className="flex items-center gap-3 mt-1 font-medium text-xs">
-            {/* LIKE KOMENTAR UTAMA (DISABLED DI ADMIN) */}
+            {/* LIKE KOMENTAR UTAMA, di nonaktifkan untuk admin */}
             <button
               onClick={toggleMainCommentLike}
               disabled={hideaction}

@@ -33,6 +33,33 @@ export default function Profile({user}) {
   const [selectedvote, setSelectedvote] = useState(null);
   const [isfocusopen, setIsfocusopen] = useState(false);
 
+  // --- FUNGSI SHARE PROFILE ---
+  const share_profile = async (username, userId) => {
+    const shareUrl = `${window.location.origin}/profile/${username || userId}`;
+    const shareData = {
+      title: `Profile KitaKomplain - ${username}`,
+      text: `Cek profile dan riwayat aduan ${username} di platform KitaKomplain!`,
+      url: shareUrl,
+    };
+
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+        console.log('Profil berhasil dibagikan!');
+      } catch (err) {
+        console.log('Share dibatalkan', err);
+      }
+    } else { 
+      try {
+        await navigator.clipboard.writeText(shareUrl);
+        showStatus("Link profil berhasil disalin ke clipboard!", "success");
+      } catch (err) {
+        console.error('Gagal menyalin link :', err);
+        showStatus("Gagal menyalin link profil!", "error");
+      }
+    }
+  };
+
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
     if (savedTheme === "dark") {
@@ -321,12 +348,10 @@ export default function Profile({user}) {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
               </svg>
             </button>
+            {/* Tombol Share Profile */}
             <button
               type="button"
-              onClick={() => {
-                navigator.clipboard.writeText(window.location.href);
-                showStatus("Tautan profil disalin!", "success");
-              }}
+              onClick={() => share_profile(username, userId)}
               className="p-1.5 rounded-full bg-white/50 dark:bg-black/30 hover:bg-white/80 dark:hover:bg-black/50 transition cursor-pointer backdrop-blur-xs"
             >
               <svg className="w-4 h-4 fill-none stroke-current" strokeWidth="2.2" viewBox="0 0 24 24">

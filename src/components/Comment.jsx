@@ -25,7 +25,7 @@ export default function CommentSection({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // 🔒 MATIKAN FUNGSI JIKA DI ADMIN PAGE
+    // MATIKAN FUNGSI JIKA DI ADMIN PAGE
     if (hideaction) return; 
     if (!inputText.trim()) return;
 
@@ -38,23 +38,6 @@ export default function CommentSection({
 
     setLoading(true);
 
-    // Verification check
-    /*
-    const { data: userData } = await supabase
-      .from("users")
-      .select("is_verified")
-      .eq("id", currentUserId)
-      .single();
-
-    if (!userData?.is_verified)
-    {
-      showStatus("Akun belum diverifikasi! Silakan verifikasi untuk berkomentar.");
-      setLoading(false);
-      return;
-    }
-    */
-
-    // Comment to supabase
     const { error: commentError } = await supabase.from("comments").insert([
       {
         post_id: postId,
@@ -105,7 +88,7 @@ export default function CommentSection({
           placeholder={hideaction ? "Komentar di-nonaktifkan di mode admin" : "Tambahkan komentar..."}
           value={inputText}
           onChange={(e) => setInputText(e.target.value)}
-          disabled={loading || hideaction} // 🔒 DISABLE INPUT PAS ADMIN
+          disabled={loading || hideaction} // DISABLE INPUT PAS ADMIN
           className={`flex-1 bg-transparent text-sm text-gray-800 dark:text-white placeholder-gray-500 outline-none ${
             hideaction ? "cursor-not-allowed opacity-60" : ""
           }`}
@@ -113,7 +96,7 @@ export default function CommentSection({
         {inputText.trim() && (
           <button
             type="submit"
-            disabled={loading || hideaction} // 🔒 DISABLE BUTTON PAS ADMIN
+            disabled={loading || hideaction} // DISABLE BUTTON PAS ADMIN
             className={`text-xs font-bold text-[#a50034] ${
               hideaction ? "cursor-not-allowed opacity-50" : "hover:underline cursor-pointer"
             }`}
