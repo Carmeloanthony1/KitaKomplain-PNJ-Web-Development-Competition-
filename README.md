@@ -461,11 +461,15 @@ npm run lint
 
 #### Untuk Admin
 
-1. **Akses Admin Panel**: [Jelaskan cara men]
+1. **Akses Admin Panel**: Admin diberikan hak akses melalui Supabase (role/permission di-set di sana). Untuk masuk ke panel admin, tinggal ganti routes menjadi `/admin` dari root domain.
+   
+   Contoh: `[namaDomain]/home` → `[namaDomain]/admin`
 
-2. **[Delete Account]**: [Jelaskan cara menggunakan]
+2. **Delete Account**: Admin dapat menghapus akun user yang dianggap melanggar ketentuan atau atas dasar laporan yang masuk. Aksi ini bersifat permanen dan akan menghapus seluruh data terkait akun tersebut.
 
-3. **[Delete Post]**: [Jelaskan cara menggunakan]
+3. **Delete Post**: Admin dapat menghapus post/postingan user secara langsung dari admin panel, misalnya jika konten melanggar aturan komunitas.
+
+4. **Baca Laporan User**: Admin juga dapat melihat dan meninjau laporan yang dikirimkan oleh user untuk menentukan tindakan lebih lanjut (delete post/account, dsb).
 
 ---
 
