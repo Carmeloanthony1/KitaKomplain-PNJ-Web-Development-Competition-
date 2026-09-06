@@ -558,17 +558,6 @@ npm run test:coverage
 
 ```
 
-### Test Coverage
-
-```
-
-Statements   : XX%
-Branches     : XX%
-Functions    : XX%
-Lines        : XX%
-
-```
-
 ---
 
 ## 📄 Lisensi
