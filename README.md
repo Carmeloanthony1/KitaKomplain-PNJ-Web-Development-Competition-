@@ -4,7 +4,7 @@
 
   ## Daripada dipendem, komplainin aja dulu!
   <p>
-    <a href="https://https://kita-komplain-pnj-web-development-c.vercel.app/">
+    <a href="https://kita-komplain-pnj-web-development-c.vercel.app/">
       <img src="https://img.shields.io/badge/🚀_Live_Demo-Visit_Site-success?style=for-the-badge" alt="Live Demo" />
     </a>
   </p>
@@ -26,26 +26,16 @@
 ## 📋 Daftar Isi
 
 - [Tentang Proyek](#-tentang-proyek)
-
+- [Akun Penguji & Admin](#-akun-penguji--admin-tester-credentials)
 - [Fitur Unggulan](#-fitur-unggulan)
-
-- [Demo & Screenshot](#-demo--screenshot)
-
+- [Demo & Screenshot](#-demo--tampilan-aplikasi)
 - [Teknologi](#-teknologi)
-
 - [Arsitektur Sistem](#-arsitektur-sistem)
-
 - [Instalasi & Setup](#-instalasi--setup)
-
 - [Penggunaan](#-penggunaan)
-
 - [API Documentation](#-api-documentation)
-
 - [Testing](#-testing)
-
-- [Tim Developer](#-tim-pengembang)
-
-- [Lisensi](#-lisensi)
+- [Tim Developer](#-developer-team)
 
 ---
 
@@ -60,6 +50,16 @@
 | **Kentdji Orlando** | Full Stack Developer | [![GitHub](https://img.shields.io/badge/Gordnum-181717?style=flat-square&logo=github)](https://github.com/Gordnum) |
 
 </div>
+
+---
+
+## 🔑 Akun Penguji & Admin (Tester Credentials)
+
+Gunakan akun berikut untuk keperluan pengujian dan demonstrasi fitur-fitur pada platform **KitaKomplain**:
+
+| Role / Akses | Username / Email | Password | Keterangan |
+| :--- | :--- | :--- | :--- |
+| **Admin / Tester** | `Degun` / `marvelvg265@gmail.com` | `pass123` | Memiliki akses penuh ke Admin Panel di route `/admin` |
 
 ---
 
@@ -82,13 +82,14 @@ Indonesia masih menghadapi tantangan besar dalam pemerataan infrastruktur serta 
 
 ### 🎯 Tujuan Proyek
 
-**Tujuan Utama:** Menjembatani masyarakat dalam menyampaikan aspirasi dan keluhan terkait infrastruktur, lingkungan, serta fasilitas umum secara transparan, yang selaras dengan pencapaian **SDG 9** (*Industry, Innovation, and Infrastructure*) dan **SDG 11** (*Sustainable Cities and Communities*).
-**Target Pengguna:** Masyarakat umum yang membutuhkan wadah terbuka dan terintegrasi untuk menyampaikan aspirasi serta keluhan fasilitas publik secara akuntabel kepada pemerintah.
-**Value Proposition:**
+* **Tujuan Utama:** Menjembatani masyarakat dalam menyampaikan aspirasi dan keluhan terkait infrastruktur, lingkungan, serta fasilitas umum secara transparan, yang selaras dengan pencapaian **SDG 9** (*Industry, Innovation, and Infrastructure*) dan **SDG 11** (*Sustainable Cities and Communities*).
+* **Target Pengguna:** Masyarakat umum yang membutuhkan wadah terbuka dan terintegrasi untuk menyampaikan aspirasi serta keluhan fasilitas publik secara akuntabel kepada pemerintah.
+* **Value Proposition:**
   * **Transparansi Publik:** Menyediakan ruang aspirasi masyarakat secara terbuka dan dapat dipantau secara *real-time*.
   * **Otentikasi Kredibel:** Menggunakan sistem otentikasi berbasis *credential* yang terverifikasi dan sulit dipalsukan demi menjaga keabsahan setiap laporan serta mencegah *spam*.
   * **Validasi Berbasis Data (*Vote System*):** Menyaring keluhan prioritas berdasarkan dukungan kolektif masyarakat agar masalah paling mendesak dapat ditindaklanjuti lebih cepat.
 
+---
 
 ## ✨ Fitur Unggulan
 
@@ -117,7 +118,7 @@ Indonesia masih menghadapi tantangan besar dalam pemerataan infrastruktur serta 
 
 ### 🚀 Live Demo
 
-Aplikasi **KitaKomplain** telah di-deploy dan dapat diakses secara langsung melalui tautan berikut:
+Aplikasi **KitaKomplain** telah di-deploy dan dapat diakses secara langsung melalui tautan [KitaKomplain Live Demo](https://kita-komplain-pnj-web-development-c.vercel.app/).
 
 <div align="center">
 
@@ -201,362 +202,15 @@ Aplikasi **KitaKomplain** telah di-deploy dan dapat diakses secara langsung mela
 
 </div>
 
+---
+
 ## 🛠️ Teknologi
 
 ### Tech Stack
+
 #### Frontend
-
-```
-
+```text
 Framework    : React
-UI Library   : Tailwind
+UI Library   : Tailwind CSS
 State Mgmt   : Context API
 Validation   : React Hook Form
-```
-
-#### Backend
-
-```
-
-Runtime      : Node.js
-Framework    : Express
-Database     : Supabase (PostgreSQL)
-ORM          : Supabase Client / SQL
-Auth         : JWT
-
-```
-
-#### DevOps & Tools
-
-```
-
-Deployment   : Vercel
-CI/CD        : Vercel 
-Testing      : Vitest
-```
-
-### Alasan Pemilihan Teknologi
-
-| Teknologi | Alasan Pemilihan |
-|-----------|------------------|
-| **React** | React dipilih karena struktur komponennya yang reusable dan mudah di gunakan. Hal ini memudahkan pengembangan fitur seperti pemanggilan modal yang berulang, penggunaan useState, API dan struktur yang kompleks | 
-| **Tailwind CSS** | Tailwind CSS di pilih karena mempercepat proses development UI baik pengembangan maupun update UI baru |
-| **Express + Supabase** | Express digunakan sebagai backend API yang ringan dan flexible untuk menangani autentikasi, data komplain, serta integrasi fitur aplikasi. Supabase dipilih karena menyediakan database PostgreSQL, autentikasi, dan API realtime yang memudahkan pengelolaan data yang cepat dan aman. |
-
-### Dependencies Utama 
-
-```json
-
-{
-
-  "dependencies": {
-    "@supabase/supabase-js": "^2.112.3",
-    "express": "^5.2.1",
-    "react": "^19.2.8",
-    "react-dom": "^19.2.8",
-    "react-router-dom": "^7.18.2"
-    }
-}
-```
-
----
-
-## 🏗️ Arsitektur Sistem
-### System Architecture
-
-<img width="1000" alt="Supabase Profile Management-2026-09-06-073740" src="https://github.com/user-attachments/assets/629ad1b1-adcc-4e61-8bbf-5b0229ec2518" />
-
-### Database Schema
-
-<img src="src/assets/ERD_KitaKomplen.webp" alt="ERD KitaKomplain" width="1000" />
-
-### Folder Structure
-```
-
-KitaKomplain-PNJ-Web-Development-Competition-
-├── backend/
-│   └── server.js
-├── data/
-│   └── Dummy_data.json
-├── public/
-│   └── assets/
-├── src/
-│   ├── assets/
-│   ├── components/
-│   │   ├── Anonim_mode.jsx
-│   │   ├── Comment.jsx
-│   │   ├── Comment_detail.jsx
-│   │   ├── ConfirmContext.jsx
-│   │   ├── ConfirmModal.jsx
-│   │   ├── edit_post.jsx
-│   │   ├── FocusPost.jsx
-│   │   ├── History.css
-│   │   ├── History.jsx
-│   │   ├── Most_Polling.jsx
-│   │   ├── Navbar.jsx
-│   │   ├── Navbar_Admin.jsx
-│   │   ├── newpost.jsx
-│   │   ├── Notification.css
-│   │   ├── Notification.jsx
-│   │   ├── Post.jsx
-│   │   ├── Protected_Route.jsx
-│   │   ├── public_profile.jsx
-│   │   ├── Report_Panel.jsx
-│   │   ├── Share_post.jsx
-│   │   ├── Sidebar_Kiri.jsx
-│   │   ├── Status.jsx
-│   │   ├── StatusContext.jsx
-│   │   ├── Verify.jsx
-│   │   └── Vote.jsx
-│   ├── pages/
-│   │   ├── Admin_Dashboard.jsx
-│   │   ├── Home.jsx
-│   │   ├── Login.jsx
-│   │   ├── Login.css
-│   │   ├── Profile.jsx
-│   │   ├── ReportProblem.jsx
-│   │   ├── ReportProblem.css
-│   │   ├── Search_page.jsx
-│   │   ├── Settings.jsx
-│   │   ├── SignUp.jsx
-│   │   └── SignUp.css
-│   ├── temp_files/
-│   │   └── Other_profile.jsx
-│   ├── App.css
-│   ├── App.jsx
-│   ├── index.css
-│   ├── main.jsx
-│   └── supabaseClient.js
-├── .gitignore
-├── eslint.config.js 
-├── index.html
-├── package-lock.json
-├── package.json
-├── README.md
-├── tailwind.config.js
-├── vite.config.js
-└── node_modules/
-
-```
-
----
-
-## ⚙️ Instalasi & Setup
-### Prerequisites
-
-Pastikan Anda telah menginstall:
-- **Node.js** (v18.x atau lebih tinggi)
-- **npm** 
-- **Git**
-
-### Langkah Instalasi
-
-#### 1️⃣ Clone Repository
-
-```bash
-
-git clone https://github.com/Carmeloanthony1/KitaKomplain-PNJ-Web-Development-Competition-.git
-
-cd [KitaKomplain-PNJ-Web-Development-Competition-]
-
-```
-
-#### 2️⃣ Install Dependencies
-
-```bash
-
-# Menggunakan npm
-npm install
-# Atau menggunakan yarn
-yarn install
-# Atau menggunakan pnpm
-pnpm install
-
-```
-
-#### 3️⃣ Setup Environment Variables
-
-Buat file `.env` di root directory lalu masuk ke folder backend:
-
-``` env.example
-
-PORT=
-SUPABASE_URL=
-SUPABASE_ANON_KEY=
-JWT_SECRET=
-
-```
-
-#### 4️⃣ Setup Database
-
-Project ini menggunakan Supabase sebagai database utama. Silakan buat project baru di Supabase, lalu buat tabel dan data awal lewat SQL Editor / Dashboard.
-
-```sql
--- Contoh membuat tabel sederhana
-CREATE TABLE IF NOT EXISTS profiles (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  username TEXT,
-  bio TEXT,
-  created_at TIMESTAMPTZ DEFAULT NOW()
-);
-```
-
-Setelah itu, isi nilai `SUPABASE_URL` dan `SUPABASE_ANON_KEY` pada file `.env`.
-
-#### 5️⃣ Run Development Server
-
-```bash
-npm run dev 
-``` 
-
-Aplikasi akan berjalan di `http://localhost:3000`
-
----
-
-## 🚀 Penggunaan
-### Menjalankan Aplikasi via Windows
-
-```bash
-
-# Development mode
-npm run dev
-
-# Production build
-npm run build
-npm run start
-
-# Run tests
-npm run test
-
-# Linting
-npm run lint
-
-```
-
-### Menjalankan Aplikasi via Linux
-
-```bash
-
-# root folder
-npm run dev 
-
-#back end folder
-node server.js
-
-```
-### User Guide
-
-#### Untuk Pengguna Umum
-
-1. **[Registrasi/Login]**: [ Sebelum memulai website setiap user wajib login akun terlebih dahulu, untuk berkomunikasi baik sebagai anonim/bukan anonim ]
-
-2. **[Membuat Komplain]**:  [ Pengguna dapat menulis postingan terkait masalah infrastruktur, fasilitas umum, atau lingkungan yang ingin dilaporkan dengan menambahkan detail, lokasi, dan deskripsi yang jelas. ]
-
-3. **[Memberi Dukungan / Vote]**: [ Pengguna dapat memberikan dukungan pada komplain yang dianggap penting agar isu tersebut lebih terlihat dan berpotensi mendapatkan perhatian lebih luas dari masyarakat maupun pihak terkait. ] 
-
-#### Untuk Admin
-
-1. **Akses Admin Panel**: Admin diberikan hak akses melalui Supabase (role/permission di-set di sana). Untuk masuk ke panel admin, tinggal ganti routes menjadi `/admin` dari root domain.
-   
-   Contoh: `[namaDomain]/home` → `[namaDomain]/admin`
-
-2. **Delete Account**: Admin dapat menghapus akun user yang dianggap melanggar ketentuan atau atas dasar laporan yang masuk. Aksi ini bersifat permanen dan akan menghapus seluruh data terkait akun tersebut.
-
-3. **Delete Post**: Admin dapat menghapus post/postingan user secara langsung dari admin panel, misalnya jika konten melanggar aturan komunitas.
-
-4. **Baca Laporan User**: Admin juga dapat melihat dan meninjau laporan yang dikirimkan oleh user untuk menentukan tindakan lebih lanjut (delete post/account, dsb).
-
----
-
-## 📚 API Documentation
-### Base URL
-
-```
-
-Development: http://localhost:3000/api
-Production:  https://[domain]/api
-
-```
-
-### Endpoints
-
-#### Authentication
-
-```http
-
-POST /api/auth/register
-POST /api/auth/login
-POST /api/auth/logout
-GET  /api/auth/me
-
-```
-
-#### [Resource 1]
-
-```http
-
-GET    /api/[resource]       # Get all
-GET    /api/[resource]/:id   # Get by ID
-POST   /api/[resource]       # Create
-PUT    /api/[resource]/:id   # Update 
-DELETE /api/[resource]/:id   # Delete 
-
-```
-
-### Example Request
-
-```javascript
-
-// Login
-
-const response = await fetch('/api/auth/login', {
-
-  method: 'POST',
-
-  headers: { 'Content-Type': 'application/json' },
-
-  body: JSON.stringify({
-
-    email: 'user@example.com',
-
-    password: 'password123'
-
-  })
-
-});
-
-``` 
-
----
-
-## 🧪 Testing 
-
-### Running Tests
-
-```bash
-
-# Unit tests
-
-npm run test
-
-# Integration tests
-
-npm run test:integration
-
-# E2E tests
-
-npm run test:e2e
-
-# Test coverage
-
-npm run test:coverage
-
-```
-
-<div align="center">
-
-  **Made with ❤️ by [KitaKomplain] for ITECHNO CUP 2026**
-
- 
-
-</div>
