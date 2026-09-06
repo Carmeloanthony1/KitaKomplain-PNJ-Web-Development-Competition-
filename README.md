@@ -113,107 +113,36 @@ Indonesia masih menghadapi tantangan besar dalam pemerataan infrastruktur serta 
 
 --- 
 
-## 📸 Demo & Screenshot
+## 📸 Demo & Tampilan Aplikasi
 
-### Live Demo
+### 🚀 Live Demo
 
-🔗 **[Kunjungi Website](https://kita-komplain-pnj-web-development-c.vercel.app/profile)**
-
-
-### Screenshot Aplikasi
+Aplikasi **KitaKomplain** telah di-deploy dan dapat diakses secara langsung melalui tautan berikut:
 
 <div align="center">
 
-<!-- General Used Panel (Untuk User) -->
-  <img src="src/assets/Screenshoot-Homepage.png" alt="Homepage" width="800"/>
 
-  <p><em>Homepage - Tampilan utama aplikasi</em></p>
+</div>
 
-<!-- History -->
-  <img src="src/assets/Screenshot-History.png" alt="History" width="800"/>
-
-  <p><em>History - Riwayat aktivitas pengguna</em></p>
-
-<!-- Notification -->
-  <img src="src/assets/Screenshot-Notification.png" alt="Notification" width="800"/>
-
-  <p><em>Notification - Daftar notifikasi pengguna</em></p>
-
-<!-- New Post -->
-  <img src="src/assets/Screenshot-NewPost.png" alt="New Post" width="800"/>
-
-  <p><em>New Post - Membuat postingan baru</em></p>
-
-<!-- Profile -->
-  <img src="src/assets/Screenshot-Profile.png" alt="Profile" width="800"/>
-
-  <p><em>Profile - Halaman profil pengguna</em></p>
-
-<!-- Setting -->
-  <img src="src/assets/Screenshot-Setting.png" alt="Setting" width="800"/>
-
-  <p><em>Setting - Pengaturan akun dan aplikasi</em></p>
-
-<!-- Most Polling -->
-  <img src="src/assets/Screenshot-MostPolling.png" alt="Most Polling" width="800"/>
-
-  <p><em>Most Polling - Daftar polling terpopuler</em></p>
+### Screenshot Aplikasi
 
 
-<!-- Admin Panel -->
-  <img src="src/assets/Screenshot-AdminPanel.png" alt="Dashboard Admin" width="800"/>
+<Laptop>
+<p> Home page </p>
+<img width="1922" height="1082" alt="image" src="https://github.com/user-attachments/assets/3b4740c3-8f4a-4cdb-9103-cb0dcf9c0886" />
 
-  <p><em>Dashboard Admin - Panel kontrol pengguna</em></p>
+<img width="1922" height="1082" alt="image" src="https://github.com/user-attachments/assets/f1f6775e-f9ec-4fe1-baf1-eca4fe7d5e84" />
 
-  <img src="src/assets/Screenshot-AdminPanel2.png" alt="Dashboard Admin 2" width="800"/>
+<p>history</p>
+<img width="1922" height="1055" alt="image" src="https://github.com/user-attachments/assets/60c37156-e6b6-49aa-b7d0-a9b085bdee64" />
 
-  <p><em>Dashboard Admin - Tampilan pengelolaan data</em></p>
+<img width="1922" height="1055" alt="image" src="https://github.com/user-attachments/assets/d46f942a-4163-41f7-818b-13c2ab573544" />
 
-  <img src="src/assets/Screenshot-AdminPanel3.png" alt="Dashboard Admin 3" width="800"/>
+<p>notification</p>
 
-  <p><em>Dashboard Admin - Tampilan pengelolaan laporan</em></p>
+<img width="1922" height="1082" alt="image" src="https://github.com/user-attachments/assets/47091ae9-255e-422b-b6d1-bc6280937981" />
 
-<!-- Konfigurasi Dark Mode -->
-<!-- DarkMode Setting Toggle -->
-  <img src="src/assets/Screenshot-DarkModeSettingToggle.png" alt="Dark Mode Setting Toggle" width="800"/>
 
-  <p><em>Dark Mode Setting - Toggle pengaturan mode gelap</em></p>
-
-<!-- DARK Mode Home -->
-  <img src="src/assets/Screenshot-DarkModeHome.png" alt="Dark Mode Home" width="800"/>
-
-  <p><em>Dark Mode Home - Tampilan homepage dalam mode gelap</em></p>
-
-<!-- DARK MODE PROFILE -->
-
-  <img src="src/assets/Screenshot-DarkModeProfile.png" alt="Dark Mode Profile" width="800"/>
-
-  <p><em>Dark Mode Profile - Tampilan profil dalam mode gelap</em></p>
-
-<!-- Dark Mode New Post -->
-  <img src="src/assets/Screenshot-DarkModeNewPost.png" alt="Dark Mode New Post" width="800"/>
-
-  <p><em>Dark Mode New Post - Form postingan dalam mode gelap</em></p>
-
-<!-- Dark Mode Notification -->
-  <img src="src/assets/Screenshot-DarkModeNotif.png" alt="Dark Mode Notification" width="800"/>
-
-  <p><em>Dark Mode Notification - Notifikasi dalam mode gelap</em></p>
-
-<!-- DARK MODE History-->
-  <img src="src/assets/Screenshot-DarkModeHistory.png" alt="Dark Mode History" width="800"/>
-
-  <p><em>Dark Mode History - Riwayat aktivitas dalam mode gelap</em></p>
-
-<!-- DARK MODE Report -->
-  <img src="src/assets/Screenshot-ReportDarkMode.png" alt="Dark Mode Report Problem" width="800"/>
-
-  <p><em>Dark Mode Report Problem - Laporan masalah dalam mode gelap</em></p>
-
-<!-- Dark Mode Most Polling -->
-  <img src="src/assets/Screenshot-DarModeMostPolling.png" alt="Dark Mode Most Polling" width="800"/>
-
-  <p><em>Dark Mode Most Polling - Daftar polling terpopuler dalam mode gelap</em></p>
 
 </div>
 
