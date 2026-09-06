@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import { useStatus } from "./StatusContext";
 
-export default function Sidebar_kiri({ onNavigate, openNotifications, openPostModal, openHistory }) {
+export default function Sidebar_kiri({ onNavigate, openNotifications, openPostModal, openHistory, openSettings }) {
   const [search, setSearch] = useState("");
   const navigate = useNavigate();
   const [isdark, setIsdark] = useState(false);
@@ -31,7 +31,7 @@ export default function Sidebar_kiri({ onNavigate, openNotifications, openPostMo
     }
     */
 
-    openPostModal();
+    if (openPostModal) openPostModal();
   };
 
   const toggle_darkmode = () => {
@@ -86,7 +86,10 @@ export default function Sidebar_kiri({ onNavigate, openNotifications, openPostMo
       {/* Menu Bawah (Setting) */}
       <div className="mt-auto pt-6">
         <button 
-          onClick={() => navigate('/settings')}
+          onClick={() => {
+            if (openSettings) openSettings();
+            else navigate('/settings');
+          }}
           className="flex items-center gap-4 text-4xl font-bold cursor-pointer text-[#a50034] dark:text-[#f1ece1] hover:opacity-80 transition"
         >
           <svg className="w-12 h-12 fill-[#a50034] dark:fill-[#f1ece1] flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
