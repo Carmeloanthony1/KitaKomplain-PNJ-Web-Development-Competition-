@@ -55,6 +55,16 @@ export default function Home({ user, onLogout, onNavigate }) {
     setIsPostModalOpen(true);
   };
 
+  // Fungsi pengaman settings
+  const handleOpenSettings = () => {
+    if (!currentUserId) {
+      showStatus("Silahkan login/sign up terlebih dahulu untuk mengakses setting!", "error");
+      return;
+    }
+    if (onNavigate) onNavigate("settings");
+    else navigate("/settings");
+  };
+
   const toggle_darkmode = () => {
     const isdarkState = document.documentElement.classList.toggle("dark");
     setIsdark(isdarkState);
@@ -195,6 +205,7 @@ export default function Home({ user, onLogout, onNavigate }) {
           openHistory={handleOpenHistory}
           onOpenNewPost={handleOpenPostModal}
           openPollingModal={() => setIsPollingModalOpen(true)}
+          openSettings={handleOpenSettings}
         />
       </header>
 
@@ -205,6 +216,7 @@ export default function Home({ user, onLogout, onNavigate }) {
             openNotifications={handleOpenNotification}
             openHistory={handleOpenHistory}
             openPostModal={handleOpenPostModal}
+            openSettings={handleOpenSettings}
           />
         </aside>
 

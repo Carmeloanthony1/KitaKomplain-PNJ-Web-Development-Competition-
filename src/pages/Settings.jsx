@@ -5,9 +5,18 @@ import { useStatus } from "../components/StatusContext";
 
 export default function Settings({ user, onNavigate }) {
   const { showStatus } = useStatus();
+  const navigate = useNavigate();
+  const current_user_id = user?.id || localStorage.getItem("user_id"); 
+
   const [isDarkMode, setIsDarkMode] = useState(() => {
     return localStorage.getItem("theme") === "dark";
   });
+
+  useEffect(() => {
+    if (!current_user_id) {
+      showStatus("Silahkan login/sign up terlebih dahulu untuk mengakses Pengaturan!", "error");
+    }
+  }, [current_user_id, navigate, showStatus]);
 
   useEffect(() => {
     if (isDarkMode) {
@@ -22,9 +31,6 @@ export default function Settings({ user, onNavigate }) {
   const toggle_dark_mode = () => {
     setIsDarkMode((prev) => !prev);
   };
-
-  const navigate = useNavigate();
-  const current_user_id = localStorage.getItem("user_id");
 
   const [permission, setPermission] = useState({
     Camera: false
@@ -118,6 +124,10 @@ export default function Settings({ user, onNavigate }) {
       showStatus("Akses kamera ditolak! Izinkan kamera pada pengaturan browser.", "error");
     }
   };
+
+  if (!current_user_id) {
+    return null;
+  }
 
   return (
     <div className={`min-h-screen w-full flex flex-col transition-colors duration-300 ${isDarkMode ? "bg-[#1e1e1e] text-white" : "bg-[#f7f7f7] text-gray-800"}`}>

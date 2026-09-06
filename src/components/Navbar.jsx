@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 
-export default function Navbar({ user, openNotifications, onOpenNewPost, openPollingModal, openHistory }) {
+export default function Navbar({ user, openNotifications, onOpenNewPost, openPollingModal, openHistory, openSettings}) {
   const [search_params] = useSearchParams();
   const navigate = useNavigate();
   const inputRef = useRef(null);
@@ -265,7 +265,12 @@ export default function Navbar({ user, openNotifications, onOpenNewPost, openPol
                     Most Polling
                   </button>
                   
-                  <button onClick={() => { setIsMenuOpen(false); navigate('/settings'); }} className={menuItemClass}>
+                  <button onClick={() => { 
+                    setIsMenuOpen(false);
+                    if (openSettings) openSettings();
+                    navigate('/settings'); }} 
+                    className={menuItemClass}
+                  >
                     Setting
                   </button>
 

@@ -101,7 +101,7 @@ export default function App() {
           />
           <Route
             path="/settings"
-            element={user ? <Settings user={user} onNavigate={handleNavigate} /> : <Navigate to="/login" />}
+            element={<Settings user={user} onNavigate={handleNavigate} />}
           />
           <Route
             path="/SignUp"
@@ -116,7 +116,7 @@ export default function App() {
             element={user ? <ReportProblem user={user} onNavigate={handleNavigate} /> : <Navigate to="/login" />}
           />
 
-          {/* RUTE KHUSUS ADMIN PANEL */}
+          {/* Rute khusus admin */}
           <Route element={<ProtectedRoute />}>
             <Route path="/admin" element={<AdminDashboard />} />
           </Route>
