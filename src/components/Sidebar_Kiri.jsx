@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import { useStatus } from "./StatusContext";
 
@@ -11,23 +11,14 @@ export default function Sidebar_kiri({ onNavigate, openNotifications, openPostMo
 
   const handleNewPost = async () => {
     const currentUserId = localStorage.getItem("user_id");
-<<<<<<< HEAD
-    if (!currentUserId) {
-      showStatus("Silakan login terlebih dahulu!", "error");
-      return;
-    }
-
-=======
     
-    if (!currentUserId)
-    {
-      showStatus("Silahkan login/sign up terlebih dahulu untuk membuat postingan!", "error");
+    if (!currentUserId) {
+      showStatus("Silakan login/sign up terlebih dahulu untuk membuat postingan!", "error");
       return;
     }
 
-    //Verification check
     /*
->>>>>>> c8ac70230e5349ff68c0a8859834aeceda7887f9
+    // Verification check jika dibutuhkan nanti
     const { data: userData, error } = await supabase
       .from("users")
       .select("is_verified")
@@ -44,9 +35,9 @@ export default function Sidebar_kiri({ onNavigate, openNotifications, openPostMo
   };
 
   const toggle_darkmode = () => {
-    const isdark = document.documentElement.classList.toggle("dark");
-    setIsdark(isdark);
-    if(isdark){
+    const isdarkState = document.documentElement.classList.toggle("dark");
+    setIsdark(isdarkState);
+    if (isdarkState) {
       localStorage.setItem("theme", "dark");
     } else {
       localStorage.setItem("theme", "light");
@@ -54,7 +45,7 @@ export default function Sidebar_kiri({ onNavigate, openNotifications, openPostMo
   };
 
   useEffect(() => {
-    if(localStorage.getItem("theme") === "dark") {
+    if (localStorage.getItem("theme") === "dark") {
       document.documentElement.classList.add("dark");
       setIsdark(true);
     }

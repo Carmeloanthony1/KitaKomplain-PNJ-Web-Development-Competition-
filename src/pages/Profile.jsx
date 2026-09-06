@@ -213,7 +213,7 @@ export default function Profile({user}) {
     } catch (error) {
       showStatus("Gagal upload foto profile", "error");
       console.error(error.message);
-    } fontally { 
+    } finally { 
       setUploading(false);
     }
   };
