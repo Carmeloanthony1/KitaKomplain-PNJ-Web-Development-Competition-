@@ -1,7 +1,15 @@
-// --- FUNGSI SHARE PROFILE (BY USER_ID) ---
-  const share_profile = async (username, userId) => {
-    // Ubah di baris ini: langsung pakai userId
-    const shareUrl = `${window.location.origin}/profile/${userId}`; 
+// --- FUNGSI SHARE PROFILE (BY USER_ID / UUID) ---
+  const share_profile = async () => {
+    // Ambil ID dari props user atau dari localStorage
+    const targetUserId = user?.id || localStorage.getItem("user_id");
+
+    if (!targetUserId) {
+      showStatus("Gagal mendapatkan User ID!", "error");
+      return;
+    }
+
+    // Pakai targetUserId (UUID)
+    const shareUrl = `${window.location.origin}/profile/${targetUserId}`; 
     
     const shareData = {
       title: `Profile KitaKomplain - ${username}`,
@@ -12,7 +20,6 @@
     if (navigator.share) {
       try {
         await navigator.share(shareData);
-        console.log('Profil berhasil dibagikan!');
       } catch (err) {
         console.log('Share dibatalkan', err);
       }

@@ -95,10 +95,6 @@ export default function App() {
             path="/profile"
             element={<Profile user={user} onNavigate={handleNavigate} />}
           />
-          <Route 
-            path="/user/:id"
-            element={<PublicProfile />}
-          />
           <Route
             path="/settings"
             element={<Settings user={user} onNavigate={handleNavigate} />}
@@ -114,6 +110,12 @@ export default function App() {
           <Route
             path="/report"
             element={user ? <ReportProblem user={user} onNavigate={handleNavigate} /> : <Navigate to="/login" />}
+          />
+
+          {/* Route Public Profile pakai userId */}
+          <Route 
+            path="/profile/:userId" 
+            element={<PublicProfile />} 
           />
 
           {/* Rute khusus admin */}

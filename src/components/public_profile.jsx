@@ -2,443 +2,268 @@ import { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 import Focuspost from "../components/FocusPost";
+import { useStatus } from "../components/StatusContext";
 
 export default function PublicProfile() {
-  const { id: targetUserId } = useParams();
+  const { userId } = useParams(); // Ambil userId dari URL (/profile/:userId)
   const navigate = useNavigate();
-  const currentUserId = localStorage.getItem("user_id");
+  const { showStatus } = useStatus();
 
-  // Jika yang di-klik adalah ID diri sendiri, lempar ke /profile pribadi
-  useEffect(() => {
-    if (targetUserId === currentUserId) {
-      navigate("/profile", { replace: true });
-    }
-  }, [targetUserId, currentUserId, navigate]);
-
-  const [userData, setUserData] = useState(null);
-  const [posts, setPosts] = useState([]);
-  const [userComment, setUserComment] = useState([]);
-  const [userVote, setUserVote] = useState([]);
-  const [pollsCount, setPollsCount] = useState(0);
+  const [username, setUsername] = useState("");
+  const [bio, setBio] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState("");
+  const [isAnonimMode, setIsAnonimMode] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // State Tab
-  const [activeTab, setActiveTab] = useState("posts");
+  const [posts, setPosts] = useState([]);
+  const [user_comment, setUser_comment] = useState([]);
+  const [pollsCount, setPollsCount] = useState(0);
+  const [user_vote, setUser_vote] = useState([]);
 
-  // Focus Post Modal
+  const [activeTab, setActiveTab] = useState("posts");
   const [selectedpost, setSelectedpost] = useState(null);
   const [selectedcomment, setSelectedcomment] = useState(null);
   const [selectedvote, setSelectedvote] = useState(null);
   const [isfocusopen, setIsfocusopen] = useState(false);
 
-  const fetchPublicProfile = useCallback(async () => {
-    if (!targetUserId) return;
-    setLoading(true);
+  // Fungsi Share Profile
+  const share_profile = async () => {
+    const shareUrl = `${window.location.origin}/profile/${userId}`;
+    const shareData = {
+      title: `Profile KitaKomplain - ${username}`,
+      text: `Cek profile dan riwayat aduan ${username} di platform KitaKomplain!`,
+      url: shareUrl,
+    };
 
-    // 1. Fetch Data User (termasuk setting privasi)
-    const { data: user, error: userError } = await supabase
-      .from("users")
-      .select("id, username, bio, avatar_url, is_anonim_mode, hide_history, hide_comment, hide_vote")
-      .eq("id", targetUserId)
-      .single();
-
-    if (userError) {
-      console.error("Gagal mengambil data profile publik: ", userError.message);
-      setLoading(false);
-      return;
-    }
-
-    setUserData(user);
-
-    // Hanya fetch aktivitas publik jika user TIDAK dalam mode anonim
-    if (user && !user.is_anonim_mode) {
-
-      // 2. Fetch Posts (jika TIDAK di-hide oleh user)
-      if (!user.hide_history) {
-        const { data: publicPosts, error: postError } = await supabase
-          .from("posts")
-          .select(`id, description, image_url, tag, is_anonim_mode, created_at, user_id, users (username, avatar_url)`)
-          .eq("user_id", targetUserId)
-          .neq("is_anonim_mode", true)
-          .order("created_at", { ascending: false });
-
-        if (!postError) setPosts(publicPosts || []);
-      } else {
-        setPosts([]);
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+      } catch (err) {
+        console.log('Share dibatalkan', err);
       }
-
-      // 3. Fetch Comments (jika TIDAK di-hide oleh user)
-      if (!user.hide_comment) {
-        const { data: commentsData, error: commentError } = await supabase
-          .from("comments")
-          .select(`
-            id, content, created_at, post_id, 
-            posts ( id, description, image_url, tag, created_at, user_id, users (username, avatar_url) )
-          `)
-          .eq("user_id", targetUserId)
-          .order("created_at", { ascending: false });
-
-        if (!commentError) setUserComment(commentsData || []);
-      } else {
-        setUserComment([]);
-      }
-
-      // 4. Fetch Votes / Polling (jika TIDAK di-hide oleh user)
-      if (!user.hide_vote) {
-        const { data: voteData, error: voteError, count } = await supabase
-          .from("votes")
-          .select(
-            `
-            id, vote_type, created_at, post_id, 
-            posts ( id, tag, description, image_url, created_at, user_id, users (username, avatar_url) )
-          `,
-            { count: "exact" }
-          )
-          .eq("user_id", targetUserId)
-          .order("created_at", { ascending: false });
-
-        if (!voteError && voteData) {
-          setUserVote(voteData);
-          setPollsCount(count ?? voteData.length);
-        }
-      } else {
-        setUserVote([]);
-        setPollsCount(0);
+    } else { 
+      try {
+        await navigator.clipboard.writeText(shareUrl);
+        showStatus("Link profil berhasil disalin ke clipboard!", "success");
+      } catch (err) {
+        showStatus("Gagal menyalin link profil!", "error");
       }
     }
+  };
 
-    setLoading(false);
-  }, [targetUserId]);
+  const refreshpage = useCallback(async () => {
+    if (!userId) return;
+
+    const { data: vote_data, error: vote_error, count } = await supabase
+      .from("votes")
+      .select(
+        `
+        id, vote_type, created_at, post_id, 
+        posts ( id, tag, description, image_url, created_at, user_id, users (username, avatar_url) )
+      `,
+        { count: "exact" }
+      )
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false });
+
+    if (!vote_error && vote_data) {
+      setUser_vote(vote_data);
+      setPollsCount(count ?? vote_data.length);
+    }
+  }, [userId]);
 
   useEffect(() => {
-    fetchPublicProfile();
-  }, [fetchPublicProfile]);
+    if (!userId) return;
 
-  const handlePostClick = (item) => {
-    const formattedPost = {
-      ...item,
-      users: item.users || {
-        username: userData?.username || "User",
-        avatar_url: userData?.avatar_url,
-      },
-    };
-    setSelectedpost(formattedPost);
-    setSelectedcomment(null);
-    setSelectedvote(null);
-    setIsfocusopen(true);
-  };
+    async function fetchUserData() {
+      setLoading(true);
 
-  const handleCommentClick = (item) => {
-    if (!item.posts) return;
+      const { data, error: userError } = await supabase
+        .from("users")
+        .select("username, bio, avatar_url, is_anonim_mode")
+        .eq("id", userId)
+        .maybeSingle();
 
-    const formattedPost = {
-      ...item.posts,
-      users: item.posts.users || {
-        username: userData?.username || "User",
-        avatar_url: userData?.avatar_url,
-      },
-    };
-
-    setSelectedpost(formattedPost);
-    setSelectedcomment(item);
-    setSelectedvote(null);
-    setIsfocusopen(true);
-  };
-
-  const handleVoteClick = async (voteItem) => {
-    if (!voteItem) return;
-
-    if (voteItem.posts) {
-      const formattedPost = {
-        ...voteItem.posts,
-        users: voteItem.posts.users || {
-          username: userData?.username || "User",
-          avatar_url: userData?.avatar_url,
-        },
-      };
-      setSelectedpost(formattedPost);
-      setSelectedcomment(null);
-      setSelectedvote(voteItem);
-      setIsfocusopen(true);
-      return;
-    }
-
-    if (voteItem.post_id) {
-      const { data, error } = await supabase
-        .from("posts")
-        .select(`*, users (id, username, avatar_url)`)
-        .eq("id", voteItem.post_id)
-        .single();
-
-      if (!error && data) {
-        setSelectedpost(data);
-        setSelectedcomment(null);
-        setSelectedvote(voteItem);
-        setIsfocusopen(true);
+      if (userError || !data) {
+        showStatus("User tidak ditemukan.", "error");
+        navigate("/");
+        return;
       }
+
+      setUsername(data.username || "");
+      setBio(data.bio || "Belum ada deskripsi");
+      setAvatarUrl(data.avatar_url || "");
+      setIsAnonimMode(data.is_anonim_mode || false);
+
+      // Ambil postingan user
+      const { data: userPosts } = await supabase
+        .from("posts")
+        .select(`id, description, image_url, tag, is_anonim_mode, created_at, user_id, users (username, avatar_url)`)
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false });
+
+      if (userPosts) setPosts(userPosts);
+
+      // Ambil komentar user
+      const { data: commentsData } = await supabase
+        .from("comments")
+        .select(`
+          id, content, created_at, post_id, 
+          posts ( id, description, image_url, tag, created_at, user_id, users (username, avatar_url) )
+        `)
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false });
+
+      if (commentsData) setUser_comment(commentsData);
+
+      await refreshpage();
+      setLoading(false);
     }
-  };
+
+    fetchUserData();
+  }, [userId, navigate, refreshpage, showStatus]);
 
   if (loading) {
-    return <div className="p-10 text-center text-gray-500 dark:text-gray-400">Loading Profile...</div>;
+    return (
+      <div className="p-10 text-center text-sm text-gray-500 dark:text-gray-400">
+        Loading Profile...
+      </div>
+    );
   }
-
-  if (!userData) {
-    return <div className="p-10 text-center text-gray-500 dark:text-gray-400">Pengguna tidak ditemukan.</div>;
-  }
-
-  const isAnonim = userData.is_anonim_mode;
 
   return (
-    <div className="min-h-screen bg-[#f8f9fa] dark:bg-[#292828] text-gray-900 dark:text-[#f1ece1] py-8 px-4 sm:px-8">
-      <div className="max-w-4xl mx-auto flex flex-col gap-6">
+    <div className="min-h-screen w-full bg-[#f4f5f8] dark:bg-[#0d0e11] text-gray-900 dark:text-[#f1ece1] pb-16 transition-colors duration-200">
+      <div className="max-w-md md:max-w-xl mx-auto flex flex-col items-center bg-white dark:bg-[#16181c] md:border border-gray-200 dark:border-neutral-800/80 md:shadow-lg md:rounded-3xl md:my-6 overflow-x-hidden relative">
         
-        {/* Top Header */}
-        <div className="flex items-center gap-3">
+        {/* Top Header Bar */}
+        <header className="w-full flex items-center justify-between py-3.5 px-4 border-b border-black/5 dark:border-white/10 bg-transparent z-10">
           <button
+            type="button"
             onClick={() => window.history.back()}
-            className="p-2 rounded-full hover:scale-105 transition-colors cursor-pointer"
+            className="p-1.5 rounded-full bg-white/50 dark:bg-black/30 hover:bg-white/80 dark:hover:bg-black/50 transition cursor-pointer"
           >
-            <svg
-              className="w-6 h-6 stroke-[#a50034] dark:stroke-[#f1ece1]"
-              fill="none"
-              strokeWidth="2.5"
-              viewBox="0 0 24 24"
-            >
+            <svg className="w-5 h-5 stroke-current" fill="none" strokeWidth="2.2" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
             </svg>
           </button>
-          <h1 className="text-3xl font-bold text-[#a50034] dark:text-[#f1ece1]">User Profile</h1>
-        </div>
+          
+          <h1 className="text-base font-bold tracking-tight truncate max-w-[200px]">
+            {username || "Profile"}
+          </h1>
 
-        {/* Profile Card Publik */}
-        <div className="bg-white dark:bg-[#1e1e1e] rounded-2xl shadow-2xl overflow-hidden">
-          <div className="h-32 bg-[#800020] dark:bg-[#f1ece1] w-full"></div>
+          <button
+            type="button"
+            onClick={share_profile}
+            className="p-1.5 rounded-full bg-white/50 dark:bg-black/30 hover:bg-white/80 dark:hover:bg-black/50 transition cursor-pointer"
+          >
+            <svg className="w-4 h-4 fill-none stroke-current" strokeWidth="2.2" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186b2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" />
+            </svg>
+          </button>
+        </header>
 
-          <div className="px-8 pb-8 relative">
-            
-            {/* Foto Profil */}
-            <div className="-mt-14 mb-4 relative inline-block">
-              <div className="w-28 h-28 border-4 border-white dark:border-[#1e1e1e] rounded-full shadow-md bg-white dark:bg-[#1e1e1e] overflow-hidden flex items-center justify-center">
-                {userData.avatar_url ? (
-                  <img
-                    src={userData.avatar_url}
-                    alt="Foto profil"
-                    className="w-full h-full rounded-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full rounded-full bg-[#a50034] dark:bg-[#f1ece1] text-white dark:text-gray-900 font-bold text-3xl flex items-center justify-center uppercase">
-                    {userData.username ? userData.username.charAt(0) : "U"}
+        {/* Banner */}
+        <div className="w-full h-44 sm:h-52 -mt-[57px] bg-gradient-to-br from-slate-200 via-slate-100 to-gray-300 dark:from-[#23272e] dark:via-[#1c1f24] dark:to-[#14161a] border-b border-gray-300/80 dark:border-neutral-800 relative z-0 md:rounded-t-3xl" />
+
+        {/* Profil Content */}
+        <div className="w-full flex flex-col items-center px-4 relative z-10">
+          <div className="-mt-16 sm:-mt-20 relative flex flex-col items-center">
+            <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-full border-4 border-white dark:border-[#16181c] shadow-md bg-gray-100 dark:bg-neutral-800 overflow-hidden">
+              {avatarUrl ? (
+                <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+              ) : (
+                <div className="w-full h-full bg-[#a50034] text-white font-bold text-3xl flex items-center justify-center uppercase">
+                  {username ? username.charAt(0) : "U"}
+                </div>
+              )}
+            </div>
+            {isAnonimMode && (
+              <span className="mt-1.5 bg-black/85 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-md border border-neutral-700">
+                Anonim
+              </span>
+            )}
+          </div>
+
+          <h2 className="mt-2.5 text-base sm:text-lg font-bold tracking-tight">
+            @{username || "user"}
+          </h2>
+
+          {/* Stats */}
+          <div className="w-full flex items-center justify-center gap-9 my-3.5">
+            <div className="flex flex-col items-center">
+              <span className="text-lg font-bold">{posts.length}</span>
+              <span className="text-xs text-gray-500 dark:text-neutral-400">Posts</span>
+            </div>
+            <div className="flex flex-col items-center">
+              <span className="text-lg font-bold">{user_comment.length}</span>
+              <span className="text-xs text-gray-500 dark:text-neutral-400">Comments</span>
+            </div>
+            <div className="flex flex-col items-center">
+              <span className="text-lg font-bold">{pollsCount}</span>
+              <span className="text-xs text-gray-500 dark:text-neutral-400">Polls</span>
+            </div>
+          </div>
+
+          {/* Bio */}
+          <div className="w-full max-w-sm text-center my-2">
+            <p className="text-xs text-gray-700 dark:text-neutral-300 leading-relaxed break-words whitespace-pre-line">
+              {bio}
+            </p>
+          </div>
+
+          {/* Grid Content / Tabs */}
+          <div className="w-full flex border-b border-gray-200 dark:border-neutral-800 mt-2 mb-4">
+            {["posts", "comments", "polling"].map((tab) => (
+              <button
+                key={tab}
+                type="button"
+                onClick={() => setActiveTab(tab)}
+                className={`flex-1 py-3 text-xs font-semibold capitalize transition relative ${
+                  activeTab === tab ? "text-black dark:text-white" : "text-gray-400"
+                }`}
+              >
+                {tab}
+                {activeTab === tab && <span className="absolute bottom-0 left-1/4 right-1/4 h-[2px] bg-black dark:bg-white" />}
+              </button>
+            ))}
+          </div>
+
+          {/* Grid Post */}
+          <div className="w-full px-3 pb-6">
+            {activeTab === "posts" && (
+              <div className="grid grid-cols-3 gap-2">
+                {posts.map((item) => (
+                  <div
+                    key={item.id}
+                    onClick={() => {
+                      setSelectedpost(item);
+                      setIsfocusopen(true);
+                    }}
+                    className="aspect-[3/4] bg-gray-100 dark:bg-[#1f2228] rounded-xl overflow-hidden cursor-pointer"
+                  >
+                    {item.image_url ? (
+                      <img src={item.image_url} alt="Post" className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center p-2 text-center bg-gray-900">
+                        <p className="text-[#fe2c55] font-bold text-xs">#{item.tag}</p>
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-            </div>
-
-            {/* Nama User */}
-            <div className="flex flex-col gap-2">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-[#f1ece1]">
-                {userData.username || "User"}
-              </h2>
-            </div>
-
-            {/* STAT BADGES (DIPENGARUHI STATUS HIDE INDIVIDUAL) */}
-            {!isAnonim && (
-              <div className="my-5 inline-flex items-center gap-6 bg-gray-50/80 dark:bg-[#f1ece1] px-6 py-2.5 rounded-xl border border-gray-100 text-sm">
-                <div>
-                  <span className="font-bold text-gray-900">{userData.hide_history ? 0 : posts.length}</span>{" "}
-                  <span className="text-gray-500 dark:text-gray-900 font-medium">Posts</span>
-                </div>
-                <div>
-                  <span className="font-bold text-gray-900">{userData.hide_comment ? 0 : userComment.length}</span>{" "}
-                  <span className="text-gray-500 dark:text-gray-900 font-medium">Comments</span>
-                </div>
-                <div>
-                  <span className="font-bold text-gray-900">{userData.hide_vote ? 0 : pollsCount}</span>{" "}
-                  <span className="text-gray-500 dark:text-gray-900 font-medium">Polls</span>
-                </div>
+                ))}
               </div>
             )}
-
-            {/* DESKRIPSI */}
-            <div className="flex flex-col gap-1 mt-4">
-              <h3 className="text-sm font-bold text-[#a50034] dark:text-[#f1ece1]">Deskripsi</h3>
-              <p className="text-gray-700 dark:text-[#f1ece1] text-sm leading-relaxed">
-                {userData.bio || "Belum ada deskripsi"}
-              </p>
-            </div>
-
           </div>
+
         </div>
-
-        {/* NOTIFIKASI ANONIM */}
-        {isAnonim && (
-          <div className="px-5 py-3 bg-amber-500/10 border border-amber-500/30 rounded-xl max-w-md mx-auto text-center shadow-sm">
-            <span className="text-xs sm:text-sm font-medium text-amber-600 dark:text-amber-400">
-              Pengguna ini mengaktifkan mode anonim untuk post, comment, dan vote.
-            </span>
-          </div>
-        )}
-
-        {/* NAVIGATION TABS & KONTEN AKTIVITAS */}
-        {!isAnonim && (
-          <>
-            {/* Tabs Header */}
-            <div className="flex items-center gap-8 border-b border-gray-200 dark:border-gray-800 px-2 pt-2">
-              {[
-                { id: "posts", label: "Posts" },
-                { id: "comments", label: "Comments" },
-                { id: "polling", label: "Polling" },
-              ].map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`text-sm font-semibold transition-all pb-3 border-b-2 cursor-pointer ${
-                    activeTab === tab.id
-                      ? "text-[#a50034] border-[#a50034] dark:text-[#f1ece1] dark:border-[#f1ece1]"
-                      : "text-gray-500 dark:text-[#f1ece1]/70 border-transparent hover:text-gray-800 dark:hover:text-[#f1ece1]"
-                  }`}
-                >
-                  {tab.label}
-                </button>
-              ))}
-            </div>
-
-            {/* Content Section */}
-            <div className="bg-white dark:bg-[#1e1e1e] rounded-2xl min-h-[200px] flex items-center justify-center p-8">
-              {/* TAB POSTS */}
-              {activeTab === "posts" &&
-                (userData.hide_history ? (
-                  <p className="text-gray-400 dark:text-[#f1ece1] text-sm font-medium">
-                    Pengguna menyembunyikan riwayat laporan.
-                  </p>
-                ) : posts.length === 0 ? (
-                  <p className="text-gray-400 dark:text-[#f1ece1] text-sm font-medium">
-                    Belum ada post yang dibuat.
-                  </p>
-                ) : (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 w-full">
-                    {posts.map((item) => (
-                      <div
-                        key={item.id}
-                        onClick={() => handlePostClick(item)}
-                        className="bg-white dark:bg-[#f1ece1] rounded-xl shadow-sm border border-gray-100 p-2 flex flex-col gap-3 cursor-pointer hover:shadow-md transition-shadow relative overflow-hidden group"
-                      >
-                        <div className="h-48 w-full overflow-hidden rounded-lg flex justify-center items-center bg-[#f1ece1]">
-                          {item.image_url ? (
-                            <img
-                              src={item.image_url}
-                              alt="Post media"
-                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                            />
-                          ) : (
-                            <p className="text-[#a50034] font-semibold text-center text-xl line-clamp-4">
-                              {`#${item.tag}`}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ))}
-
-              {/* TAB COMMENTS */}
-              {activeTab === "comments" &&
-                (userData.hide_comment ? (
-                  <p className="text-gray-400 dark:text-[#f1ece1] text-sm font-medium">
-                    Pengguna menyembunyikan riwayat komentar.
-                  </p>
-                ) : userComment.length === 0 ? (
-                  <p className="text-gray-400 dark:text-[#f1ece1] text-sm font-medium">
-                    Belum ada komentar yang dibuat.
-                  </p>
-                ) : (
-                  <div className="flex flex-col gap-3 w-full">
-                    {userComment.map((item) => (
-                      <div
-                        key={item.id}
-                        onClick={() => handleCommentClick(item)}
-                        className="bg-gray-50 dark:bg-[#292828] border border-gray-200 dark:border-gray-700 rounded-xl p-4 flex flex-col gap-1 text-left cursor-pointer hover:border-[#a50034] dark:hover:border-[#f1ece1] transition-all group"
-                      >
-                        <div className="flex justify-between items-center text-xs text-gray-400 dark:text-gray-400 mb-1">
-                          <span>
-                            Membalas post:{" "}
-                            <strong className="text-[#a50034] dark:text-[#f1ece1] group-hover:underline">
-                              #{item.posts?.tag || "komplain"}
-                            </strong>
-                          </span>
-                          <span>{new Date(item.created_at).toLocaleDateString("id-ID")}</span>
-                        </div>
-
-                        <p className="text-sm font-semibold text-gray-800 dark:text-[#f1ece1]">
-                          "{item.content}"
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                ))}
-
-              {/* TAB POLLING */}
-              {activeTab === "polling" &&
-                (userData.hide_vote ? (
-                  <p className="text-gray-400 dark:text-[#f1ece1] text-sm font-medium">
-                    Pengguna menyembunyikan riwayat vote/polling.
-                  </p>
-                ) : userVote.length === 0 ? (
-                  <p className="text-gray-400 dark:text-[#f1ece1] text-sm font-medium">
-                    Belum ada kontribusi terhadap suatu isu.
-                  </p>
-                ) : (
-                  <div className="flex flex-col gap-3 w-full">
-                    {userVote.map((item) => (
-                      <div
-                        key={item.id}
-                        onClick={() => handleVoteClick(item)}
-                        className="bg-gray-50 dark:bg-[#292828] border border-gray-200 dark:border-gray-700 rounded-xl p-4 flex flex-col gap-2 text-left cursor-pointer hover:border-[#a50034] dark:hover:border-[#f1ece1] transition-all group"
-                      >
-                        <div className="flex justify-between items-center text-xs text-gray-400 dark:text-gray-400">
-                          <span>
-                            tag:{" "}
-                            <strong className="text-[#a50034] dark:text-[#f1ece1] group-hover:underline">
-                              #{item.posts?.tag || "isu"}
-                            </strong>
-                          </span>
-                          <span>{new Date(item.created_at).toLocaleDateString("id-ID")}</span>
-                        </div>
-
-                        <p className="text-sm text-gray-700 dark:text-gray-300 line-clamp-2">
-                          {item.posts?.description || "Tidak ada deskripsi"}
-                        </p>
-
-                        <div className="flex items-center gap-2 mt-1">
-                          <span className="text-xs text-gray-500 dark:text-gray-400">Pilihan Vote:</span>
-                          <span
-                            className={`text-xs font-bold px-2.5 py-1 rounded-full uppercase ${
-                              item.vote_type === "up"
-                                ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400"
-                                : "bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-400"
-                            }`}
-                          >
-                            {item.vote_type === "up" ? "Setuju" : "Tidak Setuju"}
-                          </span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ))}
-            </div>
-          </>
-        )}
-
       </div>
 
-      {/* Focus Post Modal */}
       <Focuspost
         post={selectedpost}
         focused_comment={selectedcomment}
         focused_vote={selectedvote}
         isOpen={isfocusopen}
         onClose={() => setIsfocusopen(false)}
-        onVoteSuccess={fetchPublicProfile}
+        onVoteSuccess={refreshpage}
       />
     </div>
   );
