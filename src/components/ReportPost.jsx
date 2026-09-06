@@ -39,7 +39,7 @@ export default function Report_post({
 
     setIsSubmitting(true);
 
-    const { error } = await supabase.from("reports").insert([
+    const { error } = await supabase.from("reportpost").insert([
       {
         post_id: post.id,
         reporter_id: currentUserId,
