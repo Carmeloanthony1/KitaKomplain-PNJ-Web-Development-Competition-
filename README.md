@@ -121,7 +121,7 @@ Aplikasi **KitaKomplain** telah di-deploy dan dapat diakses secara langsung mela
 
 <div align="center">
 
-### Screenshot Aplikasi
+## 💻 Desktop & Laptop View
 
 <table>
   <tr>
@@ -138,7 +138,7 @@ Aplikasi **KitaKomplain** telah di-deploy dan dapat diakses secara langsung mela
   </tr>
   <!-- History -->
   <tr>
-    <td colspan="2" align="center"><b>History</b></td>
+    <td colspan="2" align="center"><b>History Page</b></td>
   </tr>
   <tr>
     <td width="50%"><img src="https://github.com/user-attachments/assets/60c37156-e6b6-49aa-b7d0-a9b085bdee64" alt="History Light" /></td>
@@ -146,7 +146,7 @@ Aplikasi **KitaKomplain** telah di-deploy dan dapat diakses secara langsung mela
   </tr>
   <!-- Notification -->
   <tr>
-    <td colspan="2" align="center"><b>Notification</b></td>
+    <td colspan="2" align="center"><b>Notification Drawer / Page</b></td>
   </tr>
   <tr>
     <td width="50%"><img src="https://github.com/user-attachments/assets/47091ae9-255e-422b-b6d1-bc6280937981" alt="Notification Light" /></td>
@@ -154,7 +154,7 @@ Aplikasi **KitaKomplain** telah di-deploy dan dapat diakses secara langsung mela
   </tr>
   <!-- New Post -->
   <tr>
-    <td colspan="2" align="center"><b>New Post</b></td>
+    <td colspan="2" align="center"><b>Create New Post Modal</b></td>
   </tr>
   <tr>
     <td width="50%"><img src="https://github.com/user-attachments/assets/2bff2f78-fd1a-4c83-872e-afbce3448cd6" alt="New Post Light" /></td>
@@ -162,7 +162,7 @@ Aplikasi **KitaKomplain** telah di-deploy dan dapat diakses secara langsung mela
   </tr>
   <!-- Profile -->
   <tr>
-    <td colspan="2" align="center"><b>Profile</b></td>
+    <td colspan="2" align="center"><b>User Profile Page</b></td>
   </tr>
   <tr>
     <td width="50%"><img src="https://github.com/user-attachments/assets/fbdec093-cb0e-4ebc-8d80-00096dcf76d4" alt="Profile Light" /></td>
@@ -170,7 +170,7 @@ Aplikasi **KitaKomplain** telah di-deploy dan dapat diakses secara langsung mela
   </tr>
   <!-- Live Search Bar -->
   <tr>
-    <td colspan="2" align="center"><b>Live Search Bar</b></td>
+    <td colspan="2" align="center"><b>Live Search Bar & Filtering</b></td>
   </tr>
   <tr>
     <td width="50%"><img src="https://github.com/user-attachments/assets/1827db6a-7c20-4256-8b82-6e1578fb6b1c" alt="Live Search Light" /></td>
@@ -178,11 +178,24 @@ Aplikasi **KitaKomplain** telah di-deploy dan dapat diakses secara langsung mela
   </tr>
   <!-- Setting -->
   <tr>
-    <td colspan="2" align="center"><b>Setting</b></td>
+    <td colspan="2" align="center"><b>Settings Page</b></td>
   </tr>
   <tr>
     <td width="50%"><img src="https://github.com/user-attachments/assets/6c334af9-f084-4950-bdd2-d4370d8c2737" alt="Setting Light" /></td>
     <td width="50%"><img src="https://github.com/user-attachments/assets/25da201f-31ac-4dba-a09a-7fb87d0d866f" alt="Setting Dark" /></td>
+  </tr>
+</table>
+
+<br />
+
+## 📱 Mobile View (Responsive Layout)
+
+<table>
+  <tr>
+    <td align="center" width="25%"><img src="https://github.com/user-attachments/assets/166fad3a-8fe2-4fc5-9ec6-d3a1b9d54ac9" alt="Mobile View 1" /></td>
+    <td align="center" width="25%"><img src="https://github.com/user-attachments/assets/8ad36835-4361-4248-a343-d3dbef6c3626" alt="Mobile View 2" /></td>
+    <td align="center" width="25%"><img src="https://github.com/user-attachments/assets/8ebc3dda-a4e5-4d7c-8b73-4f76d583dd14" alt="Mobile View 3" /></td>
+    <td align="center" width="25%"><img src="https://github.com/user-attachments/assets/be0cdbed-7fb6-47a8-9e8d-5bfd83b6ae43" alt="Mobile View 4" /></td>
   </tr>
 </table>
 
@@ -255,7 +268,7 @@ Testing      : Vitest
 
 ### Database Schema
 
-<img src="src/assets/ERD_KitaKomplen.webp" alt="ERD KitaKomplain" height="800" width="800" />
+<img src="src/assets/ERD_KitaKomplen.webp" alt="ERD KitaKomplain" width="1000" />
 
 ### Folder Structure
 ```
@@ -401,7 +414,7 @@ Aplikasi akan berjalan di `http://localhost:3000`
 ---
 
 ## 🚀 Penggunaan
-### Menjalankan Aplikasi
+### Menjalankan Aplikasi via Windows
 
 ```bash
 
@@ -420,6 +433,17 @@ npm run lint
 
 ```
 
+### Menjalankan Aplikasi via Linux
+
+```bash
+
+# root folder
+npm run dev 
+
+#back end folder
+node server.js
+
+```
 ### User Guide
 
 #### Untuk Pengguna Umum
