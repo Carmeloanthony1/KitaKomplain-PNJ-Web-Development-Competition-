@@ -553,14 +553,6 @@ npm run test:coverage
 
 ```
 
----
-
-## 📄 Lisensi
-
-Proyek ini dilisensikan di bawah [MIT License](LICENSE) - lihat file LICENSE untuk detail lebih lanjut.
-
----
-
 <div align="center">
 
   **Made with ❤️ by [KitaKomplain] for ITECHNO CUP 2026**
